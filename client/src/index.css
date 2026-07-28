@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', sans-serif;
+  --color-primary: #00e5ff;
+  --color-secondary: #4f46e5;
+  --color-bg-start: #0f172a;
+  --color-bg-end: #1e1b4b;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-slate-50 min-h-screen bg-gradient-to-br from-slate-900 to-indigo-950;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-custom {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111113; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00e5ff; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #111113; 
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00e5ff #0f172a;
+}
+
+/* NProgress Customization */
+#nprogress .bar {
+  background: #00e5ff !important;
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #00e5ff, 0 0 5px #00e5ff !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #00e5ff !important;
+  border-left-color: #00e5ff !important;
+}
+
