@@ -1,0 +1,132 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { colors, typography } from '../lib/tokens';
+
+interface BuyWindowModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  onDelegate: () => void;
+}
+
+export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate }: BuyWindowModalProps) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          
+          {/* Backdrop */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-[#0A0F1C]/80 backdrop-blur-sm cursor-pointer"
+          />
+
+          {/* Modal Container */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="relative bg-[#0A0F1C] border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl overflow-hidden flex flex-col"
+          >
+            {/* Header */}
+            <div className="px-8 py-6 border-b border-[#1A1B41] flex justify-between items-center bg-[#1A1B41]/20">
+              <div>
+                <h2 className="text-xl font-light text-white tracking-wide">Review Buy Window</h2>
+                <p className={`${typography.textSecondary} text-sm mt-1`}>DARIA Supervisor has detected an optimal execution window.</p>
+              </div>
+              <button 
+                onClick={onClose}
+                className="text-gray-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+                aria-label="Close modal"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-8 flex flex-col gap-8">
+              <div className="grid grid-cols-2 gap-8">
+                
+                {/* Current Plan */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className={`${typography.microLabel} text-gray-500`}>Current Plan</span>
+                    <span className="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[10px] font-mono uppercase">Baseline</span>
+                  </div>
+                  <div className="p-5 border border-[#1A1B41] bg-[#1A1B41]/20 rounded-lg flex flex-col gap-3">
+                    <div className="flex justify-between items-end">
+                      <span className="text-gray-400 text-sm">Execution Date</span>
+                      <span className="text-white font-mono">Q3 (Standard)</span>
+                    </div>
+                    <div className="flex justify-between items-end border-t border-[#1A1B41]/50 pt-3">
+                      <span className="text-gray-400 text-sm">Est. Saturation</span>
+                      <span className="text-gray-300 font-mono">~45%</span>
+                    </div>
+                    <div className="flex justify-between items-end border-t border-[#1A1B41]/50 pt-3">
+                      <span className="text-gray-400 text-sm">Capital Allocation</span>
+                      <span className="text-gray-300 font-mono">$1.2M</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DARIA Recommendation */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className={`${typography.microLabel} ${colors.accentText}`}>DARIA Recommended</span>
+                    <span className="px-2 py-0.5 rounded bg-accent/10 border border-accent/30 text-accent text-[10px] font-mono uppercase animate-pulse">
+                      Optimal
+                    </span>
+                  </div>
+                  <div className="p-5 border border-accent/40 bg-accent/5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-accent blur-[50px] opacity-20"></div>
+                    <div className="flex justify-between items-end relative z-10">
+                      <span className="text-accent text-sm">Execution Date</span>
+                      <span className="text-white font-mono">Next 72 Hours</span>
+                    </div>
+                    <div className="flex justify-between items-end border-t border-accent/20 pt-3 relative z-10">
+                      <span className="text-accent text-sm">Est. Saturation</span>
+                      <span className="text-white font-mono">+89% (Anomaly)</span>
+                    </div>
+                    <div className="flex justify-between items-end border-t border-accent/20 pt-3 relative z-10">
+                      <span className="text-accent text-sm">Capital Allocation</span>
+                      <span className="text-white font-mono">$1.2M</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              
+              <div className="bg-[#1A1B41]/10 border-l-2 border-accent p-4 text-sm text-gray-300 leading-relaxed">
+                By accelerating the execution window, the underlying asset will capture the emerging velocity spike prior to mainstream plateau. Confidence metric remains high across Ghost Mode and Quantum Guess parameters.
+              </div>
+            </div>
+
+            {/* Footer / Actions */}
+            <div className="px-8 py-6 bg-[#1A1B41]/20 border-t border-[#1A1B41] flex justify-between gap-4">
+              <button 
+                onClick={onDelegate}
+                className="flex-1 py-3 rounded text-accent border border-accent/40 hover:bg-accent/10 transition-colors text-sm font-semibold flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                Delegate to HoloBidder
+                <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </button>
+              <button 
+                onClick={onConfirm}
+                className="flex-1 py-3 rounded bg-accent text-[#0A0F1C] hover:bg-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Confirm (Execute Directly)
+              </button>
+            </div>
+
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}

@@ -16,7 +16,7 @@ function ResetPassword() {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/reset-password", {
+      await axios.post("/api/reset-password", {
         email,
       });
       setMessage("Password reset link sent to your email.");

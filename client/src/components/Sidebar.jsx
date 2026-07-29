@@ -86,7 +86,7 @@ function Sidebar() {
               const isActive = location.pathname === item.path;
               return (
                 <Link
-                  key={item.name}
+                  key={item.name}                                                                                                                                                       
                   to={item.path}
                   title={isCollapsed ? item.name : ""}
                   className={`flex items-center ${isCollapsed ? 'lg:justify-center lg:rounded-tl-lg lg:p-3 gap-3 py-2.5 rounded-tl-lg rounded-bl-lg' :
