@@ -11,15 +11,15 @@ const EVIDENCE_PACKS = [
     trendScore: '84.2',
     confidence: 94,
     sources: [
-      { name: 'Social Graph Velocity (Nodes 40-82)', weight: '0.45w', trust: 'High' },
-      { name: 'Historical Saturation Curve Match', weight: '0.35w', trust: 'Very High' },
-      { name: 'Cross-Platform Arousal Delta', weight: '0.20w', trust: 'Medium' },
+      { name: 'Social Graph Velocity (Nodes 40-82)', weight: 45, trust: 'High' },
+      { name: 'Historical Saturation Curve Match', weight: 35, trust: 'Very High' },
+      { name: 'Cross-Platform Arousal Delta', weight: 20, trust: 'Medium' },
     ],
     backtest: 'Matched to historical curve event [EV-2024-8A] with 91% correlation. Projected decay in 72 hours.',
     compliance: [
-      '[04:22:11] Audience cohort deanonymization blocked. (GDPR)',
-      '[04:22:12] Targeting exclusion parameters verified. (CCPA)',
-      '[04:22:14] Financial exposure threshold cleared. (FISMA)'
+      "✓ Kept everyone's identity private (GDPR rule)",
+      "✓ Made sure ads only go to the right people (CCPA rule)",
+      "✓ Checked that we aren't spending too much money (FISMA rule)"
     ]
   },
   {
@@ -29,13 +29,13 @@ const EVIDENCE_PACKS = [
     trendScore: '61.4',
     confidence: 82,
     sources: [
-      { name: 'Fringe Network Anomaly Scans', weight: '0.60w', trust: 'Medium' },
-      { name: 'Keyword Emergence Delta', weight: '0.40w', trust: 'High' },
+      { name: 'Fringe Network Anomaly Scans', weight: 60, trust: 'Medium' },
+      { name: 'Keyword Emergence Delta', weight: 40, trust: 'High' },
     ],
     backtest: 'Insufficient historical data for direct match. Relies purely on structural velocity metrics.',
     compliance: [
-      '[10:15:45] Data anonymization confirmed.',
-      '[10:15:45] No PII transmitted.'
+      "✓ Made sure no personal information was shared",
+      "✓ Kept data completely anonymous"
     ]
   },
   {
@@ -45,19 +45,22 @@ const EVIDENCE_PACKS = [
     trendScore: '92.1',
     confidence: 99,
     sources: [
-      { name: 'Aggregated Engine Output', weight: '0.80w', trust: 'Very High' },
-      { name: 'HoloBidder Liquidity Verification', weight: '0.20w', trust: 'High' },
+      { name: 'Aggregated Engine Output', weight: 80, trust: 'Very High' },
+      { name: 'HoloBidder Liquidity Verification', weight: 20, trust: 'High' },
     ],
     backtest: 'Cross-engine consensus achieved. 100% match with internal execution protocols.',
     compliance: [
-      '[22:05:13] Executive sign-off verified via automated policy.',
-      '[22:05:14] Market manipulation safeguards active.'
+      "✓ Got approval from the boss automatically",
+      "✓ Turned on rules to stop market manipulation"
     ]
   }
 ];
 
 export default function EvidenceLibrary() {
   const [selectedPack, setSelectedPack] = useState<typeof EVIDENCE_PACKS[0] | null>(null);
+
+  const allPassed = selectedPack ? selectedPack.compliance.every(log => log.startsWith('✓')) : true;
+  const summarySentence = selectedPack ? `DARIA is ${selectedPack.confidence}% sure about this, and ${allPassed ? 'all privacy checks passed.' : 'some privacy checks failed.'}` : '';
 
   return (
     <div className="flex flex-col h-full max-w-6xl mx-auto pt-4 pb-12 relative">
@@ -172,6 +175,11 @@ export default function EvidenceLibrary() {
               {/* Left Column */}
               <div className="flex flex-col gap-10">
                 
+                {/* Summary Sentence */}
+                <div className="text-white text-lg leading-relaxed">
+                  {summarySentence}
+                </div>
+
                 {/* Confidence & Score */}
                 <div>
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Calibration Metrics</h3>
@@ -209,7 +217,12 @@ export default function EvidenceLibrary() {
                         <span className="text-gray-300 text-sm">{source.name}</span>
                         <div className="flex items-center gap-4">
                           <span className={`${typography.textSecondary} text-xs uppercase tracking-wider`}>{source.trust}</span>
-                          <span className={`${colors.accentText} font-mono text-sm`}>{source.weight}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-12 h-1 bg-surface rounded overflow-hidden">
+                              <div className="h-full bg-cyan-400" style={{ width: `${source.weight}%` }}></div>
+                            </div>
+                            <span className={`${typography.textSecondary} text-xs`}>{source.weight}% of the decision</span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -219,13 +232,10 @@ export default function EvidenceLibrary() {
                 {/* Compliance Log */}
                 <div>
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Compliance Clearance</h3>
-                  <div className="p-4 bg-surface/10 border border-border rounded flex flex-col gap-2 font-mono text-xs text-gray-400">
+                  <div className="p-4 bg-surface/10 border border-border rounded flex flex-col gap-3 text-sm text-gray-300">
                     {selectedPack.compliance.map((log, idx) => (
                       <span key={idx}>{log}</span>
                     ))}
-                    <div className="mt-2 pt-2 border-t border-border/50 text-accent">
-                      &gt; CLEARANCE GRANTED
-                    </div>
                   </div>
                 </div>
 

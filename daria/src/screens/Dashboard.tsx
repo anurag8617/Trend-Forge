@@ -118,7 +118,7 @@ export default function Dashboard() {
         
         {/* DARIA Anchor Panel */}
         <div 
-          className={`${colors.bgPanel} flex flex-col relative overflow-hidden group ${isAlertActive ? 'ring-1 ring-[#3DD6F5] shadow-[0_0_30px_rgb(var(--theme-accent-rgb) / 0.1)]' : ''}`}
+          className={`${colors.bgPanel} flex flex-col relative overflow-hidden group ${isAlertActive ? 'ring-1 ring-cyan-400 shadow-[0_0_30px_rgb(var(--theme-accent-rgb) / 0.1)]' : ''}`}
           onMouseEnter={() => !isAlertActive && setShowSummary(true)}
           onMouseLeave={() => setShowSummary(false)}
         >
@@ -162,7 +162,7 @@ export default function Dashboard() {
                        className="max-w-md mx-auto bg-surface/80 backdrop-blur border border-border p-5 rounded-xl shadow-2xl cursor-pointer hover:bg-surface transition-colors"
                      >
                        <div className="flex items-center gap-3 mb-2">
-                         <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                         <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
                          <span className={`${typography.microLabel} text-white`}>Supervisor Status</span>
                        </div>
                        <p className={`${typography.textSecondary} text-sm leading-relaxed`}>
@@ -237,22 +237,24 @@ export default function Dashboard() {
       {/* Middle Section: Five Engine Pipeline - Dimmed during alert */}
       <div className={dimClass}>
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-4 ml-1`}>Execution Pipeline</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 ">
           {ENGINES.map((engine) => {
             const engineState = isAlertActive && triggerEngine === engine.id ? 'signal' : 
                                isAlertActive ? 'standby' : dariaState;
             
             const renderGlyph = () => {
-              if (engineState === 'executing') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect width="10" height="10" className="fill-accent shadow-[0_0_8px_rgb(var(--theme-accent-rgb)_/_0.8)]" /></svg>;
-              if (engineState === 'signal') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0 10,10 0,10" className="fill-accent animate-pulse drop-shadow-[0_0_4px_rgb(var(--theme-accent-rgb)_/_0.4)]" /></svg>;
-              if (engineState === 'scanning') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" className="fill-accent/50" /></svg>;
-              if (engineState === 'low-confidence') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1,9 L5,1 L9,9 Z" className="stroke-accent/50 fill-none stroke-2 animate-pulse" /></svg>;
+              if (engineState === 'executing') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect width="10" height="10" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;
+              if (engineState === 'signal') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0 10,10 0,10" className="fill-gray-500 group-hover:fill-cyan-400 animate-pulse transition-colors duration-300" /></svg>;
+              if (engineState === 'scanning') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;
+              if (engineState === 'low-confidence') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1,9 L5,1 L9,9 Z" className="stroke-gray-500 group-hover:stroke-cyan-400 fill-none stroke-2 animate-pulse transition-colors duration-300" /></svg>;
+              
+              // Default standby
               return <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><rect width="8" height="8" rx="4" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;            
             };
 
             return (
               <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-accent/50 bg-accent/5' : ''}`}>                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center justify-center w-4  h-4 ">{renderGlyph()}</div>
+                  <div className="flex items-center justify-center w-4  h-4">{renderGlyph()}</div>
                   <span className={`${typography.microLabel} ${typography.textTertiary} group-hover:text-white`}>
                     {engineState}
                   </span>
