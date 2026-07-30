@@ -54,7 +54,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#0A0F1C]/80 backdrop-blur-sm cursor-pointer"
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm cursor-pointer"
           />
 
           {/* Modal Container */}
@@ -62,10 +62,10 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-[#0A0F1C] border border-[#1A1B41] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
+            className="relative bg-background border border-border rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-[#1A1B41] flex justify-between items-center bg-[#1A1B41]/20">
+            <div className="px-8 py-6 border-b border-border flex justify-between items-center bg-surface/20">
               <div>
                 <h2 className="text-xl font-light text-white tracking-wide">Evidence Pack</h2>
                 <p className={`${typography.textSecondary} text-sm mt-1`}>Generated from {contextName}</p>
@@ -92,7 +92,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
                 <div>
                   <span className={`${typography.microLabel} ${typography.textSecondary} block mb-1`}>Confidence Calibration</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-[#1A1B41] rounded overflow-hidden">
+                    <div className="w-16 h-1.5 bg-surface rounded overflow-hidden">
                       <div className="h-full bg-accent" style={{ width: `${confidence}%` }}></div>
                     </div>
                     <span className="text-white font-mono text-sm">{confidence}%</span>
@@ -102,7 +102,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
 
               <div>
                 <span className={`${typography.microLabel} ${typography.textSecondary} block mb-3`}>Sources Weighted</span>
-                <div className="bg-[#1A1B41]/10 border border-[#1A1B41] rounded p-4 flex flex-col gap-2">
+                <div className="bg-surface/10 border border-border rounded p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300">Social Graph Velocity (Nodes 40-82)</span>
                     <span className="text-accent font-mono">0.45w</span>
@@ -129,16 +129,16 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             </div>
 
             {/* Footer / Actions */}
-            <div className="px-8 py-6 bg-[#1A1B41]/20 border-t border-[#1A1B41] flex justify-end gap-4">
+            <div className="px-8 py-6 bg-surface/20 border-t border-border flex justify-end gap-4">
               <button 
                 onClick={() => handleExport('API')}
-                className="px-5 py-2.5 rounded text-white border border-[#1A1B41] hover:bg-[#1A1B41] transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="px-5 py-2.5 rounded text-white border border-border hover:bg-surface transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 Export via API
               </button>
               <button 
                 onClick={() => handleExport('PDF')}
-                className="px-5 py-2.5 rounded bg-accent text-[#0A0F1C] hover:bg-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="px-5 py-2.5 rounded bg-accent text-background hover:bg-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Download PDF
               </button>

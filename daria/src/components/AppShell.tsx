@@ -4,13 +4,15 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import { useAppState } from '../state/AppContext';
 import { typography } from '../lib/tokens';
+import TopLoadBar from './TopLoadBar';
 
 export default function AppShell() {
   const location = useLocation();
   const { toasts, tenant } = useAppState();
 
   return (
-    <div className={`theme-${tenant} flex h-screen w-screen overflow-hidden bg-gradient-to-br from-[#0A0F1C] to-[#11162b] text-white`}>
+    <div className={`theme-${tenant} flex h-screen w-screen overflow-hidden bg-background text-white`}>
+      <TopLoadBar />
       {/* Background glow effects to match the 'deep water' aesthetic */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent pointer-events-none"></div>
       <Sidebar />
@@ -45,7 +47,7 @@ export default function AppShell() {
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className="bg-[#1A1B41] border border-accent shadow-[0_0_15px_rgb(var(--theme-accent-rgb) / 0.2)] p-4 rounded-lg pointer-events-auto max-w-sm"
+              className="bg-surface border border-accent shadow-[0_0_15px_rgb(var(--theme-accent-rgb) / 0.2)] p-4 rounded-lg pointer-events-auto max-w-sm"
             >
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 mt-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--theme-accent)] shrink-0"></div>

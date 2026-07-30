@@ -85,7 +85,7 @@ export default function EvidenceLibrary() {
           >
             <div className="w-full">
               {/* Table Header */}
-              <div className="grid grid-cols-5 py-3 border-b border-[#1A1B41] mb-2">
+              <div className="grid grid-cols-5 py-3 border-b border-border mb-2">
                 <span className={`${typography.microLabel} ${typography.textSecondary}`}>ID / Timestamp</span>
                 <span className={`${typography.microLabel} ${typography.textSecondary}`}>Engine</span>
                 <span className={`${typography.microLabel} ${typography.textSecondary}`}>Trend Score</span>
@@ -99,7 +99,7 @@ export default function EvidenceLibrary() {
                   <div 
                     key={pack.id}
                     onClick={() => setSelectedPack(pack)}
-                    className="grid grid-cols-5 py-4 border-b border-[#1A1B41]/50 cursor-pointer group hover:bg-[#1A1B41]/20 transition-colors items-center"
+                    className="grid grid-cols-5 py-4 border-b border-border/50 cursor-pointer group hover:bg-surface/20 transition-colors items-center"
                   >
                     <div className="flex flex-col">
                       <span className="text-white text-sm font-medium">{pack.id.toUpperCase()}</span>
@@ -109,7 +109,7 @@ export default function EvidenceLibrary() {
                     <span className="text-white text-sm font-mono">{pack.trendScore}</span>
                     
                     <div className="flex items-center gap-2">
-                      <div className="w-12 h-1 bg-[#1A1B41] rounded overflow-hidden">
+                      <div className="w-12 h-1 bg-surface rounded overflow-hidden">
                         <div className="h-full bg-accent" style={{ width: `${pack.confidence}%` }}></div>
                       </div>
                       <span className={`${typography.textSecondary} text-xs font-mono`}>{pack.confidence}%</span>
@@ -136,10 +136,10 @@ export default function EvidenceLibrary() {
             className="flex-1 flex flex-col gap-10"
           >
             {/* Back Button & Title */}
-            <div className="flex items-start gap-6 border-b border-[#1A1B41] pb-6">
+            <div className="flex items-start gap-6 border-b border-border pb-6">
               <button 
                 onClick={() => setSelectedPack(null)}
-                className={`mt-1 p-2 rounded hover:bg-[#1A1B41]/50 ${typography.textSecondary} hover:text-white transition-colors`}
+                className={`mt-1 p-2 rounded hover:bg-surface/50 ${typography.textSecondary} hover:text-white transition-colors`}
                 aria-label="Back to Library"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,10 +157,10 @@ export default function EvidenceLibrary() {
                 </div>
                 
                 <div className="flex gap-3">
-                  <button className="px-4 py-2 border border-[#1A1B41] text-white rounded text-sm font-medium hover:bg-[#1A1B41] transition-colors">
+                  <button className="px-4 py-2 border border-border text-white rounded text-sm font-medium hover:bg-surface transition-colors">
                     Export JSON
                   </button>
-                  <button className="px-4 py-2 bg-accent text-[#0A0F1C] rounded text-sm font-semibold hover:bg-white transition-colors">
+                  <button className="px-4 py-2 bg-accent text-background rounded text-sm font-semibold hover:bg-white transition-colors">
                     Download PDF
                   </button>
                 </div>
@@ -190,7 +190,7 @@ export default function EvidenceLibrary() {
                 {/* Backtest Citation */}
                 <div>
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Backtest Citation</h3>
-                  <div className="p-5 border-l-2 border-[#1A1B41] bg-[#0A0F1C]">
+                  <div className="p-5 border-l-2 border-border bg-background">
                     <p className="text-gray-300 text-sm leading-relaxed">{selectedPack.backtest}</p>
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default function EvidenceLibrary() {
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Source Trust Breakdown</h3>
                   <div className="flex flex-col gap-3">
                     {selectedPack.sources.map((source, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-2 border-b border-[#1A1B41]/30">
+                      <div key={idx} className="flex justify-between items-center py-2 border-b border-border/30">
                         <span className="text-gray-300 text-sm">{source.name}</span>
                         <div className="flex items-center gap-4">
                           <span className={`${typography.textSecondary} text-xs uppercase tracking-wider`}>{source.trust}</span>
@@ -219,11 +219,11 @@ export default function EvidenceLibrary() {
                 {/* Compliance Log */}
                 <div>
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Compliance Clearance</h3>
-                  <div className="p-4 bg-[#1A1B41]/10 border border-[#1A1B41] rounded flex flex-col gap-2 font-mono text-xs text-gray-400">
+                  <div className="p-4 bg-surface/10 border border-border rounded flex flex-col gap-2 font-mono text-xs text-gray-400">
                     {selectedPack.compliance.map((log, idx) => (
                       <span key={idx}>{log}</span>
                     ))}
-                    <div className="mt-2 pt-2 border-t border-[#1A1B41]/50 text-accent">
+                    <div className="mt-2 pt-2 border-t border-border/50 text-accent">
                       &gt; CLEARANCE GRANTED
                     </div>
                   </div>

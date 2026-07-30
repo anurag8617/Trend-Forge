@@ -12,7 +12,7 @@
 export const colors = {
   // Page & Panel Backgrounds
   bgPage: 'bg-navy-indigo-gradient',
-  bgPanel: 'bg-[#0A0F1C]/60 border border-[#1A1B41] backdrop-blur-md rounded-xl',
+  bgPanel: 'bg-background/60 border border-border backdrop-blur-md rounded-xl',
   
   // Single Accent (State only)
   accentText: 'text-accent',

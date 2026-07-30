@@ -9,7 +9,7 @@ export default function Settings() {
     <div className="flex flex-col h-full max-w-5xl mx-auto pt-4 pb-12">
       
       {/* Header */}
-      <div className="mb-8 border-b border-[#1A1B41] pb-6">
+      <div className="mb-8 border-b border-border pb-6">
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Administration</h2>
         <h1 className="text-4xl font-light tracking-tight text-white">System Settings & Audit</h1>
         <p className={`${typography.textTertiary} mt-2 text-sm`}>
@@ -21,23 +21,23 @@ export default function Settings() {
         
         {/* Settings Navigation */}
         <div className="w-64 flex flex-col gap-2 shrink-0">
-          <button className="text-left px-4 py-2 bg-[#1A1B41]/50 border-l-2 border-accent text-white text-sm font-medium">
+          <button className="text-left px-4 py-2 bg-surface/50 border-l-2 border-accent text-white text-sm font-medium">
             Audit Trail
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-[#1A1B41]/20 text-sm transition-colors">
+          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             Access Control
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-[#1A1B41]/20 text-sm transition-colors">
+          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             API Keys
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-[#1A1B41]/20 text-sm transition-colors">
+          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             Engine Config
           </button>
         </div>
 
         {/* Content: Audit Trail */}
-        <div className="flex-1 flex flex-col min-h-0 bg-[#0A0F1C] border border-[#1A1B41] rounded-xl overflow-hidden shadow-2xl">
-          <div className="px-6 py-4 border-b border-[#1A1B41] flex justify-between items-center bg-[#1A1B41]/20">
+        <div className="flex-1 flex flex-col min-h-0 bg-background border border-border rounded-xl overflow-hidden shadow-2xl">
+          <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-surface/20">
             <h3 className="text-white font-medium text-sm">Execution Audit Log</h3>
             <button className="text-accent hover:text-white text-xs font-mono uppercase tracking-wider transition-colors">
               Export CSV
@@ -51,7 +51,7 @@ export default function Settings() {
                   key={log.id}
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                   animate={{ opacity: 1, height: 'auto', marginBottom: 12 }}
-                  className="flex flex-col gap-1 p-3 bg-[#1A1B41]/20 border border-[#1A1B41]/50 rounded"
+                  className="flex flex-col gap-1 p-3 bg-surface/20 border border-border/50 rounded"
                 >
                   <div className="flex items-center gap-3">
                     <span className={`${colors.accentText} text-xs font-mono`}>{log.action}</span>

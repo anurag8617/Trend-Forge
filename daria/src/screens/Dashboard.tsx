@@ -12,7 +12,6 @@ const ENGINES = [
   { id: 'bio', name: 'Bio-Feel', desc: 'Emotional arousal scoring' },
   { id: 'disinfo', name: 'DisinfoDefender', desc: 'Compliance & bot screening' },
   { id: 'holo', name: 'HoloBidder', desc: 'Cross-channel bid execution' },
-  { id: 'holo', name: 'HoloBidder', desc: 'Cross-channel bid execution' },
 ];
 
 const InfoTooltip = ({ label, info }: { label: string, info: string }) => {
@@ -32,7 +31,7 @@ const InfoTooltip = ({ label, info }: { label: string, info: string }) => {
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }}
-            className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-[#1A1B41] border border-gray-700 rounded shadow-xl z-50 text-xs text-gray-300 font-normal normal-case tracking-normal"
+            className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-surface border border-gray-700 rounded  shadow-xl z-50 text-xs text-gray-300 font-normal normal-case tracking-normal"
           >
             {info}
           </motion.div>
@@ -78,7 +77,7 @@ export default function Dashboard() {
       addAuditLog('BUY_WINDOW_DELEGATED', 'Target delegated to HoloBidder protocol for execution.');
     } else {
       addAuditLog('BUY_WINDOW_CONFIRMED', 'Target executed directly by manual confirmation.');
-    }
+     }
     
     setAlertState(false);
     setDariaState('executing');
@@ -102,13 +101,13 @@ export default function Dashboard() {
   const dimClass = isAlertActive ? "opacity-30 pointer-events-none grayscale-[50%] transition-all duration-700 blur-[2px]" : "transition-all duration-700";
 
   return (
-    <div className="flex flex-col gap-8 h-full max-w-6xl mx-auto pt-4 pb-12 relative">
+    <div className="flex flex-col gap-8 min-h-full max-w-6xl mx-auto pt-4 pb-12 relative">
       
       {/* Dev Toggle Button */}
       <div className="absolute top-0 right-0 z-50">
         <button 
           onClick={handleToggleAlert}
-          className={`text-xs px-3 py-1 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isAlertActive ? 'border-red-500/50 text-red-500' : 'border-[#1A1B41] text-gray-400 hover:text-white'}`}
+          className={`text-xs px-3 py-1 bg-background rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isAlertActive ? 'border-red-500/50 text-red-500' : 'border-border text-gray-400 hover:text-white'}`}
         >
           {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
         </button>
@@ -123,10 +122,10 @@ export default function Dashboard() {
           onMouseEnter={() => !isAlertActive && setShowSummary(true)}
           onMouseLeave={() => setShowSummary(false)}
         >
-          <div className="p-6 pb-0 flex justify-between items-start absolute w-full z-10">
+          <div className="group p-6 pb-0 flex justify-between items-start absolute w-full z-10">
             <div>
-              <h2 className={`${typography.microLabel} ${typography.textSecondary}`}>Core Engine</h2>
-              <h3 className="text-xl font-light text-white mt-1 tracking-wide">DARIA Supervisor</h3>
+              <h2 className={`${typography.microLabel} ${typography.textSecondary} group-hover:text-white`}>Core Engine</h2>
+              <h3 className="text-xl font-bold text-white mt-1 tracking-wide group-hover:text-cyan-500">DARIA Supervisor</h3>
             </div>
             
             {/* Standard controls only shown when NOT in alert mode */}
@@ -134,7 +133,7 @@ export default function Dashboard() {
               <select 
                 value={dariaState} 
                 onChange={(e) => setDariaState(e.target.value as DariaState)}
-                className="bg-transparent text-[#9ca3af] text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded cursor-pointer hover:text-white transition-colors"
+                className="bg-transparent text-[#9ca3af] text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded cursor-pointe transition-colors"
                 aria-label="DARIA Supervisor State"
               >
                 <option value="standby">Standby</option>
@@ -160,7 +159,7 @@ export default function Dashboard() {
                        initial={{ opacity: 0, y: 10 }}
                        animate={{ opacity: 1, y: 0 }}
                        exit={{ opacity: 0, y: -10 }}
-                       className="max-w-md mx-auto bg-[#1A1B41]/80 backdrop-blur border border-[#1A1B41] p-5 rounded-xl shadow-2xl cursor-pointer hover:bg-[#1A1B41] transition-colors"
+                       className="max-w-md mx-auto bg-surface/80 backdrop-blur border border-border p-5 rounded-xl shadow-2xl cursor-pointer hover:bg-surface transition-colors"
                      >
                        <div className="flex items-center gap-3 mb-2">
                          <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
@@ -178,7 +177,7 @@ export default function Dashboard() {
                      initial={{ opacity: 0, scale: 0.95 }}
                      animate={{ opacity: 1, scale: 1 }}
                      exit={{ opacity: 0, scale: 0.95 }}
-                     className="max-w-md mx-auto bg-[#0A0F1C] border border-accent/40 p-6 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.1)] relative overflow-hidden"
+                     className="max-w-md mx-auto bg-background border border-accent/40 p-6 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.1)] relative overflow-hidden"
                    >
                      <div className="absolute top-0 left-0 w-full h-1 bg-accent"></div>
                      
@@ -196,7 +195,7 @@ export default function Dashboard() {
                      <div className="flex gap-3 w-full">
                        <button 
                          onClick={handleBuyWindow}
-                         className="flex-1 bg-accent text-[#0A0F1C] font-semibold text-sm py-3 rounded-lg hover:bg-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                         className="flex-1 bg-accent text-background font-semibold text-sm py-3 rounded-lg hover:bg-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                        >
                          Review buy window
                        </button>
@@ -219,9 +218,9 @@ export default function Dashboard() {
         </div>
 
         {/* Trend Score Panel - Dimmed during alert */}
-        <div className={`${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}>
+        <div className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}>
           <div>
-            <h2 className={`${typography.microLabel} ${typography.textSecondary}`}>Trend Score</h2>
+            <h2 className={`${typography.microLabel} ${typography.textSecondary} group-hover:text-white`}>Trend Score</h2>
             <p className={`${typography.textTertiary} text-sm mt-2 leading-relaxed`}>
               Aggregated momentum across tracked nodes. Requires active signal.
             </p>
@@ -248,14 +247,13 @@ export default function Dashboard() {
               if (engineState === 'signal') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0 10,10 0,10" className="fill-accent animate-pulse drop-shadow-[0_0_4px_rgb(var(--theme-accent-rgb)_/_0.4)]" /></svg>;
               if (engineState === 'scanning') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" className="fill-accent/50" /></svg>;
               if (engineState === 'low-confidence') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1,9 L5,1 L9,9 Z" className="stroke-accent/50 fill-none stroke-2 animate-pulse" /></svg>;
-              return <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><rect width="8" height="8" rx="4" className="fill-gray-500" /></svg>;
+              return <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><rect width="8" height="8" rx="4" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;            
             };
 
             return (
-              <div key={engine.id} className={`${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-accent/50 bg-accent/5' : ''}`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center justify-center w-4 h-4">{renderGlyph()}</div>
-                  <span className={`${typography.microLabel} ${typography.textTertiary}`}>
+              <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-accent/50 bg-accent/5' : ''}`}>                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center justify-center w-4  h-4 ">{renderGlyph()}</div>
+                  <span className={`${typography.microLabel} ${typography.textTertiary} group-hover:text-white`}>
                     {engineState}
                   </span>
                 </div>
@@ -263,14 +261,14 @@ export default function Dashboard() {
                   <h3 className={`text-white font-medium text-[13px] mb-1 ${isAlertActive && triggerEngine === engine.id ? colors.accentText : ''}`}>{engine.name}</h3>
                   <p className={`${typography.textSecondary} text-[11px] leading-snug`}>{engine.desc}</p>
                 </div>
-              </div>
+            </div>
             );
           })}
         </div>
       </div>
 
       {/* Bottom Section: Trust Metrics Strip - Dimmed during alert */}
-      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-[#1A1B41] ${dimClass}`}>
+      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border ${dimClass}`}>
         <div className="flex flex-col gap-2">
           <InfoTooltip label="Lead Time" info="Calculated via DARIA's quantum forecasting model, indicating the optimal execution window before the target saturates." />
           <span className={typography.heroMetricSub}>{leadTime}</span>

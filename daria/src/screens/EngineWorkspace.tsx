@@ -53,7 +53,7 @@ const renderViz = (type: EngineType) => {
         <div className="w-full h-full flex items-center justify-center relative">
           <svg className="w-48 h-48" viewBox="0 0 100 50">
             {/* Background Arc */}
-            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#1A1B41" strokeWidth="8" strokeLinecap="round" />
+            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--color-border)" strokeWidth="8" strokeLinecap="round" />
             {/* Value Arc */}
             <path d="M 10 50 A 40 40 0 0 1 75 15" fill="none" stroke="#3DD6F5" strokeWidth="8" strokeLinecap="round" />
           </svg>
@@ -83,7 +83,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
   const currentMetricColor = isBlocked ? 'text-[#F43F5E]' : 'text-white';
   const currentMetric = isBlocked ? 'BLOCKED' : config.heroMetric;
   const currentBg = isBlocked ? 'bg-[#F43F5E]/5' : colors.bgPanel;
-  const currentBorder = isBlocked ? 'border-[#F43F5E]/20' : 'border-[#1A1B41]';
+  const currentBorder = isBlocked ? 'border-[#F43F5E]/20' : 'border-border';
 
   const handleEvidencePack = () => {
     addAuditLog('EVIDENCE_EXPORTED', `Generated evidence pack for ${config.title}.`);
@@ -103,7 +103,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
       className="flex flex-col gap-8 h-full max-w-5xl mx-auto pt-4 pb-12 relative"
     >
       {/* Header */}
-      <div className="border-b border-[#1A1B41] pb-8 flex justify-between items-end">
+      <div className="border-b border-border pb-8 flex justify-between items-end">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h2 className={`${typography.microLabel} ${typography.textSecondary}`}>Engine Workspace</h2>
@@ -122,7 +122,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
             <button 
               onClick={handleToggleBlock}
               className={`px-3 py-1.5 border rounded text-xs font-mono transition-colors ${
-                isBlocked ? 'border-[#F43F5E] text-[#F43F5E] bg-[#F43F5E]/10' : 'border-[#1A1B41] text-gray-500 hover:text-gray-300'
+                isBlocked ? 'border-[#F43F5E] text-[#F43F5E] bg-[#F43F5E]/10' : 'border-border text-gray-500 hover:text-gray-300'
               }`}
             >
               Toggle Block State
@@ -154,7 +154,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
             </h2>
           </div>
 
-          <div className={`flex flex-col gap-4 p-6 bg-[#0A0F1C] border-l-2 ${isBlocked ? 'border-[#F43F5E]' : 'border-[#1A1B41]'} transition-colors duration-500`}>
+          <div className={`flex flex-col gap-4 p-6 bg-background border-l-2 ${isBlocked ? 'border-[#F43F5E]' : 'border-border'} transition-colors duration-500`}>
             {!isBlocked ? (
               <p className={`${typography.textPrimary} leading-relaxed text-sm`}>
                 {config.description}
@@ -167,7 +167,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
                 </p>
               </div>
             )}
-            <div className={`mt-4 pt-4 border-t ${isBlocked ? 'border-[#F43F5E]/20' : 'border-[#1A1B41]'}`}>
+            <div className={`mt-4 pt-4 border-t ${isBlocked ? 'border-[#F43F5E]/20' : 'border-border'}`}>
               <span className={`${typography.microLabel} text-gray-500 block mb-2`}>Honest Science Caveat</span>
               <p className={`${typography.textSecondary} text-xs italic leading-relaxed`}>
                 "{config.caveat}"
@@ -178,7 +178,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
 
         {/* Right Column: Visualization Canvas */}
         <div className={`${colors.bgPanel} flex flex-col overflow-hidden`}>
-          <div className="px-6 py-4 border-b border-[#1A1B41]">
+          <div className="px-6 py-4 border-b border-border">
             <span className={`${typography.microLabel} ${typography.textTertiary}`}>Live Telemetry</span>
           </div>
           <div className={`flex-1 relative min-h-[300px] transition-opacity duration-500 ${isBlocked ? 'opacity-30 grayscale' : ''}`}>

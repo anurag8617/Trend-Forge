@@ -20,7 +20,7 @@ export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#0A0F1C]/80 backdrop-blur-sm cursor-pointer"
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm cursor-pointer"
           />
 
           {/* Modal Container */}
@@ -28,10 +28,10 @@ export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate 
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-[#0A0F1C] border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl overflow-hidden flex flex-col"
+            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-[#1A1B41] flex justify-between items-center bg-[#1A1B41]/20">
+            <div className="px-8 py-6 border-b border-border flex justify-between items-center bg-surface/20">
               <div>
                 <h2 className="text-xl font-light text-white tracking-wide">Review Buy Window</h2>
                 <p className={`${typography.textSecondary} text-sm mt-1`}>DARIA Supervisor has detected an optimal execution window.</p>
@@ -57,16 +57,16 @@ export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate 
                     <span className={`${typography.microLabel} text-gray-500`}>Current Plan</span>
                     <span className="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[10px] font-mono uppercase">Baseline</span>
                   </div>
-                  <div className="p-5 border border-[#1A1B41] bg-[#1A1B41]/20 rounded-lg flex flex-col gap-3">
+                  <div className="p-5 border border-border bg-surface/20 rounded-lg flex flex-col gap-3">
                     <div className="flex justify-between items-end">
                       <span className="text-gray-400 text-sm">Execution Date</span>
                       <span className="text-white font-mono">Q3 (Standard)</span>
                     </div>
-                    <div className="flex justify-between items-end border-t border-[#1A1B41]/50 pt-3">
+                    <div className="flex justify-between items-end border-t border-border/50 pt-3">
                       <span className="text-gray-400 text-sm">Est. Saturation</span>
                       <span className="text-gray-300 font-mono">~45%</span>
                     </div>
-                    <div className="flex justify-between items-end border-t border-[#1A1B41]/50 pt-3">
+                    <div className="flex justify-between items-end border-t border-border/50 pt-3">
                       <span className="text-gray-400 text-sm">Capital Allocation</span>
                       <span className="text-gray-300 font-mono">$1.2M</span>
                     </div>
@@ -100,13 +100,13 @@ export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate 
 
               </div>
               
-              <div className="bg-[#1A1B41]/10 border-l-2 border-accent p-4 text-sm text-gray-300 leading-relaxed">
+              <div className="bg-surface/10 border-l-2 border-accent p-4 text-sm text-gray-300 leading-relaxed">
                 By accelerating the execution window, the underlying asset will capture the emerging velocity spike prior to mainstream plateau. Confidence metric remains high across Ghost Mode and Quantum Guess parameters.
               </div>
             </div>
 
             {/* Footer / Actions */}
-            <div className="px-8 py-6 bg-[#1A1B41]/20 border-t border-[#1A1B41] flex justify-between gap-4">
+            <div className="px-8 py-6 bg-surface/20 border-t border-border flex justify-between gap-4">
               <button 
                 onClick={onDelegate}
                 className="flex-1 py-3 rounded text-accent border border-accent/40 hover:bg-accent/10 transition-colors text-sm font-semibold flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -118,7 +118,7 @@ export default function BuyWindowModal({ isOpen, onClose, onConfirm, onDelegate 
               </button>
               <button 
                 onClick={onConfirm}
-                className="flex-1 py-3 rounded bg-accent text-[#0A0F1C] hover:bg-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="flex-1 py-3 rounded bg-accent text-background hover:bg-white transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Confirm (Execute Directly)
               </button>

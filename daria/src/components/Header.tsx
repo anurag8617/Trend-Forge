@@ -38,7 +38,7 @@ export default function Header() {
   };
 
   return (
-    <header className="h-16 border-b border-[#1A1B41] bg-[#0A0F1C] flex items-center justify-between px-6 shrink-0 relative z-40">
+    <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6 shrink-0 relative z-40">
       
       {/* Workspace Switcher */}
       <div className="flex items-center gap-3">
@@ -67,7 +67,7 @@ export default function Header() {
               className={`px-2 py-1 rounded text-[10px] font-mono tracking-widest border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 selectedBadge === badge 
                   ? 'border-accent text-accent bg-accent/10' 
-                  : 'border-[#1A1B41] text-gray-500 hover:text-gray-300 hover:border-gray-700'
+                  : 'border-border text-gray-500 hover:text-gray-300 hover:border-gray-700'
               }`}
               aria-label={`${badge}: ${badgeDescriptions[badge]}`}
               title={`${badge}: ${badgeDescriptions[badge]}`}
@@ -83,7 +83,7 @@ export default function Header() {
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 5 }}
-                className="absolute top-full right-0 mt-3 w-64 bg-[#0A0F1C] border border-[#1A1B41] shadow-xl rounded-lg p-4 z-50"
+                className="absolute top-full right-0 mt-3 w-64 bg-background border border-border shadow-xl rounded-lg p-4 z-50"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_5px_var(--theme-accent)]"></div>
@@ -101,7 +101,7 @@ export default function Header() {
         <div 
           role="button" 
           tabIndex={0} 
-          className="w-8 h-8 rounded-full bg-[#1A1B41] flex items-center justify-center cursor-pointer hover:bg-[#282a57] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="w-8 h-8 rounded-full bg-surface flex items-center justify-center cursor-pointer hover:bg-[#282a57] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <span className={`${typography.textSecondary} text-xs font-medium`}>{tenantData[tenant].logo}</span>
         </div>

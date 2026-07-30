@@ -87,8 +87,8 @@ export default function HoloBidderQueue() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0A0F1C] overflow-hidden">
-      <div className="px-6 py-4 border-b border-[#1A1B41] flex justify-between items-center bg-[#1A1B41]/20">
+    <div className="flex flex-col h-full bg-background overflow-hidden">
+      <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-surface/20">
         <h3 className="text-white font-medium text-sm flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_var(--theme-accent)]"></div>
           Live Execution Queue
@@ -116,8 +116,8 @@ export default function HoloBidderQueue() {
                     isExecuting
                       ? 'bg-accent/10 border-accent/50 shadow-[0_0_15px_rgb(var(--theme-accent-rgb) / 0.1)]'
                       : isCompleted
-                        ? 'bg-[#1A1B41]/10 border-[#1A1B41]/50 opacity-60'
-                        : 'bg-[#1A1B41]/30 border-[#1A1B41]'
+                        ? 'bg-surface/10 border-border/50 opacity-60'
+                        : 'bg-surface/30 border-border'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
@@ -134,7 +134,7 @@ export default function HoloBidderQueue() {
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center mt-2 pt-3 border-t border-[#1A1B41]/30">
+                  <div className="flex justify-between items-center mt-2 pt-3 border-t border-border/30">
                     <div className="flex items-center gap-2">
                       {isExecuting && (
                         <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
@@ -161,7 +161,7 @@ export default function HoloBidderQueue() {
                     {isPending && (
                       <button
                         onClick={() => handleExecute(bid.id)}
-                        className="px-4 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-[#0A0F1C] border border-accent/30 rounded text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        className="px-4 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-background border border-accent/30 rounded text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                       >
                         Force Execute
                       </button>

@@ -32,7 +32,7 @@ export default function Billing() {
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col h-full max-w-6xl mx-auto pt-4 pb-12"
     >
-      <div className="mb-8 border-b border-[#1A1B41] pb-6">
+      <div className="mb-8 border-b border-border pb-6">
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Workspace</h2>
         <h1 className="text-4xl font-light tracking-tight text-white">Billing & Plans</h1>
         <p className={`${typography.textTertiary} mt-2 text-sm`}>
@@ -46,8 +46,8 @@ export default function Billing() {
             key={tier.name} 
             className={`p-8 rounded-xl border flex flex-col relative overflow-hidden transition-colors ${
               tier.isActive 
-                ? 'bg-[#1A1B41]/20 border-accent shadow-[0_0_30px_rgb(var(--theme-accent-rgb)_/_0.05)]' 
-                : 'bg-[#0A0F1C] border-[#1A1B41] hover:border-[#1A1B41]/80'
+                ? 'bg-surface/20 border-accent shadow-[0_0_30px_rgb(var(--theme-accent-rgb)_/_0.05)]' 
+                : 'bg-background border-border hover:border-border/80'
             }`}
           >
             {tier.isActive && (
@@ -64,7 +64,7 @@ export default function Billing() {
               </p>
             </div>
 
-            <div className="flex-1 flex flex-col gap-3 border-t border-[#1A1B41] pt-6">
+            <div className="flex-1 flex flex-col gap-3 border-t border-border pt-6">
               {tier.features.map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-3">
                   <svg className={`w-4 h-4 shrink-0 mt-0.5 ${tier.isActive ? colors.accentText : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -78,8 +78,8 @@ export default function Billing() {
             <button 
               className={`mt-8 w-full py-3 rounded text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 tier.isActive 
-                  ? 'bg-[#1A1B41] text-white cursor-default' 
-                  : 'bg-transparent border border-[#1A1B41] text-white hover:bg-[#1A1B41]/50'
+                  ? 'bg-surface text-white cursor-default' 
+                  : 'bg-transparent border border-border text-white hover:bg-surface/50'
               }`}
             >
               {tier.isActive ? 'Current Plan' : 'Upgrade Plan'}
