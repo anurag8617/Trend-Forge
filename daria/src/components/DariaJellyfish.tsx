@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export type DariaState =
   | "standby"
@@ -86,19 +86,19 @@ export default function DariaJellyfish({
       ? "#00E5FF"
       : tenant === "enterprise"
       ? "#6366F1"
-      : "#3DD6F5";
+      : "#22d3ee";
   const themeRgb =
     tenant === "gov"
       ? "0,229,255"
       : tenant === "enterprise"
       ? "99,102,241"
-      : "61,214,245";
+      : "34,211,238";
   const themeLightRgb =
     tenant === "gov"
       ? "180,252,255"
       : tenant === "enterprise"
       ? "199,210,254"
-      : "180,240,255";
+      : "165,243,252";
 
   useEffect(() => {
     const canvas = canvasRef.current;

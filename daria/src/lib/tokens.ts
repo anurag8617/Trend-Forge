@@ -15,15 +15,15 @@ export const colors = {
   bgPanel: 'bg-background/60 border border-border backdrop-blur-md rounded-xl',
   
   // Single Accent (State only)
-  accentText: 'text-accent',
-  accentBg: 'bg-accent',
-  accentBorder: 'border-accent',
-  accentGlow: 'shadow-[0_0_15px_rgb(var(--theme-accent-rgb) / 0.4)]',
+  accentText: 'text-cyan-400',
+  accentBg: 'bg-cyan-400',
+  accentBorder: 'border-cyan-400',
+  accentGlow: 'shadow-[0_0_15px_rgba(34,211,238,0.4)]',
   
   // Exception: Compliance Blocked State
-  blockedText: 'text-red-500',
-  blockedBg: 'bg-red-500/10',
-  blockedBorder: 'border-red-500/50',
+  blockedText: 'text-rose-500',
+  blockedBg: 'bg-rose-500/10',
+  blockedBorder: 'border-rose-500/50',
 };
 
 export const typography = {

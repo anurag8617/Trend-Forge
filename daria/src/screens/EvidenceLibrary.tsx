@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { colors, typography } from '../lib/tokens';
+import { typography } from '../lib/tokens';
+import { EngineGlyphs } from '../components/EngineGlyph';
+
+const getEngineId = (engineName: string) => {
+  if (engineName.includes('Ghost')) return 'ghost';
+  if (engineName.includes('Quantum')) return 'quantum';
+  if (engineName.includes('Bio')) return 'bio';
+  if (engineName.includes('Disinfo')) return 'disinfo';
+  if (engineName.includes('Holo')) return 'holo';
+  return 'ghost';
+};
 
 // Dummy Data
 const EVIDENCE_PACKS = [
@@ -86,44 +96,47 @@ export default function EvidenceLibrary() {
             transition={{ duration: 0.2 }}
             className="flex-1"
           >
-            <div className="w-full">
-              {/* Table Header */}
-              <div className="grid grid-cols-5 py-3 border-b border-border mb-2">
-                <span className={`${typography.microLabel} ${typography.textSecondary}`}>ID / Timestamp</span>
-                <span className={`${typography.microLabel} ${typography.textSecondary}`}>Engine</span>
-                <span className={`${typography.microLabel} ${typography.textSecondary}`}>Trend Score</span>
-                <span className={`${typography.microLabel} ${typography.textSecondary}`}>Confidence</span>
-                <span className={`${typography.microLabel} ${typography.textSecondary} text-right`}>Action</span>
-              </div>
-
-              {/* Table Rows */}
-              <div className="flex flex-col">
-                {EVIDENCE_PACKS.map(pack => (
-                  <div 
-                    key={pack.id}
-                    onClick={() => setSelectedPack(pack)}
-                    className="grid grid-cols-5 py-4 border-b border-border/50 cursor-pointer group hover:bg-surface/20 transition-colors items-center"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-white text-sm font-medium">{pack.id.toUpperCase()}</span>
-                      <span className={`${typography.textSecondary} text-[11px] font-mono mt-1`}>{pack.timestamp.replace('T', ' ').slice(0, 16)}</span>
+            <div className="w-full flex flex-col gap-4">
+              {EVIDENCE_PACKS.map(pack => (
+                <div 
+                  key={pack.id}
+                  onClick={() => setSelectedPack(pack)}
+                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border border-border rounded-xl cursor-pointer group hover:bg-surface/30 transition-colors bg-background gap-4"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-white text-lg font-medium">{pack.id.toUpperCase()}</span>
+                    <span className="text-cyan-400 text-sm mt-1">
+                      {pack.confidence >= 90 ? "TrendForge was highly confident and it turned out to be right." : "TrendForge caught this early and monitored the progression."}
+                    </span>
+                    <span className={`${typography.textSecondary} text-sm mt-3`}>
+                      {new Date(pack.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2 bg-surface/50 px-3 py-1.5 rounded-full border border-border">
+                      <svg className="w-4 h-4 text-cyan-400" viewBox="0 0 24 24">
+                        {EngineGlyphs[getEngineId(pack.engine)]}
+                      </svg>
+                      <span className="text-white text-sm">{pack.engine}</span>
                     </div>
-                    <span className="text-white text-sm">{pack.engine}</span>
-                    <span className="text-white text-sm font-mono">{pack.trendScore}</span>
                     
-                    <div className="flex items-center gap-2">
-                      <div className="w-12 h-1 bg-surface rounded overflow-hidden">
-                        <div className="h-full bg-accent" style={{ width: `${pack.confidence}%` }}></div>
+                    <div className="flex items-center gap-6 text-right">
+                      <div className="flex flex-col">
+                        <span className={`${typography.textTertiary} text-[10px] uppercase tracking-wider`}>Trend Score</span>
+                        <span className="text-white text-base">{pack.trendScore}</span>
                       </div>
-                      <span className={`${typography.textSecondary} text-xs font-mono`}>{pack.confidence}%</span>
-                    </div>
-
-                    <div className="text-right">
-                      <span className={`${typography.textSecondary} group-hover:${colors.accentText} transition-colors text-sm font-medium`}>View Detail &rarr;</span>
+                      <div className="flex flex-col">
+                        <span className={`${typography.textTertiary} text-[10px] uppercase tracking-wider`}>Confidence</span>
+                        <span className="text-white text-base">{pack.confidence}%</span>
+                      </div>
+                      <div className="ml-4">
+                        <span className="text-cyan-400 group-hover:text-white transition-colors text-sm font-medium">View Detail &rarr;</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </motion.div>
         )}
@@ -153,17 +166,24 @@ export default function EvidenceLibrary() {
               <div className="flex-1 flex justify-between items-start">
                 <div>
                   <h2 className="text-2xl font-light text-white">{selectedPack.id.toUpperCase()}</h2>
-                  <div className="flex gap-4 mt-2">
-                    <span className={`${typography.textSecondary} text-sm font-mono`}>{selectedPack.timestamp.replace('T', ' ').replace('Z', ' UTC')}</span>
-                    <span className={`${colors.accentText} text-sm font-medium`}>{selectedPack.engine}</span>
+                  <div className="flex items-center gap-4 mt-2">
+                    <span className={`${typography.textSecondary} text-sm`}>
+                      {new Date(selectedPack.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-cyan-400" viewBox="0 0 24 24">
+                        {EngineGlyphs[getEngineId(selectedPack.engine)]}
+                      </svg>
+                      <span className="text-cyan-400 text-sm font-medium">{selectedPack.engine}</span>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="flex gap-3">
-                  <button className="px-4 py-2 border border-border text-white rounded text-sm font-medium hover:bg-surface transition-colors">
+                  <button className="px-4 py-2 border border-border text-white rounded text-sm font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
                     Export JSON
                   </button>
-                  <button className="px-4 py-2 bg-accent text-background rounded text-sm font-semibold hover:bg-white transition-colors">
+                  <button className="px-4 py-2 bg-cyan-400 text-background rounded text-sm font-semibold hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
                     Download PDF
                   </button>
                 </div>

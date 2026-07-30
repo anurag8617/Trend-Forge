@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { typography, colors } from '../lib/tokens';
-import DariaJellyfish from './DariaJellyfish';
 import { useAppState } from '../state/AppContext';
 import logo from '../assets/logo.png';
 
+import { EngineGlyphs } from './EngineGlyph';
+
 const mainNavItems = [
   { name: 'Dashboard', path: '/dashboard', icon: <rect width="10" height="10" x="7" y="7" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5"/> },
-  { name: 'Signals', path: '/signals', icon: <polygon points="12,4 20,12 12,20 4,12" fill="none" stroke="currentColor" strokeWidth="1.5"/> },
-  { name: 'Forecasts', path: '/forecasts', icon: <circle cx="12" cy="12" r="6" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5"/> },
-  { name: 'Audience', path: '/audience', icon: <polygon points="12,5 19,12 12,19 5,12" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5"/> },
-  { name: 'Compliance', path: '/compliance', icon: <polygon points="12,6 18,12 12,18 6,12" fill="currentColor" stroke="currentColor" strokeWidth="1.5"/> },
-  { name: 'Bidding', path: '/bidding', icon: <rect width="12" height="12" x="6" y="6" transform="rotate(45 12 12)" fill="currentColor" fillOpacity="0.5" stroke="currentColor" strokeWidth="1.5"/> },
+  { name: 'Signals', path: '/signals', icon: EngineGlyphs.ghost },
+  { name: 'Forecasts', path: '/forecasts', icon: EngineGlyphs.quantum },
+  { name: 'Audience', path: '/audience', icon: EngineGlyphs.bio },
+  { name: 'Compliance', path: '/compliance', icon: EngineGlyphs.disinfo },
+  { name: 'Bidding', path: '/bidding', icon: EngineGlyphs.holo },
   { name: 'Evidence Packs', path: '/evidence', icon: <rect width="14" height="10" x="5" y="7" fill="none" stroke="currentColor" strokeWidth="1.5"/> },
 ];
 
@@ -24,7 +25,7 @@ const bottomNavItems = [
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
-  const { isAlertActive, triggerEngine, dariaState } = useAppState();
+  const { isAlertActive, triggerEngine } = useAppState();
 
   const engineToPath: Record<string, string> = {
     ghost: '/signals',

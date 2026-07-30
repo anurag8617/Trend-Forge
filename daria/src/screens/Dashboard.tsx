@@ -5,6 +5,7 @@ import DariaJellyfish, { type DariaState } from '../components/DariaJellyfish';
 import BuyWindowModal from '../components/BuyWindowModal';
 import { colors, typography } from '../lib/tokens';
 import { useAppState } from '../state/AppContext';
+import { EngineGlyphs } from '../components/EngineGlyph';
 
 const ENGINES = [
   { id: 'ghost', name: 'Ghost Mode', desc: 'Fringe velocity & wide-bridge crossings' },
@@ -14,29 +15,32 @@ const ENGINES = [
   { id: 'holo', name: 'HoloBidder', desc: 'Cross-channel bid execution' },
 ];
 
-const InfoTooltip = ({ label, info }: { label: string, info: string }) => {
+const MetricLabel = ({ label, subtitle, info }: { label: string, subtitle: string, info: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="relative flex items-center gap-1">
-      <span className={`${typography.microLabel} ${typography.textSecondary}`}>{label}</span>
-      <button 
-        className="text-gray-500 hover:text-white focus-visible:outline-none focus-visible:text-white rounded-full"
-        onClick={() => setIsOpen(!isOpen)}
-        onBlur={() => setIsOpen(false)}
-        aria-label={`How is ${label} calculated?`}
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }}
-            className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-surface border border-gray-700 rounded  shadow-xl z-50 text-xs text-gray-300 font-normal normal-case tracking-normal"
-          >
-            {info}
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="flex flex-col gap-1">
+      <div className="relative flex items-center gap-1">
+        <span className={`${typography.microLabel} ${typography.textSecondary}`}>{label}</span>
+        <button 
+          className="text-gray-500 hover:text-white focus-visible:outline-none focus-visible:text-white rounded-full"
+          onClick={() => setIsOpen(!isOpen)}
+          onBlur={() => setIsOpen(false)}
+          aria-label={`Learn more about ${label}`}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </button>
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }}
+              className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-surface border border-gray-700 rounded shadow-xl z-50 text-xs text-gray-300 font-normal normal-case tracking-normal"
+            >
+              {info}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <span className="text-gray-400 text-xs leading-relaxed">{subtitle}</span>
     </div>
   );
 };
@@ -105,12 +109,17 @@ export default function Dashboard() {
       
       {/* Dev Toggle Button */}
       <div className="absolute top-0 right-0 z-50">
-        <button 
-          onClick={handleToggleAlert}
-          className={`text-xs px-3 py-1 bg-background rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isAlertActive ? 'border-red-500/50 text-red-500' : 'border-border text-gray-400 hover:text-white'}`}
-        >
-          {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
-        </button>
+        <details className="text-right group">
+          <summary className="text-[10px] uppercase text-gray-500 cursor-pointer list-none hover:text-cyan-400 outline-none">Dev Tools</summary>
+          <div className="mt-2 p-3 bg-surface/80 backdrop-blur border border-border rounded shadow-xl">
+            <button 
+              onClick={handleToggleAlert}
+              className={`text-xs px-3 py-1.5 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 transition-colors ${isAlertActive ? 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10' : 'border-border text-gray-300 hover:text-white hover:border-gray-500'}`}
+            >
+              {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
+            </button>
+          </div>
+        </details>
       </div>
 
       {/* Top Section: DARIA & Trend Score */}
@@ -130,18 +139,17 @@ export default function Dashboard() {
             
             {/* Standard controls only shown when NOT in alert mode */}
             {!isAlertActive && (
-              <select 
-                value={dariaState} 
-                onChange={(e) => setDariaState(e.target.value as DariaState)}
-                className="bg-transparent text-[#9ca3af] text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded cursor-pointe transition-colors"
-                aria-label="DARIA Supervisor State"
-              >
-                <option value="standby">Standby</option>
-                <option value="scanning">Scanning</option>
-                <option value="signal">Signal</option>
-                <option value="executing">Executing</option>
-                <option value="low-confidence">Low Confidence</option>
-              </select>
+              <div className="flex flex-wrap items-center gap-1 bg-background/50 p-1 rounded border border-border">
+                {(['standby', 'scanning', 'signal', 'executing', 'low-confidence'] as DariaState[]).map(state => (
+                  <button
+                    key={state}
+                    onClick={() => setDariaState(state)}
+                    className={`px-3 py-1.5 text-xs rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${dariaState === state ? 'bg-cyan-400/20 text-cyan-400 font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    {state.charAt(0).toUpperCase() + state.replace('-', ' ').slice(1)}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
@@ -195,13 +203,13 @@ export default function Dashboard() {
                      <div className="flex gap-3 w-full">
                        <button 
                          onClick={handleBuyWindow}
-                         className="flex-1 bg-accent text-background font-semibold text-sm py-3 rounded-lg hover:bg-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                         className="flex-1 py-3 cursor-pointer rounded bg-cyan-400 text-background hover:bg-cyan-300 transition-all duration-300 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                        >
                          Review buy window
                        </button>
                        <button 
                          onClick={handleEvidencePack}
-                         className="px-4 border border-accent/40 text-accent hover:bg-accent/10 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                         className="px-4 cursor-pointer border border-accent/40 hover:border-cyan-400 text-accent  hover:bg-accent/10 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                          title="View Evidence Library"
                          aria-label="View Evidence Library"
                        >
@@ -218,12 +226,13 @@ export default function Dashboard() {
         </div>
 
         {/* Trend Score Panel - Dimmed during alert */}
-        <div className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}>
+        <div className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}> 
           <div>
-            <h2 className={`${typography.microLabel} ${typography.textSecondary} group-hover:text-white`}>Trend Score</h2>
-            <p className={`${typography.textTertiary} text-sm mt-2 leading-relaxed`}>
-              Aggregated momentum across tracked nodes. Requires active signal.
-            </p>
+            <MetricLabel 
+              label="Trend Score" 
+              subtitle="How well this is spreading right now."
+              info="Aggregated momentum across tracked nodes. Requires active signal."
+            />
           </div>
           <div className="flex items-baseline">
              <h1 className={`${typography.heroMetric} ${hasActiveSignal ? colors.accentText : typography.textTertiary}`}>
@@ -243,18 +252,21 @@ export default function Dashboard() {
                                isAlertActive ? 'standby' : dariaState;
             
             const renderGlyph = () => {
-              if (engineState === 'executing') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect width="10" height="10" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;
-              if (engineState === 'signal') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0 10,10 0,10" className="fill-gray-500 group-hover:fill-cyan-400 animate-pulse transition-colors duration-300" /></svg>;
-              if (engineState === 'scanning') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;
-              if (engineState === 'low-confidence') return <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1,9 L5,1 L9,9 Z" className="stroke-gray-500 group-hover:stroke-cyan-400 fill-none stroke-2 animate-pulse transition-colors duration-300" /></svg>;
+              const stateClass = engineState === 'executing' ? 'text-cyan-400' : 
+                                 engineState === 'signal' ? 'text-cyan-400 animate-pulse' : 
+                                 engineState === 'scanning' ? 'text-gray-400' : 'text-gray-500';
               
-              // Default standby
-              return <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><rect width="8" height="8" rx="4" className="fill-gray-500 group-hover:fill-cyan-400 transition-colors duration-300" /></svg>;            
+              return (
+                <svg className={`w-4 h-4 ${stateClass} group-hover:text-cyan-400 transition-colors duration-300`} viewBox="0 0 24 24" aria-hidden="true">
+                  {EngineGlyphs[engine.id]}
+                </svg>
+              );
             };
 
             return (
-              <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-accent/50 bg-accent/5' : ''}`}>                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center justify-center w-4  h-4">{renderGlyph()}</div>
+              <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-cyan-400/50 bg-cyan-400/5' : ''}`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center justify-center w-4 h-4">{renderGlyph()}</div>
                   <span className={`${typography.microLabel} ${typography.textTertiary} group-hover:text-white`}>
                     {engineState}
                   </span>
@@ -272,18 +284,18 @@ export default function Dashboard() {
       {/* Bottom Section: Trust Metrics Strip - Dimmed during alert */}
       <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border ${dimClass}`}>
         <div className="flex flex-col gap-2">
-          <InfoTooltip label="Lead Time" info="Calculated via DARIA's quantum forecasting model, indicating the optimal execution window before the target saturates." />
+          <MetricLabel label="Lead Time" subtitle="Time left to act before everyone knows." info="Calculated via DARIA's quantum forecasting model, indicating the optimal execution window before the target saturates." />
           <span className={typography.heroMetricSub}>{leadTime}</span>
         </div>
         <div className="flex flex-col gap-2">
-          <InfoTooltip label="Confidence" info="Derived from multi-vector signal consensus and historical anomaly patterns. >85% is considered actionable." />
+          <MetricLabel label="Confidence" subtitle="How sure we are that this is real." info="Derived from multi-vector signal consensus and historical anomaly patterns. >85% is considered actionable." />
           <div className="flex items-baseline gap-1">
              <span className={typography.heroMetricSub}>{confidence}</span>
              <span className={`${typography.textTertiary} text-xl`}>%</span>
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <span className={`${typography.microLabel} ${typography.textSecondary}`}>System Latency</span>
+          <MetricLabel label="System Latency" subtitle="How fast the system is responding." info="Round-trip time for processing global signals." />
           <span className={typography.heroMetricSub}>{latency}</span>
         </div>
       </div>

@@ -26,10 +26,10 @@ const MOCK_SIGNALS = [
     dariaVoice: 'This is spreading fast and naturally across lots of platforms. It looks like a good time to advertise.',
     cta: 'Review buy window',
     technicalDetails: [
-      'Node ID: X42-99B',
-      'Wide-bridge crossing: Confirmed (Cluster A -> Cluster F)',
-      'Baseline deviation: +412%',
-      'Synthetic engagement: 0.02% (Pass)'
+      'Source group: 99B',
+      'Cross-community spread: Confirmed',
+      'Growth vs normal: +412%',
+      'Fake account check: Passed'
     ]
   },
   {
@@ -41,10 +41,10 @@ const MOCK_SIGNALS = [
     dariaVoice: 'This is slowly building up in a small group of fans. Not big yet, but growing.',
     cta: 'View evidence',
     technicalDetails: [
-      'Node ID: Y17-21A',
-      'Wide-bridge crossing: Pending',
-      'Baseline deviation: +65%',
-      'Synthetic engagement: 0.15% (Pass)'
+      'Source group: 21A',
+      'Cross-community spread: Pending',
+      'Growth vs normal: +65%',
+      'Fake account check: Passed'
     ]
   },
   {
@@ -56,10 +56,10 @@ const MOCK_SIGNALS = [
     dariaVoice: "A small, steady signal is showing up in design communities. I'm keeping an eye on it.",
     cta: 'View evidence',
     technicalDetails: [
-      'Node ID: Z99-01C',
-      'Wide-bridge crossing: Negative',
-      'Baseline deviation: +12%',
-      'Synthetic engagement: 0.05% (Pass)'
+      'Source group: 01C',
+      'Cross-community spread: Negative',
+      'Growth vs normal: +12%',
+      'Fake account check: Passed'
     ]
   }
 ];
@@ -115,12 +115,12 @@ function SignalCard({ signal }: { signal: typeof MOCK_SIGNALS[0] }) {
              initial={{ opacity: 0, height: 0 }}
              animate={{ opacity: 1, height: 'auto' }}
              exit={{ opacity: 0, height: 0 }}
-             className="mt-4 pt-4 border-t border-border/60 font-mono text-[11px] text-gray-500 flex flex-col gap-2 overflow-hidden"
+             className="mt-4 pt-4 border-t border-border/60 text-[11px] text-gray-400 flex flex-col gap-2 overflow-hidden"
            >
               {signal.technicalDetails.map((detail, i) => (
                  <div key={i} className="flex gap-3">
-                   <span className="text-accent/50">&gt;</span>
-                   <span className="text-gray-400">{detail}</span>
+                   <span className="text-cyan-400/50">&gt;</span>
+                   <span>{detail}</span>
                  </div>
               ))}
            </motion.div>
@@ -143,11 +143,12 @@ const renderViz = (type: EngineType) => {
   switch (type) {
     case 'line':
       return (
-        <div className="w-full h-full flex items-end justify-center pb-4 relative overflow-hidden">
+        <div className="w-full h-full flex flex-col items-center justify-center pb-4 relative overflow-hidden">
+          <p className="absolute top-6 left-6 text-sm text-gray-300 z-10">This shows how big we expect this trend to get over the next few days</p>
           {/* Shaded Confidence Band */}
           <svg className="absolute bottom-0 w-full h-[80%]" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <path d="M0 80 Q 25 70, 50 40 T 100 20 L 100 100 L 0 100 Z" fill="rgb(var(--theme-accent-rgb) / 0.05)" />
-            <path d="M0 60 Q 25 50, 50 20 T 100 10 L 100 100 L 0 100 Z" fill="rgb(var(--theme-accent-rgb) / 0.1)" />
+            <path d="M0 80 Q 25 70, 50 40 T 100 20 L 100 100 L 0 100 Z" fill="rgba(34,211,238,0.05)" />
+            <path d="M0 60 Q 25 50, 50 20 T 100 10 L 100 100 L 0 100 Z" fill="rgba(34,211,238,0.1)" />
             {/* Minimal Line */}
             <path d="M0 70 Q 25 60, 50 30 T 100 15" fill="none" className="stroke-cyan-400" strokeWidth="2" vectorEffect="non-scaling-stroke" />
           </svg>
@@ -157,14 +158,19 @@ const renderViz = (type: EngineType) => {
       return <SignalFeed />;
     case 'gauge':
       return (
-        <div className="w-full h-full flex items-center justify-center relative">
-          <svg className="w-48 h-48" viewBox="0 0 100 50">
-            {/* Background Arc */}
-            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--color-border)" strokeWidth="8" strokeLinecap="round" />
-            {/* Value Arc */}
-            <path d="M 10 50 A 40 40 0 0 1 75 15" fill="none" className="stroke-cyan-400" strokeWidth="8" strokeLinecap="round" />
-          </svg>
-          <div className="absolute bottom-6 font-semibold text-white">High Arousal</div>
+        <div className="w-full h-full flex flex-col items-center justify-center relative gap-4">
+          <div className="relative">
+            <svg className="w-48 h-48" viewBox="0 0 100 50">
+              {/* Background Arc */}
+              <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--color-border)" strokeWidth="8" strokeLinecap="round" />
+              {/* Value Arc */}
+              <path d="M 10 50 A 40 40 0 0 1 75 15" fill="none" className="stroke-cyan-400" strokeWidth="8" strokeLinecap="round" />
+            </svg>
+            <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+              <span className="text-4xl font-light text-white">8.2<span className="text-lg text-gray-500">/10</span></span>
+            </div>
+          </div>
+          <div className="font-semibold text-white">People are reacting strongly to this</div>
         </div>
       );
     case 'log':
@@ -231,7 +237,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
           <div className="flex items-center gap-3 mb-2">
             <h2 className={`${typography.microLabel} ${typography.textSecondary}`}>Engine Workspace</h2>
             {isBlocked && (
-              <span className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[10px] font-mono uppercase tracking-wider">
+              <span className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[10px] uppercase tracking-wider">
                 Execution Suspended
               </span>
             )}
@@ -244,7 +250,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
           {isDisinfo && (
             <button 
               onClick={handleToggleBlock}
-              className={`px-3 py-1.5 border rounded text-xs font-mono transition-colors ${
+              className={`px-3 py-1.5 border rounded text-xs transition-colors ${
                 isBlocked ? 'border-rose-500 text-rose-500 bg-rose-500/10' : 'border-border text-gray-500 hover:text-gray-300'
               }`}
             >

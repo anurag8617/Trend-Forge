@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { typography, colors } from '../lib/tokens';
+import { typography } from '../lib/tokens';
 
 const TEAM_MEMBERS = [
   { id: 1, name: 'Andrew Holmberg', role: 'Owner', email: 'holmbergandrew95@gmail.com', status: 'Active' },

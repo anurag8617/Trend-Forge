@@ -6,7 +6,7 @@ import { useAppState, type Tenant } from '../state/AppContext';
 export default function Header() {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { tenant, setTenant } = useAppState();
+  const { tenant, setTenant, isAlertActive } = useAppState();
 
   // Close popover on outside click
   useEffect(() => {
@@ -20,9 +20,9 @@ export default function Header() {
   }, []);
 
   const badgeDescriptions: Record<string, string> = {
-    'GDPR': 'Certifies that all audience data is fully anonymized and no PII is retained in the execution pipeline.',
-    'CCPA': 'Confirms compliance with consumer privacy regulations, with all opt-out vectors actively suppressed.',
-    'FISMA': 'Validates that information security controls meet required federal thresholds for data protection.'
+    'GDPR': 'Privacy rules (Europe)',
+    'CCPA': 'Privacy rules (California)',
+    'FISMA': 'Data security (Government)'
   };
 
   const tenantData: Record<Tenant, { org: string, app: string, logo: string }> = {
@@ -47,14 +47,25 @@ export default function Header() {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && handleNextTenant()}
-          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded p-1"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded p-1"
         >
           <span className="text-white font-medium text-sm">{tenantData[tenant].org}</span>
-          <span className="text-accent text-sm font-semibold">/ {tenantData[tenant].app}</span>
+          <span className="text-cyan-400 text-sm font-semibold">/ {tenantData[tenant].app}</span>
           <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
+      </div>
+
+      {/* DARIA Glow Indicator (Persistent Presence) */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group cursor-pointer" title="DARIA Supervisor Status">
+        <div className="relative flex items-center justify-center w-8 h-8">
+          {/* Outer glow (pulsing if active) */}
+          <div className={`absolute inset-0 rounded-full bg-cyan-400 opacity-20 blur-md transition-all duration-700 ${isAlertActive ? 'animate-pulse scale-150' : 'scale-100'}`}></div>
+          {/* Inner core */}
+          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] z-10"></div>
+        </div>
+        <span className="text-[9px] uppercase tracking-[0.2em] text-cyan-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity absolute top-full mt-1">Supervisor</span>
       </div>
 
       <div className="flex items-center gap-8">
@@ -64,9 +75,9 @@ export default function Header() {
             <button
               key={badge}
               onClick={() => setSelectedBadge(selectedBadge === badge ? null : badge)}
-              className={`px-2 py-1 rounded text-[10px] font-mono tracking-widest border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+              className={`px-2 py-1 rounded text-[10px] uppercase tracking-widest border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 selectedBadge === badge 
-                  ? 'border-accent text-accent bg-accent/10' 
+                  ? 'border-cyan-400 text-cyan-400 bg-cyan-400/10' 
                   : 'border-border text-gray-500 hover:text-gray-300 hover:border-gray-700'
               }`}
               aria-label={`${badge}: ${badgeDescriptions[badge]}`}
@@ -86,7 +97,7 @@ export default function Header() {
                 className="absolute top-full right-0 mt-3 w-64 bg-background border border-border shadow-xl rounded-lg p-4 z-50"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_5px_var(--theme-accent)]"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(34,211,238,0.5)]"></div>
                   <span className={`${typography.microLabel} text-white`}>{selectedBadge} Cleared</span>
                 </div>
                 <p className={`${typography.textSecondary} text-xs leading-relaxed`}>
@@ -101,7 +112,7 @@ export default function Header() {
         <div 
           role="button" 
           tabIndex={0} 
-          className="w-8 h-8 rounded-full bg-surface flex items-center justify-center cursor-pointer hover:bg-[#282a57] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="w-8 h-8 rounded-full bg-surface flex items-center justify-center cursor-pointer hover:bg-[#282a57] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
         >
           <span className={`${typography.textSecondary} text-xs font-medium`}>{tenantData[tenant].logo}</span>
         </div>

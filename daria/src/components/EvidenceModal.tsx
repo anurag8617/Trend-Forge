@@ -87,15 +87,15 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <span className={`${typography.microLabel} ${typography.textSecondary} block mb-1`}>Timestamp (UTC)</span>
-                  <span className="text-white font-mono text-sm">{new Date().toISOString().replace('T', ' ').slice(0, 19)}</span>
+                  <span className="text-white text-sm">{new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                 </div>
                 <div>
                   <span className={`${typography.microLabel} ${typography.textSecondary} block mb-1`}>Confidence Calibration</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-1.5 bg-surface rounded overflow-hidden">
-                      <div className="h-full bg-accent" style={{ width: `${confidence}%` }}></div>
+                      <div className="h-full bg-cyan-400" style={{ width: `${confidence}%` }}></div>
                     </div>
-                    <span className="text-white font-mono text-sm">{confidence}%</span>
+                    <span className="text-white text-sm">{confidence}%</span>
                   </div>
                 </div>
               </div>
@@ -105,15 +105,15 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
                 <div className="bg-surface/10 border border-border rounded p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300">Social Graph Velocity (Nodes 40-82)</span>
-                    <span className="text-accent font-mono">0.45w</span>
+                    <span className="text-cyan-400">45% weight</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300">Historical Saturation Curve Match</span>
-                    <span className="text-accent font-mono">0.35w</span>
+                    <span className="text-cyan-400">35% weight</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-300">Cross-Platform Arousal Delta</span>
-                    <span className="text-accent font-mono">0.20w</span>
+                    <span className="text-cyan-400">20% weight</span>
                   </div>
                 </div>
               </div>

@@ -51,7 +51,7 @@ export default function AppShell() {
             >
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 mt-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--theme-accent)] shrink-0"></div>
-                <p className={`${typography.textPrimary} text-sm font-mono leading-relaxed`}>
+                <p className={`${typography.textPrimary} text-sm leading-relaxed`}>
                   {toast.message}
                 </p>
               </div>

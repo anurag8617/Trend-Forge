@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { colors, typography } from '../lib/tokens';
+import { typography } from '../lib/tokens';
 import { useAppState } from '../state/AppContext';
 
 export default function Settings() {
@@ -39,7 +39,7 @@ export default function Settings() {
         <div className="flex-1 flex flex-col min-h-0 bg-background border border-border rounded-xl overflow-hidden shadow-2xl">
           <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-surface/20">
             <h3 className="text-white font-medium text-sm">Execution Audit Log</h3>
-            <button className="text-accent hover:text-white text-xs font-mono uppercase tracking-wider transition-colors">
+            <button className="text-cyan-400 hover:text-white text-xs uppercase tracking-wider transition-colors">
               Export CSV
             </button>
           </div>
@@ -54,8 +54,8 @@ export default function Settings() {
                   className="flex flex-col gap-1 p-3 bg-surface/20 border border-border/50 rounded"
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`${colors.accentText} text-xs font-mono`}>{log.action}</span>
-                    <span className="text-gray-500 text-[10px] font-mono">{log.timestamp.replace('T', ' ').replace('Z', ' UTC')}</span>
+                    <span className="text-cyan-400 text-xs">{log.action}</span>
+                    <span className="text-gray-500 text-[10px]">{new Date(log.timestamp).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}</span>
                   </div>
                   <p className="text-gray-300 text-sm leading-relaxed">
                     {log.detail}

@@ -93,7 +93,7 @@ export default function HoloBidderQueue() {
           <div className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_var(--theme-accent)]"></div>
           Live Execution Queue
         </h3>
-        <span className="text-accent text-xs font-mono uppercase tracking-wider">
+        <span className="text-cyan-400 text-xs uppercase tracking-wider">
           HoloBidder Protocol
         </span>
       </div>
@@ -123,12 +123,12 @@ export default function HoloBidderQueue() {
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex flex-col gap-1">
                       <span className="text-white font-medium text-sm">{bid.target}</span>
-                      <span className={`${typography.textSecondary} text-[10px] font-mono`}>
-                        {bid.id} | {bid.timestamp.replace('T', ' ').slice(0, 19)}
+                      <span className={`${typography.textSecondary} text-[11px]`}>
+                        {bid.id} | {new Date(bid.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     <span
-                      className={`font-mono text-sm ${isExecuting ? 'text-accent' : 'text-gray-300'}`}
+                      className={`text-sm ${isExecuting ? 'text-cyan-400' : 'text-gray-300'}`}
                     >
                       {bid.amount}
                     </span>
@@ -138,7 +138,7 @@ export default function HoloBidderQueue() {
                     <div className="flex items-center gap-2">
                       {isExecuting && (
                         <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
-                          <polygon points="4,0 8,8 0,8" className="fill-accent animate-pulse" />
+                          <polygon points="4,0 8,8 0,8" className="fill-cyan-400 animate-pulse" />
                         </svg>
                       )}
                       {isCompleted && (
@@ -161,13 +161,13 @@ export default function HoloBidderQueue() {
                     {isPending && (
                       <button
                         onClick={() => handleExecute(bid.id)}
-                        className="px-4 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-background border border-accent/30 rounded text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        className="px-4 py-1.5 bg-cyan-400/10 hover:bg-cyan-400 text-cyan-400 hover:text-background border border-cyan-400/30 rounded text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
                       >
                         Force Execute
                       </button>
                     )}
                     {isExecuting && (
-                      <span className="text-accent text-xs font-mono animate-pulse">
+                      <span className="text-cyan-400 text-xs animate-pulse">
                         Processing...
                       </span>
                     )}

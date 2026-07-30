@@ -69,6 +69,8 @@ useEffect(() => {
       detail
     };
     
+    setAuditLogs(prev => [newLog, ...prev]);
+    
     // Also show toast
     const toastId = `toast-${Date.now()}`;
     setToasts(prev => [...prev, { id: toastId, message: `[AUDIT] ${action}: ${detail}` }]);
