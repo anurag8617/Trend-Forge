@@ -15,10 +15,10 @@ export default function Team() {
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col h-full max-w-5xl mx-auto pt-4 pb-12"
     >
-      <div className="mb-8 border-b border-border pb-6 flex justify-between items-end">
+      <div className="mb-8 border-b border-border pb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0">
         <div>
           <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Workspace</h2>
-          <h1 className="text-4xl font-light tracking-tight text-white">Team Management</h1>
+          <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">Team Management</h1>
           <p className={`${typography.textTertiary} mt-2 text-sm`}>
             Manage organizational access, roles, and compliance clearances.
           </p>
@@ -29,7 +29,7 @@ export default function Team() {
       </div>
 
       <div className="bg-background border border-border rounded-xl overflow-hidden shadow-2xl">
-        <div className="grid grid-cols-4 py-4 px-6 border-b border-border bg-surface/20">
+        <div className="hidden md:grid grid-cols-4 py-4 px-6 border-b border-border bg-surface/20">
           <span className={`${typography.microLabel} ${typography.textSecondary} col-span-2`}>User</span>
           <span className={`${typography.microLabel} ${typography.textSecondary}`}>Role</span>
           <span className={`${typography.microLabel} ${typography.textSecondary}`}>Status</span>
@@ -37,7 +37,7 @@ export default function Team() {
 
         <div className="flex flex-col divide-y divide-[#1A1B41]/50">
           {TEAM_MEMBERS.map((member) => (
-            <div key={member.id} className="grid grid-cols-4 py-4 px-6 items-center hover:bg-surface/10 transition-colors">
+            <div key={member.id} className="flex flex-col md:grid md:grid-cols-4 py-4 px-6 items-start md:items-center hover:bg-surface/10 transition-colors gap-2 md:gap-0">
               <div className="flex flex-col col-span-2">
                 <span className="text-white text-sm font-medium">{member.name}</span>
                 <span className={`${typography.textTertiary} text-xs mt-0.5`}>{member.email}</span>

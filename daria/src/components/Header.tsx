@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { typography } from '../lib/tokens';
 import { useAppState, type Tenant } from '../state/AppContext';
 
-export default function Header() {
+export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }) {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { tenant, setTenant, isAlertActive } = useAppState();
+  const { tenant, setTenant } = useAppState();
 
   // Close popover on outside click
   useEffect(() => {
@@ -38,10 +38,19 @@ export default function Header() {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6 shrink-0 relative z-40">
+    <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 md:px-6 shrink-0 relative z-40">
       
       {/* Workspace Switcher */}
       <div className="flex items-center gap-3">
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden p-2 text-gray-400 hover:text-white transition-colors -ml-1 mr-1"
+          aria-label="Toggle menu"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
         <div 
           onClick={handleNextTenant}
           role="button"
@@ -57,20 +66,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* DARIA Glow Indicator (Persistent Presence) */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group cursor-pointer" title="DARIA Supervisor Status">
-        <div className="relative flex items-center justify-center w-8 h-8">
-          {/* Outer glow (pulsing if active) */}
-          <div className={`absolute inset-0 rounded-full bg-cyan-400 opacity-20 blur-md transition-all duration-700 ${isAlertActive ? 'animate-pulse scale-150' : 'scale-100'}`}></div>
-          {/* Inner core */}
-          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] z-10"></div>
-        </div>
-        <span className="text-[9px] uppercase tracking-[0.2em] text-cyan-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity absolute top-full mt-1">Supervisor</span>
-      </div>
 
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-4 md:gap-8">
         {/* Compliance Badges */}
-        <div className="flex items-center gap-2 relative" ref={popoverRef}>
+        <div className="hidden sm:flex items-center gap-2 relative" ref={popoverRef}>
           {['GDPR', 'CCPA', 'FISMA'].map(badge => (
             <button
               key={badge}

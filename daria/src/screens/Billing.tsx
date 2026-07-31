@@ -34,7 +34,7 @@ export default function Billing() {
     >
       <div className="mb-8 border-b border-border pb-6">
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Workspace</h2>
-        <h1 className="text-4xl font-light tracking-tight text-white">Billing & Plans</h1>
+        <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">Billing & Plans</h1>
         <p className={`${typography.textTertiary} mt-2 text-sm`}>
           Manage your TrendForge subscription and execution consumption limits.
         </p>

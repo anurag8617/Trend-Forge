@@ -65,7 +65,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             className="relative bg-background border border-border rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-border flex justify-between items-center bg-surface/20">
+            <div className="px-4 py-4 md:px-8 md:py-6 border-b border-border flex justify-between items-center bg-surface/20">
               <div>
                 <h2 className="text-xl font-light text-white tracking-wide">Evidence Pack</h2>
                 <p className={`${typography.textSecondary} text-sm mt-1`}>Generated from {contextName}</p>
@@ -82,9 +82,9 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             </div>
 
             {/* Body */}
-            <div className="p-8 flex flex-col gap-8">
+            <div className="p-4 md:p-8 flex flex-col gap-8">
               
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <span className={`${typography.microLabel} ${typography.textSecondary} block mb-1`}>Timestamp (UTC)</span>
                   <span className="text-white text-sm">{new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
@@ -129,7 +129,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
             </div>
 
             {/* Footer / Actions */}
-            <div className="px-8 py-6 bg-surface/20 border-t border-border flex justify-end gap-4">
+            <div className="px-4 py-4 md:px-8 md:py-6 bg-surface/20 border-t border-border flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
               <button 
                 onClick={() => handleExport('API')}
                 className="px-5 py-2.5 rounded text-white border border-border hover:bg-surface transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"

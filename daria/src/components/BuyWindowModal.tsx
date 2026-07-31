@@ -32,10 +32,10 @@ export default function BuyWindowModal({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl overflow-hidden flex flex-col"
+            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] min-w-full max-w-3xl overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-border flex justify-between items-center bg-surface/20">
+            <div className="px-4 py-4 md:px-8 md:py-6 border-b border-border flex justify-between items-center bg-surface/20">
               <div>
                 <h2 className="text-xl font-light text-white tracking-wide">Review Buy Window</h2>
                 <p className={`${typography.textSecondary} text-sm mt-1`}>
@@ -59,8 +59,8 @@ export default function BuyWindowModal({
             </div>
 
             {/* Body */}
-            <div className="p-8 flex flex-col gap-8">
-              <div className="grid grid-cols-2 gap-8">
+            <div className="p-4 md:p-8 flex flex-col gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                 {/* Current Plan */}
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function BuyWindowModal({
             </div>
 
             {/* Footer / Actions */}
-            <div className="px-8 py-6 bg-surface/20 border-t border-border flex justify-between gap-4">
+            <div className="px-4 py-4 md:px-8 md:py-6 bg-surface/20 border-t border-border flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
               <button
                 onClick={onDelegate}
                 className="flex-1 py-3 rounded text-accent border border-accent/40 hover:bg-accent/10 transition-colors text-sm font-semibold flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"

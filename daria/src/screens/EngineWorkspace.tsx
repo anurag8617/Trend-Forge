@@ -229,10 +229,10 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-8 h-full max-w-5xl mx-auto pt-4 pb-12 relative"
+      className="flex flex-col gap-6 md:gap-8 h-full max-w-5xl mx-auto pt-4 pb-12 relative"
     >
       {/* Header */}
-      <div className="border-b border-border pb-8 flex justify-between items-end">
+      <div className="border-b border-border pb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h2 className={`${typography.microLabel} ${typography.textSecondary}`}>Engine Workspace</h2>
@@ -242,10 +242,10 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
               </span>
             )}
           </div>
-          <h1 className="text-4xl font-light tracking-tight text-white">{config.title}</h1>
+          <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">{config.title}</h1>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {/* Toggle for Demo Purposes */}
           {isDisinfo && (
             <button 
@@ -310,7 +310,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
           <div className="px-6 py-4 border-b border-border">
             <span className={`${typography.microLabel} ${typography.textTertiary}`}>Live Telemetry</span>
           </div>
-          <div className={`flex-1 relative min-h-[300px] transition-opacity duration-500 ${isBlocked ? 'opacity-30 grayscale' : ''}`}>
+          <div className={`flex-1 relative min-h-[250px] md:min-h-[300px] transition-opacity duration-500 ${isBlocked ? 'opacity-30 grayscale' : ''}`}>
             {renderViz(config.vizType)}
           </div>
         </div>

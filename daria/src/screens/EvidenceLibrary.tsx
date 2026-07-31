@@ -78,7 +78,7 @@ export default function EvidenceLibrary() {
       {/* Header */}
       <div className="mb-8">
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Compliance & Auditing</h2>
-        <h1 className="text-4xl font-light tracking-tight text-white">Evidence Library</h1>
+        <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">Evidence Library</h1>
         <p className={`${typography.textTertiary} mt-2 text-sm`}>
           Immutable records of signal triggers, confidence calibrations, and compliance clearances.
         </p>
@@ -101,7 +101,7 @@ export default function EvidenceLibrary() {
                 <div 
                   key={pack.id}
                   onClick={() => setSelectedPack(pack)}
-                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border border-border rounded-xl cursor-pointer group hover:bg-surface/30 transition-colors bg-background gap-4"
+                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 border border-border rounded-xl cursor-pointer group hover:bg-surface/30 transition-colors bg-background gap-4"
                 >
                   <div className="flex flex-col">
                     <span className="text-white text-lg font-medium">{pack.id.toUpperCase()}</span>
@@ -113,7 +113,7 @@ export default function EvidenceLibrary() {
                     </span>
                   </div>
                   
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-wrap items-center gap-3 md:gap-6">
                     <div className="flex items-center gap-2 bg-surface/50 px-3 py-1.5 rounded-full border border-border">
                       <svg className="w-4 h-4 text-cyan-400" viewBox="0 0 24 24">
                         {EngineGlyphs[getEngineId(pack.engine)]}
@@ -121,7 +121,7 @@ export default function EvidenceLibrary() {
                       <span className="text-white text-sm">{pack.engine}</span>
                     </div>
                     
-                    <div className="flex items-center gap-6 text-right">
+                    <div className="flex items-center gap-4 md:gap-6 text-right">
                       <div className="flex flex-col">
                         <span className={`${typography.textTertiary} text-[10px] uppercase tracking-wider`}>Trend Score</span>
                         <span className="text-white text-base">{pack.trendScore}</span>
@@ -130,7 +130,7 @@ export default function EvidenceLibrary() {
                         <span className={`${typography.textTertiary} text-[10px] uppercase tracking-wider`}>Confidence</span>
                         <span className="text-white text-base">{pack.confidence}%</span>
                       </div>
-                      <div className="ml-4">
+                      <div className="ml-2 md:ml-4">
                         <span className="text-cyan-400 group-hover:text-white transition-colors text-sm font-medium">View Detail &rarr;</span>
                       </div>
                     </div>
@@ -152,7 +152,7 @@ export default function EvidenceLibrary() {
             className="flex-1 flex flex-col gap-10"
           >
             {/* Back Button & Title */}
-            <div className="flex items-start gap-6 border-b border-border pb-6">
+            <div className="flex items-start gap-3 md:gap-6 border-b border-border pb-6">
               <button 
                 onClick={() => setSelectedPack(null)}
                 className={`mt-1 p-2 rounded hover:bg-surface/50 ${typography.textSecondary} hover:text-white transition-colors`}
@@ -163,7 +163,7 @@ export default function EvidenceLibrary() {
                 </svg>
               </button>
               
-              <div className="flex-1 flex justify-between items-start">
+              <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0">
                 <div>
                   <h2 className="text-2xl font-light text-white">{selectedPack.id.toUpperCase()}</h2>
                   <div className="flex items-center gap-4 mt-2">
@@ -190,7 +190,7 @@ export default function EvidenceLibrary() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               
               {/* Left Column */}
               <div className="flex flex-col gap-10">
@@ -203,7 +203,7 @@ export default function EvidenceLibrary() {
                 {/* Confidence & Score */}
                 <div>
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Calibration Metrics</h3>
-                  <div className="flex gap-12">
+                  <div className="flex gap-8 md:gap-12">
                     <div className="flex flex-col gap-1">
                       <span className={`${typography.textTertiary} text-sm`}>Trend Score</span>
                       <span className="text-3xl font-light text-white">{selectedPack.trendScore}</span>
@@ -233,7 +233,7 @@ export default function EvidenceLibrary() {
                   <h3 className={`${typography.microLabel} ${typography.textSecondary} mb-4`}>Source Trust Breakdown</h3>
                   <div className="flex flex-col gap-3">
                     {selectedPack.sources.map((source, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-2 border-b border-border/30">
+                      <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-border/30 gap-2 sm:gap-0">
                         <span className="text-gray-300 text-sm">{source.name}</span>
                         <div className="flex items-center gap-4">
                           <span className={`${typography.textSecondary} text-xs uppercase tracking-wider`}>{source.trust}</span>

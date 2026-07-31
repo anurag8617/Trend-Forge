@@ -11,26 +11,26 @@ export default function Settings() {
       {/* Header */}
       <div className="mb-8 border-b border-border pb-6">
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-2`}>Administration</h2>
-        <h1 className="text-4xl font-light tracking-tight text-white">System Settings & Audit</h1>
+        <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">System Settings & Audit</h1>
         <p className={`${typography.textTertiary} mt-2 text-sm`}>
           Manage workspace configuration and review immutable system execution logs.
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-12 h-full">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-12 h-full">
         
         {/* Settings Navigation */}
-        <div className="w-64 flex flex-col gap-2 shrink-0">
-          <button className="text-left px-4 py-2 bg-surface/50 border-l-2 border-accent text-white text-sm font-medium">
+        <div className="w-full md:w-64 flex flex-row md:flex-col gap-2 shrink-0 overflow-x-auto md:overflow-x-visible">
+          <button className="whitespace-nowrap text-left px-4 py-2 bg-surface/50 border-l-2 border-accent text-white text-sm font-medium">
             Audit Trail
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
+          <button className="whitespace-nowrap text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             Access Control
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
+          <button className="whitespace-nowrap text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             API Keys
           </button>
-          <button className="text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
+          <button className="whitespace-nowrap text-left px-4 py-2 border-l-2 border-transparent text-gray-500 hover:text-white hover:bg-surface/20 text-sm transition-colors">
             Engine Config
           </button>
         </div>

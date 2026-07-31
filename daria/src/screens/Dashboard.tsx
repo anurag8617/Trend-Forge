@@ -105,25 +105,22 @@ export default function Dashboard() {
   const dimClass = isAlertActive ? "opacity-30 pointer-events-none grayscale-[50%] transition-all duration-700 blur-[2px]" : "transition-all duration-700";
 
   return (
-    <div className="flex flex-col gap-8 min-h-full max-w-6xl mx-auto pt-4 pb-12 relative">
+    <div className="flex flex-col gap-6 md:gap-8 min-h-full max-w-6xl mx-auto pt-4 pb-12 relative">
       
       {/* Dev Toggle Button */}
       <div className="absolute top-0 right-0 z-50">
-        <details className="text-right group">
-          <summary className="text-[10px] uppercase text-gray-500 cursor-pointer list-none hover:text-cyan-400 outline-none">Dev Tools</summary>
-          <div className="mt-2 p-3 bg-surface/80 backdrop-blur border border-border rounded shadow-xl">
             <button 
               onClick={handleToggleAlert}
-              className={`text-xs px-3 py-1.5 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 transition-colors ${isAlertActive ? 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10' : 'border-border text-gray-300 hover:text-white hover:border-gray-500'}`}
+              className={`text-xs bg-background px-3 py-1.5 rounded border cursor-pointer focus-visible:outline-none focus-visible:ring-2 
+                focus-visible:ring-cyan-400 transition-colors ${isAlertActive ? 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10' : 
+                  'border-gray-500 text-gray-300 hover:text-white hover:border-gray-300'}`}
             >
               {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
             </button>
-          </div>
-        </details>
       </div>
 
       {/* Top Section: DARIA & Trend Score */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 min-h-[440px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 min-h-[360px] lg:min-h-[440px]">
         
         {/* DARIA Anchor Panel */}
         <div 
@@ -139,7 +136,7 @@ export default function Dashboard() {
             
             {/* Standard controls only shown when NOT in alert mode */}
             {!isAlertActive && (
-              <div className="flex flex-wrap items-center gap-1 bg-background/50 p-1 rounded border border-border">
+              <div className="hidden sm:flex flex-wrap items-center gap-1 bg-background/50 p-1 rounded border border-border">
                 {(['standby', 'scanning', 'signal', 'executing', 'low-confidence'] as DariaState[]).map(state => (
                   <button
                     key={state}
@@ -264,7 +261,7 @@ export default function Dashboard() {
             };
 
             return (
-              <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-cyan-400/50 bg-cyan-400/5' : ''}`}>
+              <div key={engine.id} className={`group ${colors.bgPanel} p-5 flex flex-col justify-between min-h-[120px] md:min-h-[140px] ${isAlertActive && triggerEngine === engine.id ? 'border-cyan-400/50 bg-cyan-400/5' : ''}`}>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center justify-center w-4 h-4">{renderGlyph()}</div>
                   <span className={`${typography.microLabel} ${typography.textTertiary} group-hover:text-white`}>

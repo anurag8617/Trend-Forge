@@ -22,7 +22,7 @@ const bottomNavItems = [
   { name: 'Billing', path: '/billing', icon: <rect width="12" height="12" x="6" y="6" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/> },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const { isAlertActive, triggerEngine } = useAppState();
@@ -37,11 +37,12 @@ export default function Sidebar() {
   const triggerEnginePath = triggerEngine ? engineToPath[triggerEngine] : null;
 
   return (
-    <aside 
-      className={`flex flex-col bg-background border-r border-border transition-all duration-300 ease-in-out z-50 relative ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
-    >
+    <>
+      <aside 
+        className={`flex flex-col bg-background border-r border-border transition-all duration-300 ease-in-out z-[60] h-full fixed md:relative ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}
+      >
       {/* Toggle Button - Desktop Only */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -79,6 +80,7 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.name : ''}
                 className={`relative flex items-center py-2.5 rounded group transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isCollapsed ? 'justify-center pr-3' : 'gap-4 px-3'
@@ -117,6 +119,7 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.name : ''}
                 className={`flex items-center py-2 rounded group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isCollapsed ? 'justify-center px-0' : 'gap-4 px-3'
@@ -142,5 +145,12 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-[55] md:hidden" 
+          onClick={() => setSidebarOpen(false)} 
+        />
+      )}
+    </>
   );
 }
