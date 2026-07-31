@@ -78,9 +78,9 @@ export default function Dashboard() {
     setIsBuyModalOpen(false);
     
     if (isDelegate) {
-      addAuditLog('BUY_WINDOW_DELEGATED', 'Target delegated to HoloBidder protocol for execution.');
+      addAuditLog('BUY_WINDOW_DELEGATED', 'Target sent to auto-bidder.');
     } else {
-      addAuditLog('BUY_WINDOW_CONFIRMED', 'Target executed directly by manual confirmation.');
+      addAuditLog('BUY_WINDOW_CONFIRMED', 'Target bought successfully.');
      }
     
     setAlertState(false);
@@ -92,7 +92,7 @@ export default function Dashboard() {
   };
 
   const handleEvidencePack = () => {
-    addAuditLog('EVIDENCE_EXPORTED', 'Generated evidence pack for DARIA Supervisor context.');
+    addAuditLog('EVIDENCE_EXPORTED', 'Evidence saved successfully.');
     navigate('/evidence');
   };
 

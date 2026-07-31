@@ -1,18 +1,47 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { typography } from '../lib/tokens';
 import { useAppState, type Tenant } from '../state/AppContext';
 
+interface Workspace {
+  id: Tenant;
+  name: string;
+  label: string;
+  accent: string;
+}
+
+const WORKSPACES: Workspace[] = [
+  { id: 'daria',      name: 'DARIA',           label: 'Core Intelligence',   accent: '#3DD6F5' },
+  { id: 'gov',        name: 'Government',       label: 'GOV / OVERSEER',      accent: '#00E5FF' },
+  { id: 'enterprise', name: 'Enterprise',       label: 'AEGIS Platform',      accent: '#6366F1' },
+  { id: 'marketing',  name: 'Marketing Team',   label: 'Campaign Ops',        accent: '#34D399' },
+  { id: 'clientA',    name: 'Client A',         label: 'External Workspace',  accent: '#FBBF24' },
+  { id: 'clientB',    name: 'Client B',         label: 'External Workspace',  accent: '#F472B6' },
+];
+
 export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }) {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
+  const [wsDropdownOpen, setWsDropdownOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const wsRef = useRef<HTMLDivElement>(null);
   const { tenant, setTenant } = useAppState();
+  const navigate = useNavigate();
 
-  // Close popover on outside click
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  // Close popovers on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setSelectedBadge(null);
+      }
+      if (wsRef.current && !wsRef.current.contains(event.target as Node)) {
+        setWsDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -25,48 +54,125 @@ export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: b
     'FISMA': 'Data security (Government)'
   };
 
-  const tenantData: Record<Tenant, { org: string, app: string, logo: string }> = {
-    daria: { org: 'TrendForge', app: 'DARIA', logo: 'TF' },
-    gov: { org: 'GOV Node', app: 'OVERSEER', logo: 'GOV' },
-    enterprise: { org: 'Enterprise', app: 'AEGIS', logo: 'ENT' }
-  };
+  const currentWorkspace = WORKSPACES.find(w => w.id === tenant) || WORKSPACES[0];
 
-  const handleNextTenant = () => {
-    const sequence: Tenant[] = ['daria', 'gov', 'enterprise'];
-    const idx = sequence.indexOf(tenant);
-    setTenant(sequence[(idx + 1) % sequence.length]);
+  const handleSelectWorkspace = (ws: Workspace) => {
+    setTenant(ws.id);
+    setWsDropdownOpen(false);
   };
 
   return (
     <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 md:px-6 shrink-0 relative z-40">
       
-      {/* Workspace Switcher */}
-      <div className="flex items-center gap-3">
+      {/* Left: Hamburger + Workspace Selector */}
+      <div className="flex items-center gap-2">
+        {/* Hamburger - mobile only */}
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden p-2 text-gray-400 hover:text-white transition-colors -ml-1 mr-1"
+          className="md:hidden p-2 text-gray-400 hover:text-white transition-colors -ml-1"
           aria-label="Toggle menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <div 
-          onClick={handleNextTenant}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleNextTenant()}
-          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded p-1"
-        >
-          <span className="text-white font-medium text-sm">{tenantData[tenant].org}</span>
-          <span className="text-cyan-400 text-sm font-semibold">/ {tenantData[tenant].app}</span>
-          <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+
+        {/* Workspace Dropdown */}
+        <div className="relative" ref={wsRef}>
+          <button
+            onClick={() => setWsDropdownOpen(!wsDropdownOpen)}
+            className="flex items-center gap-2.5 cursor-pointer hover:bg-surface/40 transition-all rounded-lg px-3 py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            aria-expanded={wsDropdownOpen}
+            aria-haspopup="listbox"
+            aria-label="Select workspace"
+          >
+            {/* Accent dot */}
+            <div 
+              className="w-2 h-2 rounded-full shrink-0 shadow-[0_0_6px_var(--theme-accent)]" 
+              style={{ backgroundColor: currentWorkspace.accent }}
+            />
+            <div className="flex flex-col items-start">
+              <span className="text-white font-semibold text-sm leading-tight tracking-tight">
+                {currentWorkspace.name}
+              </span>
+              <span className="text-gray-500 text-[10px] leading-tight hidden sm:block">
+                {currentWorkspace.label}
+              </span>
+            </div>
+            <svg 
+              className={`w-3.5 h-3.5 text-gray-500 group-hover:text-gray-300 transition-transform duration-200 ${wsDropdownOpen ? 'rotate-180' : ''}`} 
+              fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Dropdown Panel */}
+          <AnimatePresence>
+            {wsDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="absolute top-full left-0 mt-2 w-64 bg-background border border-border rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-50"
+                role="listbox"
+                aria-label="Workspaces"
+              >
+                {/* Dropdown Header */}
+                <div className="px-4 py-3 border-b border-border">
+                  <span className={`${typography.microLabel} ${typography.textTertiary}`}>
+                    Select Workspace
+                  </span>
+                </div>
+
+                {/* Workspace List */}
+                <div className="py-1.5 max-h-64 overflow-y-auto">
+                  {WORKSPACES.map((ws) => {
+                    const isActive = ws.id === tenant;
+                    return (
+                      <button
+                        key={ws.id}
+                        role="option"
+                        aria-selected={isActive}
+                        onClick={() => handleSelectWorkspace(ws)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors group/item focus-visible:outline-none focus-visible:bg-surface/40 ${
+                          isActive 
+                            ? 'bg-surface/50' 
+                            : 'hover:bg-surface/30'
+                        }`}
+                      >
+                        {/* Color indicator */}
+                        <div 
+                          className={`w-2 h-2 rounded-full shrink-0 transition-shadow ${isActive ? 'shadow-[0_0_8px_var(--theme-accent)]' : ''}`}
+                          style={{ backgroundColor: ws.accent }}
+                        />
+                        {/* Name + label */}
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-sm font-medium truncate ${isActive ? 'text-white' : 'text-gray-300 group-hover/item:text-white'}`}>
+                            {ws.name}
+                          </div>
+                          <div className="text-[10px] text-gray-500 truncate">
+                            {ws.label}
+                          </div>
+                        </div>
+                        {/* Active check */}
+                        {isActive && (
+                          <svg className="w-4 h-4 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-
+      {/* Right: Badges + Avatar */}
       <div className="flex items-center gap-4 md:gap-8">
         {/* Compliance Badges */}
         <div className="hidden sm:flex items-center gap-2 relative" ref={popoverRef}>
@@ -86,7 +192,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: b
             </button>
           ))}
 
-          {/* Popover */}
+          {/* Badge Popover */}
           <AnimatePresence>
             {selectedBadge && (
               <motion.div
@@ -107,14 +213,28 @@ export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: b
           </AnimatePresence>
         </div>
 
-        {/* Account Menu Placeholder */}
+        {/* Account Avatar */}
         <div 
           role="button" 
           tabIndex={0} 
-          className="w-8 h-8 rounded-full bg-surface flex items-center justify-center cursor-pointer hover:bg-[#282a57] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          className="w-8 h-8 rounded-full bg-surface flex items-center justify-center cursor-pointer hover:bg-surface/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
         >
-          <span className={`${typography.textSecondary} text-xs font-medium`}>{tenantData[tenant].logo}</span>
+          <span className={`${typography.textSecondary} text-xs font-medium`}>
+            {currentWorkspace.name.slice(0, 2).toUpperCase()}
+          </span>
         </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="p-2 text-gray-500 hover:text-red-400 transition-colors rounded-full hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+          title="Logout"
+          aria-label="Logout"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
       </div>
     </header>
   );

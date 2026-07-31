@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import AppShell from './components/AppShell';
 import Dashboard from './screens/Dashboard';
 import EngineWorkspace, { type EngineConfig } from './screens/EngineWorkspace';
@@ -6,6 +6,9 @@ import EvidenceLibrary from './screens/EvidenceLibrary';
 import Settings from './screens/Settings';
 import Team from './screens/Team';
 import Billing from './screens/Billing';
+import Login from './screens/Login';
+import Register from './screens/Register';
+import ForgotPassword from './screens/ForgotPassword';
 import { AppProvider } from './state/AppContext';
 
 const ENGINE_CONFIGS: Record<string, EngineConfig> = {
@@ -51,12 +54,35 @@ const ENGINE_CONFIGS: Record<string, EngineConfig> = {
   }
 };
 
+const ProtectedRoute = () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Outlet />;
+};
+
+const PublicRoute = () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <Outlet />;
+};
+
 export default function App() {
   return (
     <AppProvider>
       <Router>
         <Routes>
-          <Route element={<AppShell />}>
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+          </Route>
+          
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppShell />}>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/signals" element={<EngineWorkspace config={ENGINE_CONFIGS.ghost} />} />
@@ -69,6 +95,7 @@ export default function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/team" element={<Team />} />
             <Route path="/billing" element={<Billing />} />
+            </Route>
           </Route>
         </Routes>
       </Router>

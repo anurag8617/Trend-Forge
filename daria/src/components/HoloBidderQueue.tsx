@@ -73,7 +73,7 @@ export default function HoloBidderQueue() {
     // Audit Log
     const bid = bids.find((b) => b.id === bidId);
     if (bid) {
-      addAuditLog('BID_EXECUTING', `Executing ${bid.amount} bid on ${bid.target} via HoloBidder.`);
+      addAuditLog('BID_EXECUTING', `Placing bid of ${bid.amount} for ${bid.target}.`);
     }
 
     // Simulate completion
@@ -81,7 +81,7 @@ export default function HoloBidderQueue() {
       setBids((prev) => prev.map((b) => (b.id === bidId ? { ...b, status: 'completed' } : b)));
       setDariaState('standby');
       if (bid) {
-        addAuditLog('BID_COMPLETED', `Execution confirmed for ${bid.id}.`);
+        addAuditLog('BID_COMPLETED', `Bid placed successfully!`);
       }
     }, 4000);
   };

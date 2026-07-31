@@ -23,7 +23,7 @@ export default function AppShell() {
         
         {/* Main Canvas */}
         <main className="flex-1 overflow-y-auto px-4 py-4 md:px-8 md:py-6 relative">
-          <div className="max-w-7xl mx-auto min-h-full">
+          <div className="max-w-7xl mx-auto h-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}

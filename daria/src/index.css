@@ -40,6 +40,21 @@
     --theme-accent-rgb: 99, 102, 241;
   }
 
+  .theme-marketing {
+    --theme-accent: #34D399;
+    --theme-accent-rgb: 52, 211, 153;
+  }
+
+  .theme-clientA {
+    --theme-accent: #FBBF24;
+    --theme-accent-rgb: 251, 191, 36;
+  }
+
+  .theme-clientB {
+    --theme-accent: #F472B6;
+    --theme-accent-rgb: 244, 114, 182;
+  }
+
   body {
     @apply bg-background text-text min-h-screen m-0 p-0 font-sans;
   }

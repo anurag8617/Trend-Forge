@@ -13,7 +13,7 @@ export default function EvidenceModal({ isOpen, onClose, contextName = 'DARIA Su
   const { addAuditLog } = useAppState();
 
   const handleExport = (type: string) => {
-    addAuditLog('EVIDENCE_EXPORTED', `Generated ${type} evidence pack for ${contextName}.`);
+    addAuditLog('EVIDENCE_EXPORTED', `Saved ${type} evidence for ${contextName}.`);
     
     if (type === 'API' || type === 'JSON') {
       // 1. Create dummy payload based on the modal's context

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { type DariaState } from '../components/DariaJellyfish';
 
 export type TriggerEngine = 'ghost' | 'quantum' | 'bio' | 'disinfo' | 'holo' | null;
-export type Tenant = 'daria' | 'gov' | 'enterprise';
+export type Tenant = 'daria' | 'gov' | 'enterprise' | 'marketing' | 'clientA' | 'clientB';
 
 export interface AuditLog {
   id: string;
@@ -53,7 +53,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAlertActive(active);
     setTriggerEngine(active ? engine : null);
     if (active && engine) {
-      addAuditLog('ALERT_TRIGGERED', `Anomaly detected by ${engine} engine.`);
+      addAuditLog('ALERT_TRIGGERED', `Attention needed in ${engine}.`);
     }
   };
 
@@ -73,7 +73,7 @@ useEffect(() => {
     
     // Also show toast
     const toastId = `toast-${Date.now()}`;
-    setToasts(prev => [...prev, { id: toastId, message: `[AUDIT] ${action}: ${detail}` }]);
+    setToasts(prev => [...prev, { id: toastId, message: detail }]);
     setTimeout(() => {
       removeToast(toastId);
     }, 4000);

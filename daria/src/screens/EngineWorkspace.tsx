@@ -147,8 +147,8 @@ const renderViz = (type: EngineType) => {
           <p className="absolute top-6 left-6 text-sm text-gray-300 z-10">This shows how big we expect this trend to get over the next few days</p>
           {/* Shaded Confidence Band */}
           <svg className="absolute bottom-0 w-full h-[80%]" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <path d="M0 80 Q 25 70, 50 40 T 100 20 L 100 100 L 0 100 Z" fill="rgba(34,211,238,0.05)" />
-            <path d="M0 60 Q 25 50, 50 20 T 100 10 L 100 100 L 0 100 Z" fill="rgba(34,211,238,0.1)" />
+            <path d="M0 80 Q 25 70, 50 40 T 100 20 L 100 100 L 0 100 Z" fill="rgb(0,0,0)" />
+            <path d="M0 60 Q 25 50, 50 20 T 100 10 L 100 100 L 0 100 Z" fill="rgb(0,0,0)" />
             {/* Minimal Line */}
             <path d="M0 70 Q 25 60, 50 30 T 100 15" fill="none" className="stroke-cyan-400" strokeWidth="2" vectorEffect="non-scaling-stroke" />
           </svg>
@@ -215,14 +215,14 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
   const currentBorder = isBlocked ? 'border-rose-500/20' : 'border-border';
 
   const handleEvidencePack = () => {
-    addAuditLog('EVIDENCE_EXPORTED', `Generated evidence pack for ${config.title}.`);
+    addAuditLog('EVIDENCE_EXPORTED', `Evidence saved for ${config.title}.`);
     navigate('/evidence');
   };
 
   const handleToggleBlock = () => {
     const newState = !isBlocked;
     setIsBlocked(newState);
-    addAuditLog('COMPLIANCE_STATE_CHANGED', `DisinfoDefender block state set to ${newState ? 'ACTIVE' : 'INACTIVE'}.`);
+    addAuditLog('COMPLIANCE_STATE_CHANGED', `Defender is now ${newState ? 'On' : 'Off'}.`);
   };
 
   return (
