@@ -25,7 +25,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: b
   const [wsDropdownOpen, setWsDropdownOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<HTMLDivElement>(null);
-  const { tenant, setTenant } = useAppState();
+  const { tenant, setTenant, isAlertActive } = useAppState();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -170,10 +170,21 @@ export default function Header({ sidebarOpen, setSidebarOpen }: { sidebarOpen: b
             )}
           </AnimatePresence>
         </div>
+        
+        {/* Persistent Glow Indicator */}
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="ml-2 flex items-center justify-center p-2 rounded-full hover:bg-surface/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          aria-label={isAlertActive ? "New signal detected, click to review" : "No active signal"}
+          title={isAlertActive ? "New signal detected, click to review" : "No active signal"}
+        >
+          <div className={`w-2.5 h-2.5 rounded-full transition-colors duration-500 ${isAlertActive ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] animate-pulse' : 'bg-gray-600'}`}></div>
+        </button>
       </div>
 
-      {/* Right: Badges + Avatar */}
+      {/* Right: Actions + Badges + Avatar */}
       <div className="flex items-center gap-4 md:gap-8">
+        
         {/* Compliance Badges */}
         <div className="hidden sm:flex items-center gap-2 relative" ref={popoverRef}>
           {['GDPR', 'CCPA', 'FISMA'].map(badge => (

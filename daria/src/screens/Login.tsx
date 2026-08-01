@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppState } from '../state/AppContext';
+import logo from '../assets/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -37,34 +38,31 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#111113] text-white font-sans w-full absolute inset-0 z-50">
+    <div className="min-h-screen w-full flex bg-[#111113] text-white font-sans">
       {/* Left side */}
       <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12 border-r border-[#2C2D32] relative">
         <div className="max-w-md text-center flex flex-col items-center">
-          {/* Logo SVG */}
+          {/* Logo png */}
           <div className="mb-6 relative">
-            <svg width="100" height="110" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M40 2L76 22V66L40 86L4 66V22L40 2Z" stroke="url(#paint0_linear)" strokeWidth="4" strokeLinejoin="round"/>
-              <path d="M15 60V45" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M25 60V35" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M35 60V25" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M45 60V40" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M55 60V30" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M65 60V15" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M40 40L65 15M65 15H50M65 15V30" stroke="#26E7FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-              <defs>
-                <linearGradient id="paint0_linear" x1="4" y1="2" x2="76" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#26E7FF" />
-                  <stop offset="1" stopColor="#9B6CFF" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src={logo} alt="TrendForge Logo" className="w-20 h-20" />
           </div>
-          
-          <h1 className="text-[28px] font-bold mb-2">Trend<span className="text-[#26E7FF]">Forge</span></h1>
-          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] mb-8 font-semibold">PREDICTIVE MEDIA INTELLIGENCE</p>
-          
-          <div className="text-[9px] tracking-widest text-[#8A8F98] mb-4">THE6KID</div>
+
+          <h1 className="text-[28px] font-bold mb-2">
+            Trend<span className="text-[#26E7FF]">Forge</span>
+          </h1>
+
+          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] font-semibold">
+            PREDICTIVE MEDIA INTELLIGENCE
+          </p>
+
+          {/* Line + THE6KID */}
+          <div className="flex flex-col items-center mt-6">
+            <div className="w-44 h-px bg-gradient-to-r from-transparent via-[#596272] to-transparent opacity-60"></div>
+
+            <span className="mt-3 text-[9px] tracking-[0.35em] font-bold text-[#6F7888]">
+              THE6KID
+            </span>
+          </div>
           
           <h2 className="text-3xl font-medium leading-snug mb-6">
             Predict the cascade in its<br />first hours. Buy inside the<br />window.
@@ -86,13 +84,7 @@ export default function Login() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#111113]">
         <div className="w-full max-w-[360px]">
           <div className="flex items-center gap-4 mb-10">
-            <div className="w-12 h-12 rounded-lg bg-[#18191C] border border-[#2C2D32] flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 18V12M8 18V8M12 18V14M16 18V10M20 18V4" stroke="#26E7FF" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M4 12L8 8L12 14L20 4" stroke="#9B6CFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M4 4L4 20L20 20" stroke="#9B6CFF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+              <img src={logo} alt="TrendForge Logo" className="w-12 h-12 " />
             <div>
               <h2 className="text-[22px] font-bold">Welcome back</h2>
               <p className="text-[13px] text-[#8A8F98]">Sign in to your account</p>

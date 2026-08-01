@@ -6,6 +6,7 @@ import Header from './Header';
 import { useAppState } from '../state/AppContext';
 import { typography } from '../lib/tokens';
 import TopLoadBar from './TopLoadBar';
+import GlobalSignalBanner from './GlobalSignalBanner';
 
 export default function AppShell() {
   const location = useLocation();
@@ -61,6 +62,9 @@ export default function AppShell() {
           ))}
         </AnimatePresence>
       </div>
+      
+      {/* Global Alert Banner */}
+      <GlobalSignalBanner />
     </div>
   );
 }

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppState } from '../state/AppContext';
+import logo from '../assets/logo.png';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('Enterprise / agency buyer');
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { addAuditLog } = useAppState();
@@ -15,8 +18,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (!agreeTerms) {
+      setError('You must agree to the Terms of Service');
       return;
     }
     
@@ -24,7 +27,7 @@ export default function Register() {
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ fullName, email, company, password, role })
       });
       
       const data = await response.json();
@@ -42,41 +45,40 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#111113] text-white font-sans w-full absolute inset-0 z-50">
+    <div className="min-h-screen w-full flex bg-[#111113] text-white font-sans">
       {/* Left side */}
       <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12 border-r border-[#2C2D32] relative">
         <div className="max-w-md text-center flex flex-col items-center">
-          {/* Logo SVG */}
+          {/* Logo png */}
           <div className="mb-6 relative">
-            <svg width="100" height="110" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M40 2L76 22V66L40 86L4 66V22L40 2Z" stroke="url(#paint0_linear)" strokeWidth="4" strokeLinejoin="round"/>
-              <path d="M15 60V45" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M25 60V35" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M35 60V25" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M45 60V40" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M55 60V30" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M65 60V15" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M40 40L65 15M65 15H50M65 15V30" stroke="#26E7FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-              <defs>
-                <linearGradient id="paint0_linear" x1="4" y1="2" x2="76" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#26E7FF" />
-                  <stop offset="1" stopColor="#9B6CFF" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src={logo} alt="TrendForge Logo" className="w-20 h-20" />
+          </div>
+
+          <h1 className="text-[28px] font-bold mb-2">
+            Trend<span className="text-[#26E7FF]">Forge</span>
+          </h1>
+
+          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] font-semibold">
+            PREDICTIVE MEDIA INTELLIGENCE
+          </p>
+
+          {/* Line + THE6KID */}
+          <div className="flex flex-col items-center mt-6">
+            <div className="w-44 h-px bg-gradient-to-r from-transparent via-[#596272] to-transparent opacity-60"></div>
+
+            <span className="mt-3 text-[9px] tracking-[0.35em] font-bold text-[#6F7888]">
+              THE6KID
+            </span>
           </div>
           
-          <h1 className="text-[28px] font-bold mb-2">Trend<span className="text-[#26E7FF]">Forge</span></h1>
-          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] mb-8 font-semibold">PREDICTIVE MEDIA INTELLIGENCE</p>
-          
-          <div className="text-[9px] tracking-widest text-[#8A8F98] mb-4">THE6KID</div>
-          
           <h2 className="text-3xl font-medium leading-snug mb-6">
-            Join the predictive network.<br />Command the future.
+            Predict the cascade in its<br />first hours. Buy inside the <br />window.
           </h2>
           
           <p className="text-sm text-[#8A8F98] leading-relaxed mb-16 max-w-sm">
-            Access institutional-grade forecast models and predictive media engines designed for the next era of trading.
+            DARIA runs five engines behind one conversation — 
+            detect, forecast, and clear the buy before the market 
+            reprices it.
           </p>
         </div>
         
@@ -99,8 +101,8 @@ export default function Register() {
               </svg>
             </div>
             <div>
-              <h2 className="text-[22px] font-bold">Create an account</h2>
-              <p className="text-[13px] text-[#8A8F98]">Sign up for TrendForge</p>
+              <h2 className="text-[22px] font-bold">Create your workspace</h2>
+              <p className="text-[13px] text-[#8A8F98]">Start with DARIA Core, free while you evaluate</p>
             </div>
           </div>
           
@@ -112,27 +114,40 @@ export default function Register() {
             )}
             
             <div className="space-y-2">
-              <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">USERNAME</label>
+              <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">FULL NAME</label>
               <input 
                 type="text" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="janedoe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Jane Cooper"
                 className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors"
                 required
               />
             </div>
             
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">WORK EMAIL</label>
-              <input 
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="jane@acmemedia.com"
-                className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors"
-                required
-              />
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-2">
+                <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">WORK EMAIL</label>
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="jane@acmemedia.com"
+                  className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors"
+                  required
+                />
+              </div>
+              <div className="flex-1 space-y-2">
+                <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">COMPANY</label>
+                <input 
+                  type="text" 
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="********"
+                  className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors"
+                  required
+                />
+              </div>
             </div>
             
             <div className="space-y-2">
@@ -141,29 +156,51 @@ export default function Register() {
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] tracking-widest transition-colors"
+                placeholder="Minimum 10 characters"
+                className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors"
                 required
+                minLength={10}
               />
             </div>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">CONFIRM PASSWORD</label>
+              <label className="text-[10px] font-bold tracking-widest text-[#8A8F98]">I'M SIGNING UP AS A...</label>
+              <div className="relative">
+                <select 
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] transition-colors appearance-none text-white cursor-pointer"
+                  required
+                >
+                  <option value="Enterprise / agency buyer">Enterprise / agency buyer</option>
+                  <option value="Individual">Individual</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#8A8F98]">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
               <input 
-                type="password" 
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#111113] border border-[#2C2D32] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#26E7FF] tracking-widest transition-colors"
+                type="checkbox" 
+                id="terms"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="w-3.5 h-3.5 rounded border-[#2C2D32] bg-[#18191C] checked:bg-[#26E7FF] accent-[#26E7FF]"
                 required
               />
+              <label htmlFor="terms" className="text-xs text-[#8A8F98]">
+                I agree to the <Link to="/terms" className="text-[#26E7FF] hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-[#26E7FF] hover:underline">Privacy Policy</Link>
+              </label>
             </div>
             
             <button 
               type="submit" 
               className="w-full bg-[#26E7FF] hover:bg-[#5AD7E5] text-black font-semibold py-3 rounded-md transition-colors text-sm"
             >
-              Sign up
+              Sign in
             </button>
           </form>
           

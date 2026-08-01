@@ -32,7 +32,7 @@ export default function BuyWindowModal({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] min-w-full max-w-3xl overflow-hidden flex flex-col"
+            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl max-h-[95vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="px-4 py-4 md:px-8 md:py-6 border-b border-border flex justify-between items-center bg-surface/20">
@@ -59,7 +59,7 @@ export default function BuyWindowModal({
             </div>
 
             {/* Body */}
-            <div className="p-4 md:p-8 flex flex-col gap-8">
+            <div className="p-4 md:p-8 flex flex-col gap-6 sm:gap-8 overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                 {/* Current Plan */}
                 <div className="flex flex-col gap-4">

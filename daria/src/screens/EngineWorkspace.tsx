@@ -162,7 +162,7 @@ const renderViz = (type: EngineType) => {
           <div className="relative">
             <svg className="w-48 h-48" viewBox="0 0 100 50">
               {/* Background Arc */}
-              <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--color-border)" strokeWidth="8" strokeLinecap="round" />
+              <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="var(--color-black)" strokeWidth="8" strokeLinecap="round" />
               {/* Value Arc */}
               <path d="M 10 50 A 40 40 0 0 1 75 15" fill="none" className="stroke-cyan-400" strokeWidth="8" strokeLinecap="round" />
             </svg>

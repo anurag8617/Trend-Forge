@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -29,39 +30,38 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#111113] text-white font-sans w-full absolute inset-0 z-50">
+    <div className="min-h-screen w-full flex bg-[#111113] text-white font-sans">
       {/* Left side */}
       <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12 border-r border-[#2C2D32] relative">
         <div className="max-w-md text-center flex flex-col items-center">
-          {/* Logo SVG */}
+          {/* Logo png */}
           <div className="mb-6 relative">
-            <svg width="100" height="110" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M40 2L76 22V66L40 86L4 66V22L40 2Z" stroke="url(#paint0_linear)" strokeWidth="4" strokeLinejoin="round"/>
-              <path d="M15 60V45" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M25 60V35" stroke="#26E7FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M35 60V25" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M45 60V40" stroke="#7B61FF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M55 60V30" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M65 60V15" stroke="#9B6CFF" strokeWidth="6" strokeLinecap="round"/>
-              <path d="M40 40L65 15M65 15H50M65 15V30" stroke="#26E7FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-              <defs>
-                <linearGradient id="paint0_linear" x1="4" y1="2" x2="76" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#26E7FF" />
-                  <stop offset="1" stopColor="#9B6CFF" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src={logo} alt="TrendForge Logo" className="w-20 h-20" />
+          </div>
+
+          <h1 className="text-[28px] font-bold mb-2">
+            Trend<span className="text-[#26E7FF]">Forge</span>
+          </h1>
+
+          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] font-semibold">
+            PREDICTIVE MEDIA INTELLIGENCE
+          </p>
+
+          {/* Line + THE6KID */}
+          <div className="flex flex-col items-center mt-6">
+            <div className="w-44 h-px bg-gradient-to-r from-transparent via-[#596272] to-transparent opacity-60"></div>
+
+            <span className="mt-3 text-[9px] tracking-[0.35em] font-bold text-[#6F7888]">
+              THE6KID
+            </span>
           </div>
           
-          <h1 className="text-[28px] font-bold mb-2">Trend<span className="text-[#26E7FF]">Forge</span></h1>
-          <p className="text-[10px] tracking-[0.2em] text-[#8A8F98] mb-8 font-semibold">PREDICTIVE MEDIA INTELLIGENCE</p>
-          
           <h2 className="text-3xl font-medium leading-snug mb-6">
-            Regain access to your<br />command center.
+            Compliance is visible, not<br />buried. Neither is your <br />account recovery.
           </h2>
           
           <p className="text-sm text-[#8A8F98] leading-relaxed mb-16 max-w-sm">
-            We will send you a secure link to reset your password and restore access to your workspace.
+            We'll email a secure, time-limited reset link. It expires in 30 minutes for your workspace's security.
           </p>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function ForgotPassword() {
             </div>
             <div>
               <h2 className="text-[22px] font-bold">Reset password</h2>
-              <p className="text-[13px] text-[#8A8F98]">Enter your email to receive a link</p>
+              <p className="text-[13px] text-[#8A8F98]">Enter the email on your workspace account</p>
             </div>
           </div>
           
@@ -115,12 +115,18 @@ export default function ForgotPassword() {
               {isSubmitting ? 'Sending...' : 'Send reset link'}
             </button>
           </form>
+
+          <div className="flex gap-2 mt-8 p-4 rounded-md  border border-[#2C2D32] text-sm text-[#8A8F98]">
+            <span className="font-semibold text-cyan-500">✓</span>
+            If an account exists for that email, 
+            we've sent a reset link. It'll arrive 
+            within a minute — check your spam 
+            folder if not.
+          </div>
           
-          <div className="mt-8 flex items-center justify-center">
-            <Link to="/login" className="flex items-center gap-2 text-sm text-[#8A8F98] hover:text-[#26E7FF] transition-colors">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
+          <div className="mt-8 flex items-center justify-center text-xs gap-1">
+            Remembered it? 
+            <Link to="/login" className="text-[#26E7FF] text-xs hover:underline">
               Back to Sign in
             </Link>
           </div>

@@ -22,7 +22,7 @@ const bottomNavItems = [
   { name: 'Billing', path: '/billing', icon: <rect width="12" height="12" x="6" y="6" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/> },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (v: boolean) => void }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const { isAlertActive, triggerEngine } = useAppState();
@@ -37,11 +37,22 @@ export default function Sidebar() {
   const triggerEnginePath = triggerEngine ? engineToPath[triggerEngine] : null;
 
   return (
-    <aside 
-      className={`flex flex-col bg-background border-r border-border transition-all duration-300 ease-in-out z-50 relative ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
-    >
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300 ${
+          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      <aside 
+        className={`fixed md:relative inset-y-0 left-0 flex flex-col h-full bg-background border-r border-border transition-all duration-300 ease-in-out z-50 ${
+          isCollapsed ? 'md:w-20' : 'md:w-64'
+        } ${
+          sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
       {/* Toggle Button - Desktop Only */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -79,9 +90,10 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.name : ''}
                 className={`relative flex items-center py-2.5 rounded group transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                  isCollapsed ? 'justify-center pr-3' : 'gap-4 px-3'
+                  isCollapsed ? 'justify-center md:pr-3 px-3 md:px-0' : 'gap-4 px-3'
                 } ${
                   isActive ? 'bg-linear-to-r from-[#13383f] to-surface-100 text-white' : `${typography.textSecondary} hover:bg-surface/30 hover:text-white`
                 } ${isAlerting && !isActive ? 'bg-accent/10' : ''}`}
@@ -98,7 +110,7 @@ export default function Sidebar() {
                   {item.icon}
                 </svg>
                 
-                {!isCollapsed && (
+                {(!isCollapsed || window.innerWidth < 768) && (
                   <span className={`text-[13px] font-medium tracking-wide whitespace-nowrap overflow-hidden ${isAlerting ? 'text-white' : ''}`}>
                     {item.name}
                   </span>
@@ -117,9 +129,10 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.name : ''}
                 className={`flex items-center py-2 rounded group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                  isCollapsed ? 'justify-center px-0' : 'gap-4 px-3'
+                  isCollapsed ? 'justify-center md:px-0 px-3' : 'gap-4 px-3'
                 } ${
                   isActive ? 'bg-linear-to-r from-[#13383f] to-surface-100 text-white' : `${typography.textSecondary} hover:bg-surface/30 hover:text-white`
                 }`}
@@ -131,7 +144,7 @@ export default function Sidebar() {
                   {item.icon}
                 </svg>
                 
-                {!isCollapsed && (
+                {(!isCollapsed || window.innerWidth < 768) && (
                   <span className="text-[12px] font-medium tracking-wide whitespace-nowrap overflow-hidden">
                     {item.name}
                   </span>
@@ -142,5 +155,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }
