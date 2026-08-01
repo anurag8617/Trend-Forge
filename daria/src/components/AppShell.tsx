@@ -7,6 +7,7 @@ import { useAppState } from '../state/AppContext';
 import { typography } from '../lib/tokens';
 import TopLoadBar from './TopLoadBar';
 import GlobalSignalBanner from './GlobalSignalBanner';
+import OnboardingTour from './OnboardingTour';
 
 export default function AppShell() {
   const location = useLocation();
@@ -15,6 +16,7 @@ export default function AppShell() {
 
   return (
     <div className={`theme-${tenant} flex h-screen w-screen overflow-hidden bg-background text-white`}>
+      <OnboardingTour sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <TopLoadBar />
       {/* Background glow effects to match the 'deep water' aesthetic */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent pointer-events-none"></div>
@@ -24,7 +26,7 @@ export default function AppShell() {
         
         {/* Main Canvas */}
         <main className="flex-1 overflow-y-auto px-4 py-4 md:px-8 md:py-6 relative">
-          <div className="max-w-7xl mx-auto h-full">
+          <div className="max-w-7xl mx-auto min-h-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}

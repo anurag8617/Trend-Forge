@@ -16,55 +16,7 @@ export interface EngineConfig {
   vizType: EngineType;
 }
 
-const MOCK_SIGNALS = [
-  {
-    id: 1,
-    title: 'Mob-wife aesthetic — fringe velocity spike',
-    severity: 'high',
-    timestamp: '12 min ago',
-    sparkline: 'M0 25 L20 22 L40 24 L60 15 L80 18 L100 5',
-    dariaVoice: 'This is spreading fast and naturally across lots of platforms. It looks like a good time to advertise.',
-    cta: 'Review buy window',
-    technicalDetails: [
-      'Source group: 99B',
-      'Cross-community spread: Confirmed',
-      'Growth vs normal: +412%',
-      'Fake account check: Passed'
-    ]
-  },
-  {
-    id: 2,
-    title: 'Y2K translucent hardware — steady buildup',
-    severity: 'medium',
-    timestamp: '45 min ago',
-    sparkline: 'M0 25 L20 26 L40 23 L60 20 L80 16 L100 12',
-    dariaVoice: 'This is slowly building up in a small group of fans. Not big yet, but growing.',
-    cta: 'View evidence',
-    technicalDetails: [
-      'Source group: 21A',
-      'Cross-community spread: Pending',
-      'Growth vs normal: +65%',
-      'Fake account check: Passed'
-    ]
-  },
-  {
-    id: 3,
-    title: 'Brutalist web revival — early rumblings',
-    severity: 'low',
-    timestamp: '2 hrs ago',
-    sparkline: 'M0 25 L20 24 L40 25 L60 26 L80 23 L100 20',
-    dariaVoice: "A small, steady signal is showing up in design communities. I'm keeping an eye on it.",
-    cta: 'View evidence',
-    technicalDetails: [
-      'Source group: 01C',
-      'Cross-community spread: Negative',
-      'Growth vs normal: +12%',
-      'Fake account check: Passed'
-    ]
-  }
-];
-
-function SignalCard({ signal }: { signal: typeof MOCK_SIGNALS[0] }) {
+function SignalCard({ signal }: { signal: any }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -117,7 +69,7 @@ function SignalCard({ signal }: { signal: typeof MOCK_SIGNALS[0] }) {
              exit={{ opacity: 0, height: 0 }}
              className="mt-4 pt-4 border-t border-border/60 text-[11px] text-gray-400 flex flex-col gap-2 overflow-hidden"
            >
-              {signal.technicalDetails.map((detail, i) => (
+              {signal.technicalDetails.map((detail: string, i: number) => (
                  <div key={i} className="flex gap-3">
                    <span className="text-cyan-400/50">&gt;</span>
                    <span>{detail}</span>
@@ -130,10 +82,16 @@ function SignalCard({ signal }: { signal: typeof MOCK_SIGNALS[0] }) {
   );
 }
 
-function SignalFeed() {
+const SignalFeed = () => {
+  const { signals, clearNewSignals } = useAppState();
+
+  useState(() => {
+    clearNewSignals();
+  });
+
   return (
-    <div className="flex flex-col gap-5 p-6 h-full overflow-y-auto">
-      {MOCK_SIGNALS.map(signal => <SignalCard key={signal.id} signal={signal} />)}
+    <div className="flex flex-col gap-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
+      {signals.map((signal) => (<SignalCard key={signal.id} signal={signal} />))}
     </div>
   );
 }
@@ -143,7 +101,7 @@ const renderViz = (type: EngineType) => {
   switch (type) {
     case 'line':
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center pb-4 relative overflow-hidden">
+        <div className="w-full min-h-full flex flex-col items-center justify-center pb-4 relative overflow-hidden">
           <p className="absolute top-6 left-6 text-sm text-gray-300 z-10">This shows how big we expect this trend to get over the next few days</p>
           {/* Shaded Confidence Band */}
           <svg className="absolute bottom-0 w-full h-[80%]" preserveAspectRatio="none" viewBox="0 0 100 100">
@@ -158,7 +116,7 @@ const renderViz = (type: EngineType) => {
       return <SignalFeed />;
     case 'gauge':
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center relative gap-4">
+        <div className="w-full min-h-full flex flex-col items-center justify-center relative gap-4">
           <div className="relative">
             <svg className="w-48 h-48" viewBox="0 0 100 50">
               {/* Background Arc */}
@@ -205,7 +163,7 @@ const renderViz = (type: EngineType) => {
 
 export default function EngineWorkspace({ config }: { config: EngineConfig }) {
   const navigate = useNavigate();
-  const { addAuditLog } = useAppState();
+  const { addAuditLog, presentationMode } = useAppState();
   const [isBlocked, setIsBlocked] = useState(false);
   const isDisinfo = config.title === 'DisinfoDefender';
 
@@ -247,7 +205,7 @@ export default function EngineWorkspace({ config }: { config: EngineConfig }) {
         
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Toggle for Demo Purposes */}
-          {isDisinfo && (
+          {isDisinfo && !presentationMode && (
             <button 
               onClick={handleToggleBlock}
               className={`px-3 py-1.5 border rounded text-xs transition-colors ${

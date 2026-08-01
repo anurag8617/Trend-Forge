@@ -46,7 +46,7 @@ const MetricLabel = ({ label, subtitle, info }: { label: string, subtitle: strin
 };
 
 export default function Dashboard() {
-  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState } = useAppState();
+  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState, createEvidencePack, resetDemoData, replayTour, presentationMode } = useAppState();
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [confidence] = useState(90);
   const [showSummary, setShowSummary] = useState(false);
@@ -77,11 +77,27 @@ export default function Dashboard() {
   const handleConfirmAction = (isDelegate: boolean) => {
     setIsBuyModalOpen(false);
     
+    const packId = createEvidencePack({
+      timestamp: new Date().toISOString(),
+      engine: triggerEngine || 'Ghost Mode',
+      trendScore: '84.2',
+      confidence: 94,
+      sources: [
+        { name: 'Aggregated Engine Output', weight: 80, trust: 'Very High' },
+        { name: 'HoloBidder Liquidity Verification', weight: 20, trust: 'High' }
+      ],
+      backtest: `Generated automatically during ${triggerEngine || 'Ghost'} alert confirmation.`,
+      compliance: [
+        "✓ Kept everyone's identity private (GDPR rule)",
+        "✓ Checked that we aren't spending too much money (FISMA rule)"
+      ]
+    });
+
     if (isDelegate) {
-      addAuditLog('BUY_WINDOW_DELEGATED', 'Target sent to auto-bidder.');
+      addAuditLog('BUY_WINDOW_DELEGATED', 'Target sent to auto-bidder.', packId);
     } else {
-      addAuditLog('BUY_WINDOW_CONFIRMED', 'Target bought successfully.');
-     }
+      addAuditLog('BUY_WINDOW_CONFIRMED', 'Target bought successfully.', packId);
+    }
     
     setAlertState(false);
     setDariaState('executing');
@@ -108,22 +124,37 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6 md:gap-8 min-h-full max-w-6xl mx-auto pt-4 pb-12 relative">
       
       {/* Dev Toggle Button */}
-      <div className="absolute top-0 right-0 z-50">
-            <button 
-              onClick={handleToggleAlert}
-              className={`text-xs bg-background px-3 py-1.5 rounded border cursor-pointer focus-visible:outline-none focus-visible:ring-2 
-                focus-visible:ring-cyan-400 transition-colors ${isAlertActive ? 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10' : 
-                  'border-gray-500 text-gray-300 hover:text-white hover:border-gray-300'}`}
-            >
-              {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
-            </button>
-      </div>
+      {!presentationMode && (
+        <div className="absolute top-0 right-0 z-50 flex flex-col gap-2 items-end">
+              <button 
+                onClick={handleToggleAlert}
+                className={`text-xs bg-background px-3 py-1.5 rounded border cursor-pointer focus-visible:outline-none focus-visible:ring-2 
+                  focus-visible:ring-cyan-400 transition-colors ${isAlertActive ? 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10' : 
+                    'border-gray-500 text-gray-300 hover:text-white hover:border-gray-300'}`}
+              >
+                {isAlertActive ? 'Dismiss Alert (Demo)' : 'Trigger Alert (Demo)'}
+              </button>
+              <button 
+                onClick={replayTour}
+                className="text-xs bg-background px-3 py-1.5 rounded border border-cyan-400/50 text-cyan-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 transition-colors hover:bg-cyan-400/10"
+              >
+                Replay Tour
+              </button>
+              <button 
+                onClick={resetDemoData}
+                className="text-xs bg-background px-3 py-1.5 rounded border border-gray-500 text-gray-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 transition-colors hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
+              >
+                Reset Demo Data
+              </button>
+        </div>
+      )}
 
       {/* Top Section: DARIA & Trend Score */}
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 min-h-[360px] lg:min-h-[440px]">
         
         {/* DARIA Anchor Panel */}
         <div 
+          data-tour="daria-panel"
           className={`${colors.bgPanel} flex flex-col relative overflow-hidden group ${isAlertActive ? 'ring-1 ring-cyan-400 shadow-[0_0_30px_rgb(var(--theme-accent-rgb) / 0.1)]' : ''}`}
           onMouseEnter={() => !isAlertActive && setShowSummary(true)}
           onMouseLeave={() => setShowSummary(false)}
@@ -223,7 +254,7 @@ export default function Dashboard() {
         </div>
 
         {/* Trend Score Panel - Dimmed during alert */}
-        <div className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}> 
+        <div data-tour="trend-score" className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}>
           <div>
             <MetricLabel 
               label="Trend Score" 
@@ -241,7 +272,7 @@ export default function Dashboard() {
       </div>
 
       {/* Middle Section: Five Engine Pipeline - Dimmed during alert */}
-      <div className={dimClass}>
+      <div data-tour="pipeline" className={dimClass}>
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-4 ml-1`}>Execution Pipeline</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 ">
           {ENGINES.map((engine) => {

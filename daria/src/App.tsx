@@ -3,6 +3,7 @@ import AppShell from './components/AppShell';
 import Dashboard from './screens/Dashboard';
 import EngineWorkspace, { type EngineConfig } from './screens/EngineWorkspace';
 import EvidenceLibrary from './screens/EvidenceLibrary';
+import History from './screens/History';
 import Settings from './screens/Settings';
 import Team from './screens/Team';
 import Billing from './screens/Billing';
@@ -91,6 +92,7 @@ export default function App() {
             <Route path="/compliance" element={<EngineWorkspace config={ENGINE_CONFIGS.disinfo} />} />
             <Route path="/bidding" element={<EngineWorkspace config={ENGINE_CONFIGS.holo} />} />
             <Route path="/evidence" element={<EvidenceLibrary />} />
+            <Route path="/history" element={<History />} />
             
             <Route path="/settings" element={<Settings />} />
             <Route path="/team" element={<Team />} />

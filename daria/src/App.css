@@ -182,3 +182,26 @@
     border-right-color: var(--border);
   }
 }
+
+
+/* Chrome, Edge, Safari */
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #7C3AED; /* Your dot color */
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+/* Firefox */
+.custom-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #7C3AED;
+  border: 2px solid white;
+  cursor: pointer;
+}  

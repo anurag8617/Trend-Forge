@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { typography } from '../lib/tokens';
 import { EngineGlyphs } from '../components/EngineGlyph';
@@ -11,63 +11,22 @@ const getEngineId = (engineName: string) => {
   if (engineName.includes('Holo')) return 'holo';
   return 'ghost';
 };
-
-// Dummy Data
-const EVIDENCE_PACKS = [
-  {
-    id: 'ev-092',
-    timestamp: '2026-07-29T14:22:10Z',
-    engine: 'Quantum Guess',
-    trendScore: '84.2',
-    confidence: 94,
-    sources: [
-      { name: 'Social Graph Velocity (Nodes 40-82)', weight: 45, trust: 'High' },
-      { name: 'Historical Saturation Curve Match', weight: 35, trust: 'Very High' },
-      { name: 'Cross-Platform Arousal Delta', weight: 20, trust: 'Medium' },
-    ],
-    backtest: 'Matched to historical curve event [EV-2024-8A] with 91% correlation. Projected decay in 72 hours.',
-    compliance: [
-      "✓ Kept everyone's identity private (GDPR rule)",
-      "✓ Made sure ads only go to the right people (CCPA rule)",
-      "✓ Checked that we aren't spending too much money (FISMA rule)"
-    ]
-  },
-  {
-    id: 'ev-091',
-    timestamp: '2026-07-29T10:15:44Z',
-    engine: 'Ghost Mode',
-    trendScore: '61.4',
-    confidence: 82,
-    sources: [
-      { name: 'Fringe Network Anomaly Scans', weight: 60, trust: 'Medium' },
-      { name: 'Keyword Emergence Delta', weight: 40, trust: 'High' },
-    ],
-    backtest: 'Insufficient historical data for direct match. Relies purely on structural velocity metrics.',
-    compliance: [
-      "✓ Made sure no personal information was shared",
-      "✓ Kept data completely anonymous"
-    ]
-  },
-  {
-    id: 'ev-090',
-    timestamp: '2026-07-28T22:05:12Z',
-    engine: 'DARIA Supervisor',
-    trendScore: '92.1',
-    confidence: 99,
-    sources: [
-      { name: 'Aggregated Engine Output', weight: 80, trust: 'Very High' },
-      { name: 'HoloBidder Liquidity Verification', weight: 20, trust: 'High' },
-    ],
-    backtest: 'Cross-engine consensus achieved. 100% match with internal execution protocols.',
-    compliance: [
-      "✓ Got approval from the boss automatically",
-      "✓ Turned on rules to stop market manipulation"
-    ]
-  }
-];
+import { useAppState } from '../state/AppContext';
+import { useLocation } from 'react-router-dom';
 
 export default function EvidenceLibrary() {
-  const [selectedPack, setSelectedPack] = useState<typeof EVIDENCE_PACKS[0] | null>(null);
+  const { evidencePacks } = useAppState();
+  const location = useLocation();
+  const [selectedPack, setSelectedPack] = useState<typeof evidencePacks[0] | null>(null);
+
+  useEffect(() => {
+    if (location.state?.openId) {
+      const pack = evidencePacks.find(p => p.id === location.state.openId);
+      if (pack) {
+        setSelectedPack(pack);
+      }
+    }
+  }, [location.state, evidencePacks]);
 
   const allPassed = selectedPack ? selectedPack.compliance.every(log => log.startsWith('✓')) : true;
   const summarySentence = selectedPack ? `DARIA is ${selectedPack.confidence}% sure about this, and ${allPassed ? 'all privacy checks passed.' : 'some privacy checks failed.'}` : '';
@@ -97,7 +56,7 @@ export default function EvidenceLibrary() {
             className="flex-1"
           >
             <div className="w-full flex flex-col gap-4">
-              {EVIDENCE_PACKS.map(pack => (
+              {evidencePacks.map(pack => (
                 <div 
                   key={pack.id}
                   onClick={() => setSelectedPack(pack)}

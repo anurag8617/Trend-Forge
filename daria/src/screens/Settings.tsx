@@ -34,7 +34,7 @@ export default function Settings() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`whitespace-nowrap text-left px-4 py-2 border-l-2 text-sm font-medium transition-colors cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-surface/50 border-accent text-white'
+                  ? 'bg-surface/50 border-cyan-400 text-white'
                   : 'border-transparent text-gray-500 hover:text-white hover:bg-surface/50'
               }`}
             >
@@ -100,7 +100,7 @@ export default function Settings() {
               >
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-white font-medium text-sm">Role-Based Access</h3>
-                  <button className="bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded hover:bg-accent hover:text-black transition-colors text-xs font-semibold tracking-wide cursor-pointer">
+                  <button className="bg-accent text-white px-6 py-1.5 rounded text-sm font-semibold border border-accent/20 hover:text-cyan-400 hover:bg-border transition-all cursor-pointer">
                     + INVITATION
                   </button>
                 </div>
@@ -138,7 +138,7 @@ export default function Settings() {
               >
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-white font-medium text-sm">API Integration Keys</h3>
-                  <button className="bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded hover:bg-accent hover:text-black transition-colors text-xs font-semibold tracking-wide cursor-pointer">
+                  <button className="bg-accent text-white px-6 py-1.5 rounded text-sm font-semibold border border-accent/20 hover:text-cyan-400 hover:bg-border transition-all cursor-pointer">
                     GENERATE KEY
                   </button>
                 </div>
@@ -188,7 +188,7 @@ export default function Settings() {
                     <input type="range" min="0" max="100" defaultValue="85" className="w-full accent-accent bg-border h-1 rounded-lg appearance-none cursor-pointer" />
                   </div>
 
-                  {/* Setting 2 */}
+                  {/* Setting 2 */} 
                   <div>
                     <div className="flex justify-between mb-2">
                       <label className="text-sm text-gray-200">Execution Bidding Cap</label>
@@ -219,7 +219,7 @@ export default function Settings() {
                 </div>
                 
                 <div className="mt-auto pt-8 flex justify-end">
-                  <button className="bg-accent text-white px-6 py-2 rounded text-sm font-semibold border border-accent/20 hover:shadow-[0_0_25px_rgba(61,214,245,0.6)] hover:bg-white transition-all cursor-pointer">
+                  <button className="bg-accent text-white px-6 py-2 rounded text-sm font-semibold border border-accent/20 hover:text-cyan-400 hover:bg-border transition-all cursor-pointer">
                     SAVE CONFIGURATION
                   </button>
                 </div>
