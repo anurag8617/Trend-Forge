@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { colors, typography } from '../lib/tokens';
 import { useAppState } from '../state/AppContext';
 import HoloBidderQueue from '../components/HoloBidderQueue';
+import ForecastTimeline from '../components/ForecastTimeline';
 
 export type EngineType = 'feed' | 'line' | 'gauge' | 'log' | 'queue';
 
@@ -18,6 +19,18 @@ export interface EngineConfig {
 
 function SignalCard({ signal }: { signal: any }) {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const { openBuyWindow, addAuditLog } = useAppState();
+
+  const handleCtaClick = () => {
+    if (signal.cta === 'Review buy window') {
+      openBuyWindow({ title: signal.title, severity: signal.severity });
+      navigate('/dashboard');
+    } else if (signal.cta === 'View evidence') {
+      addAuditLog('EVIDENCE_VIEWED', `Viewed evidence for signal: ${signal.title}`);
+      navigate('/evidence');
+    }
+  };
 
   return (
     <div className={`flex flex-col p-5 bg-background border border-border rounded-lg shadow-sm`}>
@@ -50,7 +63,7 @@ function SignalCard({ signal }: { signal: any }) {
       </p>
 
       <div className="flex justify-between items-center pt-4 border-t border-border/60">
-         <button className="px-4 py-1.5 border border-accent/40 text-accent hover:bg-accent/10 rounded-md text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+         <button onClick={handleCtaClick} className="px-4 py-1.5 border border-accent/40 text-accent hover:bg-accent/10 rounded-md text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
             {signal.cta}
          </button>
          <button onClick={() => setIsOpen(!isOpen)} className={`${typography.textTertiary} hover:text-white text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:text-white`}>
@@ -100,18 +113,7 @@ const SignalFeed = () => {
 const renderViz = (type: EngineType) => {
   switch (type) {
     case 'line':
-      return (
-        <div className="w-full min-h-full flex flex-col items-center justify-center pb-4 relative overflow-hidden">
-          <p className="absolute top-6 left-6 text-sm text-gray-300 z-10">This shows how big we expect this trend to get over the next few days</p>
-          {/* Shaded Confidence Band */}
-          <svg className="absolute bottom-0 w-full h-[80%]" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <path d="M0 80 Q 25 70, 50 40 T 100 20 L 100 100 L 0 100 Z" fill="rgb(0,0,0)" />
-            <path d="M0 60 Q 25 50, 50 20 T 100 10 L 100 100 L 0 100 Z" fill="rgb(0,0,0)" />
-            {/* Minimal Line */}
-            <path d="M0 70 Q 25 60, 50 30 T 100 15" fill="none" className="stroke-cyan-400" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-          </svg>
-        </div>
-      );
+      return <ForecastTimeline />;
     case 'feed':
       return <SignalFeed />;
     case 'gauge':

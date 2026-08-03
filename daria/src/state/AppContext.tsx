@@ -68,6 +68,10 @@ interface AppContextType {
   replayTour: () => void;
   presentationMode: boolean;
   togglePresentationMode: () => void;
+  isBuyModalOpen: boolean;
+  buyModalContext: any;
+  openBuyWindow: (context?: any) => void;
+  closeBuyWindow: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -245,16 +249,6 @@ const loadInitialOnboarding = (): boolean => {
   return false;
 };
 
-const loadInitialPresentationMode = (): boolean => {
-  try {
-    const saved = localStorage.getItem('trendforge:presentationMode');
-    if (saved !== null) {
-      return JSON.parse(saved);
-    }
-  } catch (e) {}
-  return false;
-};
-
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAlertActive, setIsAlertActive] = useState(false);
   const [triggerEngine, setTriggerEngine] = useState<TriggerEngine>(null);
@@ -266,7 +260,25 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [signals, setSignals] = useState<Signal[]>(INITIAL_SIGNALS);
   const [hasNewSignals, setHasNewSignals] = useState(false);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(loadInitialOnboarding);
-  const [presentationMode, setPresentationMode] = useState<boolean>(loadInitialPresentationMode);
+  const [presentationMode, setPresentationMode] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('trendforge:presentationMode');
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [buyModalContext, setBuyModalContext] = useState<any>(null);
+
+  const openBuyWindow = (context?: any) => {
+    if (context) setBuyModalContext(context);
+    setIsBuyModalOpen(true);
+  };
+
+  const closeBuyWindow = () => {
+    setIsBuyModalOpen(false);
+  };
 
   // Ambient simulation
   useEffect(() => {
@@ -436,7 +448,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       completeOnboarding,
       replayTour,
       presentationMode,
-      togglePresentationMode
+      togglePresentationMode,
+      isBuyModalOpen,
+      buyModalContext,
+      openBuyWindow,
+      closeBuyWindow
     }}>
       {children}
     </AppContext.Provider>

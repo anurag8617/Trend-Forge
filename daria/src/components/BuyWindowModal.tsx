@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { typography } from '../lib/tokens';
 
@@ -14,17 +15,27 @@ export default function BuyWindowModal({
   onConfirm,
   onDelegate,
 }: BuyWindowModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm cursor-pointer"
           />
 
           {/* Modal Container */}
@@ -32,7 +43,7 @@ export default function BuyWindowModal({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl max-h-[95vh] overflow-hidden flex flex-col"
+            className="relative bg-background border border-accent/40 rounded-xl shadow-[0_0_40px_rgb(var(--theme-accent-rgb) / 0.15)] w-full max-w-3xl max-h-[90dvh] sm:max-h-[85vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="px-4 py-4 md:px-8 md:py-6 border-b border-border flex justify-between items-center bg-surface/20">

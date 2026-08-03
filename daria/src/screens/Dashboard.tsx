@@ -46,8 +46,7 @@ const MetricLabel = ({ label, subtitle, info }: { label: string, subtitle: strin
 };
 
 export default function Dashboard() {
-  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState, createEvidencePack, resetDemoData, replayTour, presentationMode } = useAppState();
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState, createEvidencePack, resetDemoData, replayTour, presentationMode, isBuyModalOpen, closeBuyWindow } = useAppState();
   const [confidence] = useState(90);
   const [showSummary, setShowSummary] = useState(false);
   const navigate = useNavigate();
@@ -71,11 +70,11 @@ export default function Dashboard() {
   };
 
   const handleBuyWindow = () => {
-    setIsBuyModalOpen(true);
+    openBuyWindow();
   };
 
   const handleConfirmAction = (isDelegate: boolean) => {
-    setIsBuyModalOpen(false);
+    closeBuyWindow();
     
     const packId = createEvidencePack({
       timestamp: new Date().toISOString(),
@@ -330,7 +329,7 @@ export default function Dashboard() {
 
       <BuyWindowModal 
         isOpen={isBuyModalOpen} 
-        onClose={() => setIsBuyModalOpen(false)}
+        onClose={closeBuyWindow}
         onConfirm={() => handleConfirmAction(false)}
         onDelegate={() => handleConfirmAction(true)}
       />
