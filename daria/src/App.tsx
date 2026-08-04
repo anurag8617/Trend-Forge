@@ -11,6 +11,7 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import { AppProvider } from './state/AppContext';
+import { getAdminRoutes } from './admin/routes/AdminRouteConfig';
 
 const ENGINE_CONFIGS: Record<string, EngineConfig> = {
   ghost: {
@@ -99,6 +100,8 @@ export default function App() {
             <Route path="/billing" element={<Billing />} />
             </Route>
           </Route>
+          
+          {getAdminRoutes()}
         </Routes>
       </Router>
     </AppProvider>

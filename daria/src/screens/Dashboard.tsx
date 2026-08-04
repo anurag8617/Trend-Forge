@@ -46,12 +46,11 @@ const MetricLabel = ({ label, subtitle, info }: { label: string, subtitle: strin
 };
 
 export default function Dashboard() {
-  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState, createEvidencePack, resetDemoData, replayTour, presentationMode, isBuyModalOpen, closeBuyWindow } = useAppState();
+  const { isAlertActive, setAlertState, triggerEngine, addAuditLog, dariaState, setDariaState, createEvidencePack, resetDemoData, replayTour, presentationMode, isBuyModalOpen, openBuyWindow, closeBuyWindow } = useAppState();
   const [confidence] = useState(90);
   const [showSummary, setShowSummary] = useState(false);
   const navigate = useNavigate();
 
-  // Sync DARIA visually when alert activates
   useEffect(() => {
     if (isAlertActive) {
       setDariaState('signal');
@@ -60,7 +59,6 @@ export default function Dashboard() {
     }
   }, [isAlertActive]);
   
-  // Toggle demo alert function
   const handleToggleAlert = () => {
     if (!isAlertActive) {
       setAlertState(true, 'quantum');
@@ -116,13 +114,11 @@ export default function Dashboard() {
   const leadTime = hasActiveSignal ? '72 HRS' : '—';
   const latency = '42ms'; 
 
-  // Dimming class for secondary elements when alert is active
   const dimClass = isAlertActive ? "opacity-30 pointer-events-none grayscale-[50%] transition-all duration-700 blur-[2px]" : "transition-all duration-700";
 
   return (
     <div className="flex flex-col gap-6 md:gap-8 min-h-full max-w-6xl mx-auto pt-4 pb-12 relative">
       
-      {/* Dev Toggle Button */}
       {!presentationMode && (
         <div className="absolute top-0 right-0 z-50 flex flex-col gap-2 items-end">
               <button 
@@ -148,13 +144,12 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Top Section: DARIA & Trend Score */}
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 min-h-[360px] lg:min-h-[440px]">
         
-        {/* DARIA Anchor Panel */}
+        {/* Enforced !overflow-visible to ensure it breaks out of the card limits */}
         <div 
           data-tour="daria-panel"
-          className={`${colors.bgPanel} flex flex-col relative overflow-hidden group ${isAlertActive ? 'ring-1 ring-cyan-400 shadow-[0_0_30px_rgb(var(--theme-accent-rgb) / 0.1)]' : ''}`}
+          className={`${colors.bgPanel} flex flex-col relative group !overflow-visible ${isAlertActive ? 'ring-1 ring-cyan-400 shadow-[0_0_30px_rgb(var(--theme-accent-rgb) / 0.1)]' : ''}`}
           onMouseEnter={() => !isAlertActive && setShowSummary(true)}
           onMouseLeave={() => setShowSummary(false)}
         >
@@ -164,7 +159,6 @@ export default function Dashboard() {
               <h3 className="text-xl font-bold text-white mt-1 tracking-wide group-hover:text-cyan-500">DARIA Supervisor</h3>
             </div>
             
-            {/* Standard controls only shown when NOT in alert mode */}
             {!isAlertActive && (
               <div className="hidden sm:flex flex-wrap items-center gap-1 bg-background/50 p-1 rounded border border-border">
                 {(['standby', 'scanning', 'signal', 'executing', 'low-confidence'] as DariaState[]).map(state => (
@@ -180,14 +174,12 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center mt-12 relative">
+          <div className="flex-1 flex flex-col items-center justify-center mt-12 relative overflow-visible z-10">
              <DariaJellyfish size={240} state={dariaState} confidence={confidence} />
              
-             {/* Persistent context card */}
              <div className="absolute bottom-8 left-8 right-8 z-20">
                <AnimatePresence mode="wait">
                  {!isAlertActive ? (
-                   // Standby Hover Summary
                    showSummary && (
                      <motion.div 
                        key="standby"
@@ -206,7 +198,6 @@ export default function Dashboard() {
                      </motion.div>
                    )
                  ) : (
-                   // Alert Persistent Card
                    <motion.div 
                      key="alert"
                      initial={{ opacity: 0, scale: 0.95 }}
@@ -252,7 +243,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Trend Score Panel - Dimmed during alert */}
         <div data-tour="trend-score" className={`group ${colors.bgPanel} flex flex-col p-8 justify-between ${dimClass}`}>
           <div>
             <MetricLabel 
@@ -270,7 +260,6 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Middle Section: Five Engine Pipeline - Dimmed during alert */}
       <div data-tour="pipeline" className={dimClass}>
         <h2 className={`${typography.microLabel} ${typography.textSecondary} mb-4 ml-1`}>Execution Pipeline</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 ">
@@ -308,7 +297,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Bottom Section: Trust Metrics Strip - Dimmed during alert */}
       <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border ${dimClass}`}>
         <div className="flex flex-col gap-2">
           <MetricLabel label="Lead Time" subtitle="Time left to act before everyone knows." info="Calculated via DARIA's quantum forecasting model, indicating the optimal execution window before the target saturates." />
