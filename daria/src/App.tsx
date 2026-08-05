@@ -12,6 +12,7 @@ import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import { AppProvider } from './state/AppContext';
 import { getAdminRoutes } from './admin/routes/AdminRouteConfig';
+import AdminLogin from './admin/pages/AdminLogin';
 
 const ENGINE_CONFIGS: Record<string, EngineConfig> = {
   ghost: {
@@ -81,6 +82,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
           </Route>
           
           <Route element={<ProtectedRoute />}>

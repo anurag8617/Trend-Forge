@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   AdminCard, PageHeader, SectionHeader, StatusBadge, HealthIndicator,
   PrimaryButton, SecondaryButton, DangerButton, MetricCard, KPIBlock,
-  DataTable, TableToolbar, TablePagination, TableSearch, TableFilters, SortHeader,
-  Tabs, Breadcrumb, AuditTimeline, ActivityFeed,
+  DataTable, Tabs, Breadcrumb, AuditTimeline, ActivityFeed,
   RowSelectionCheckbox, BulkActionBar, StatGrid, SplitButton
 } from '../components/ui';
 
@@ -11,6 +10,12 @@ export default function Billing() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [selectedSubId, setSelectedSubId] = useState<string | null>('sub-0982');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  // --- NEW STATE: Search, Sort, and Pagination ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'org', direction: 'asc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   const subscriptions = [
     { id: 'sub-0982', org: 'Acme Corp', plan: 'Enterprise', status: 'Active', cycle: 'Annual', renewal: 'Jan 15, 2027', seats: '138', usage: 'High', contract: 'CTR-110' },
@@ -36,12 +41,44 @@ export default function Billing() {
     { time: 'Yesterday', user: 'c.manager', action: 'CONTRACT', detail: 'Renewed CTR-084 for Nexus Trading' },
   ];
 
+  // --- LOGIC: Filter, Sort, and Paginate Data ---
+  const processedSubscriptions = useMemo(() => {
+    // 1. Search Filter
+    let result = subscriptions.filter(sub => 
+      sub.org.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sub.plan.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sub.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sub.contract.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 2. Sorting
+    result.sort((a: any, b: any) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [subscriptions, searchQuery, sortConfig]);
+
+  // 3. Pagination limits
+  const totalPages = Math.ceil(processedSubscriptions.length / itemsPerPage);
+  const paginatedSubscriptions = processedSubscriptions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // --- HANDLERS ---
+  const handleSort = (key: string) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const handleSelectRow = (id: string) => {
     setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
   };
 
   const handleSelectAll = () => {
-    setSelectedRows(selectedRows.length === subscriptions.length ? [] : subscriptions.map(s => s.id));
+    setSelectedRows(selectedRows.length === paginatedSubscriptions.length ? [] : paginatedSubscriptions.map(s => s.id));
   };
 
   return (
@@ -84,45 +121,142 @@ export default function Billing() {
 
           {activeTab === 'Subscriptions' && (
             <AdminCard>
-              <div className="p-4 border-b border-border bg-surface"><h3 className="text-sm font-semibold text-text uppercase tracking-wider">Active Subscriptions</h3></div>
-              <TableToolbar>
-                <TableSearch />
-                <TableFilters />
-              </TableToolbar>
+              <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Active Subscriptions</h3>
+              </div>
+
+              {/* REAL SEARCH & TOOLBAR */}
+              <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface/50 border-b border-border">
+                <div className="relative w-full sm:w-72">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Search organizations, plans, contracts..." 
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1); // Reset to page 1 on search
+                    }}
+                    className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded text-sm text-text focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div className="flex space-x-2 w-full sm:w-auto">
+                  <select className="bg-background border border-border text-text text-sm rounded px-3 py-2 focus:outline-none focus:border-primary">
+                    <option value="all">All Plans</option>
+                    <option value="enterprise">Enterprise</option>
+                    <option value="scale">Scale</option>
+                    <option value="government">Government</option>
+                  </select>
+                  <SecondaryButton className="py-1.5 px-3">Export CSV</SecondaryButton>
+                </div>
+              </div>
               
-              <DataTable>
-                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                  <tr>
-                    <th className="px-4 py-3"><RowSelectionCheckbox checked={selectedRows.length === subscriptions.length} onChange={handleSelectAll} /></th>
-                    <th className="px-4 py-3 text-left">Organization</th>
-                    <th className="px-4 py-3 text-left">Plan</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-left">Cycle</th>
-                    <th className="px-4 py-3 text-left">Renewal</th>
-                    <th className="px-4 py-3 text-right">Seats</th>
-                    <th className="px-4 py-3 text-right">Contract</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border text-sm">
-                  {subscriptions.map(sub => (
-                    <tr 
-                      key={sub.id} 
-                      className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedSubId === sub.id ? 'bg-primary/5' : ''}`}
-                      onClick={() => setSelectedSubId(sub.id)}
-                    >
-                      <td className="px-4 py-3" onClick={e => e.stopPropagation()}><RowSelectionCheckbox checked={selectedRows.includes(sub.id)} onChange={() => handleSelectRow(sub.id)} /></td>
-                      <td className="px-4 py-3 font-semibold text-text">{sub.org}</td>
-                      <td className="px-4 py-3 text-textSecondary">{sub.plan}</td>
-                      <td className="px-4 py-3"><StatusBadge status={sub.status === 'Active' ? 'Success' : 'Critical'} label={sub.status} /></td>
-                      <td className="px-4 py-3 text-muted">{sub.cycle}</td>
-                      <td className="px-4 py-3 font-mono text-muted">{sub.renewal}</td>
-                      <td className="px-4 py-3 text-right text-text">{sub.seats}</td>
-                      <td className="px-4 py-3 text-right font-mono text-primary">{sub.contract}</td>
+              {selectedRows.length > 0 && (
+                <BulkActionBar 
+                  selectedCount={selectedRows.length} 
+                  actions={<><SecondaryButton className="py-1">Pause Selected</SecondaryButton><DangerButton className="py-1">Cancel Subscriptions</DangerButton></>} 
+                />
+              )}
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                    <tr>
+                      <th className="px-4 py-3 w-10">
+                        <RowSelectionCheckbox 
+                          checked={selectedRows.length === paginatedSubscriptions.length && paginatedSubscriptions.length > 0} 
+                          onChange={handleSelectAll} 
+                        />
+                      </th>
+                      {/* REAL SORT HEADERS */}
+                      {[
+                        { key: 'org', label: 'Organization' },
+                        { key: 'plan', label: 'Plan' },
+                        { key: 'status', label: 'Status' },
+                        { key: 'cycle', label: 'Cycle' },
+                        { key: 'renewal', label: 'Renewal' },
+                        { key: 'seats', label: 'Seats' },
+                        { key: 'contract', label: 'Contract' }
+                      ].map(col => (
+                        <th 
+                          key={col.key} 
+                          className={`px-4 py-3 cursor-pointer hover:text-text transition-colors select-none ${['seats', 'contract'].includes(col.key) ? 'text-right' : ''}`} 
+                          onClick={() => handleSort(col.key)}
+                        >
+                          <div className={`flex items-center space-x-1 ${['seats', 'contract'].includes(col.key) ? 'justify-end' : ''}`}>
+                            <span>{col.label}</span>
+                            {sortConfig.key === col.key && (
+                              <span className="text-primary">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </div>
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </DataTable>
-              <TablePagination />
+                  </thead>
+                  <tbody className="divide-y divide-border text-sm bg-background">
+                    {paginatedSubscriptions.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="px-4 py-8 text-center text-textSecondary">No subscriptions found matching your search.</td>
+                      </tr>
+                    ) : (
+                      paginatedSubscriptions.map(sub => (
+                        <tr 
+                          key={sub.id} 
+                          className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedSubId === sub.id ? 'bg-primary/5' : ''}`}
+                          onClick={() => setSelectedSubId(sub.id)}
+                        >
+                          <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                            <RowSelectionCheckbox checked={selectedRows.includes(sub.id)} onChange={() => handleSelectRow(sub.id)} />
+                          </td>
+                          <td className="px-4 py-3 font-semibold text-text">{sub.org}</td>
+                          <td className="px-4 py-3 text-textSecondary">{sub.plan}</td>
+                          <td className="px-4 py-3"><StatusBadge status={sub.status === 'Active' ? 'Success' : 'Critical'} label={sub.status} /></td>
+                          <td className="px-4 py-3 text-muted">{sub.cycle}</td>
+                          <td className="px-4 py-3 font-mono text-muted">{sub.renewal}</td>
+                          <td className="px-4 py-3 text-right text-text">{sub.seats}</td>
+                          <td className="px-4 py-3 text-right font-mono text-primary">{sub.contract}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* REAL PAGINATION */}
+              <div className="p-4 border-t border-border flex items-center justify-between bg-surface text-sm">
+                <span className="text-textSecondary">
+                  Showing <span className="font-medium text-text">{paginatedSubscriptions.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-medium text-text">{Math.min(currentPage * itemsPerPage, processedSubscriptions.length)}</span> of <span className="font-medium text-text">{processedSubscriptions.length}</span> results
+                </span>
+                <div className="flex space-x-2">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex items-center px-2 space-x-1">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-7 h-7 flex items-center justify-center rounded ${currentPage === i + 1 ? 'bg-primary text-background font-medium' : 'text-text hover:bg-surface'}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </AdminCard>
           )}
 
@@ -179,7 +313,7 @@ export default function Billing() {
       </div>
 
       {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
+      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block border-l border-border">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Revenue Inspector</h3>
         
         {selectedSub && activeTab === 'Subscriptions' ? (

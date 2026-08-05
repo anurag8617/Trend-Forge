@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   AdminCard, PageHeader, SectionHeader, StatusBadge,
   PrimaryButton, SecondaryButton, DangerButton, MetricCard,
-  DataTable, TableToolbar, TablePagination, TableSearch, TableFilters, SortHeader,
-  Tabs, Breadcrumb, KPIBlock, AuditTimeline, ActivityFeed,
-  RowSelectionCheckbox, BulkActionBar, StatGrid
+  DataTable, Tabs, Breadcrumb, KPIBlock, AuditTimeline, ActivityFeed,
+  RowSelectionCheckbox, BulkActionBar, StatGrid, SplitButton
 } from '../components/ui';
 
 export default function Forecasts() {
@@ -12,14 +11,18 @@ export default function Forecasts() {
   const [activeTab, setActiveTab] = useState('Prediction Details');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
+  // --- NEW STATE: Search, Sort, and Pagination ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'id', direction: 'desc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; // Set to 3 to demonstrate pagination with mock data
+
   const forecasts = [
     { id: 'fc-1049', engine: 'Quantum Guess', model: 'v1.9.8', confidence: '88%', window: '48h - 72h', status: 'Awaiting Review', analyst: 'm.cole' },
     { id: 'fc-1050', engine: 'Quantum Guess', model: 'v1.9.8', confidence: '94%', window: '24h - 48h', status: 'Validated', analyst: 'e.vance' },
     { id: 'fc-1051', engine: 'Bio-Feel', model: 'v3.0.0', confidence: '62%', window: '1w - 2w', status: 'Rejected', analyst: 's.chen' },
     { id: 'fc-1052', engine: 'Quantum Guess', model: 'v1.9.7', confidence: '78%', window: '72h - 96h', status: 'Published', analyst: 'Auto' },
   ];
-
-  const selectedForecast = forecasts.find(f => f.id === selectedForecastId) || forecasts[0];
 
   const tabs = [
     { id: 'Prediction Details', label: 'Prediction Summary' },
@@ -34,12 +37,46 @@ export default function Forecasts() {
     { time: '09:00 AM', user: 'system', action: 'PUBLISH', detail: 'Forecast fc-1052 published to premium tenant tier' },
   ];
 
+  // --- LOGIC: Filter, Sort, and Paginate Data ---
+  const processedForecasts = useMemo(() => {
+    // 1. Search Filter
+    let result = forecasts.filter(fc => 
+      fc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fc.engine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fc.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      fc.analyst.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 2. Sorting
+    result.sort((a: any, b: any) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [forecasts, searchQuery, sortConfig]);
+
+  // 3. Pagination limits
+  const totalPages = Math.ceil(processedForecasts.length / itemsPerPage);
+  const paginatedForecasts = processedForecasts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const selectedForecast = forecasts.find(f => f.id === selectedForecastId) || forecasts[0];
+
+  // --- HANDLERS ---
+  const handleSort = (key: string) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const handleSelectRow = (id: string) => {
     setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
   };
 
   const handleSelectAll = () => {
-    setSelectedRows(selectedRows.length === forecasts.length ? [] : forecasts.map(s => s.id));
+    setSelectedRows(selectedRows.length === paginatedForecasts.length ? [] : paginatedForecasts.map(s => s.id));
   };
 
   return (
@@ -60,52 +97,144 @@ export default function Forecasts() {
         <div className="p-6 pt-0 space-y-6 flex-1">
           {/* Forecast Queue */}
           <AdminCard>
-            <div className="p-4 border-b border-border bg-surface"><h3 className="text-sm font-semibold text-text uppercase tracking-wider">Forecast Queue</h3></div>
-            <TableToolbar>
-              <TableSearch />
-              <div className="flex space-x-2">
-                <TableFilters />
-              </div>
-            </TableToolbar>
-            
-            <BulkActionBar 
-              selectedCount={selectedRows.length} 
-              actions={<><SecondaryButton className="py-1">Approve Forecasts</SecondaryButton><DangerButton className="py-1">Reject Selected</DangerButton></>} 
-            />
+            <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+              <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Forecast Queue</h3>
+            </div>
 
-            <DataTable>
-              <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                <tr>
-                  <th className="px-4 py-3"><RowSelectionCheckbox checked={selectedRows.length === forecasts.length} onChange={handleSelectAll} /></th>
-                  <th className="px-4 py-3 text-left"><SortHeader label="Forecast ID" direction="desc" /></th>
-                  <th className="px-4 py-3 text-left">Origin Engine</th>
-                  <th className="px-4 py-3 text-left">Model</th>
-                  <th className="px-4 py-3 text-left"><SortHeader label="Confidence" /></th>
-                  <th className="px-4 py-3 text-left">Time Window</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                  <th className="px-4 py-3 text-left">Reviewer</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border text-sm">
-                {forecasts.map(fc => (
-                  <tr 
-                    key={fc.id} 
-                    className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedForecastId === fc.id ? 'bg-primary/5' : ''}`}
-                    onClick={() => setSelectedForecastId(fc.id)}
-                  >
-                    <td className="px-4 py-3" onClick={e => e.stopPropagation()}><RowSelectionCheckbox checked={selectedRows.includes(fc.id)} onChange={() => handleSelectRow(fc.id)} /></td>
-                    <td className="px-4 py-3 font-mono text-forecast font-medium">{fc.id}</td>
-                    <td className="px-4 py-3 text-text">{fc.engine}</td>
-                    <td className="px-4 py-3 font-mono text-muted">{fc.model}</td>
-                    <td className="px-4 py-3 text-text">{fc.confidence}</td>
-                    <td className="px-4 py-3 text-textSecondary">{fc.window}</td>
-                    <td className="px-4 py-3"><StatusBadge status={fc.status === 'Published' ? 'Success' : fc.status === 'Rejected' ? 'Critical' : fc.status === 'Validated' ? 'Running' : 'Warning'} label={fc.status} /></td>
-                    <td className="px-4 py-3 text-textSecondary">{fc.analyst}</td>
+            {/* REAL SEARCH & TOOLBAR */}
+            <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface/50 border-b border-border">
+              <div className="relative w-full sm:w-72">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search forecasts, engines, analysts..." 
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1); // Reset to page 1 on search
+                  }}
+                  className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded text-sm text-text focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+              <div className="flex space-x-2 w-full sm:w-auto">
+                <select className="bg-background border border-border text-text text-sm rounded px-3 py-2 focus:outline-none focus:border-primary">
+                  <option value="all">All Statuses</option>
+                  <option value="validated">Validated</option>
+                  <option value="review">Awaiting Review</option>
+                  <option value="published">Published</option>
+                </select>
+                <SecondaryButton>Export</SecondaryButton>
+              </div>
+            </div>
+
+            {selectedRows.length > 0 && (
+              <BulkActionBar 
+                selectedCount={selectedRows.length} 
+                actions={<><SecondaryButton className="py-1">Approve Forecasts</SecondaryButton><DangerButton className="py-1">Reject Selected</DangerButton></>} 
+              />
+            )}
+
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                  <tr>
+                    <th className="px-4 py-3 w-10">
+                      <RowSelectionCheckbox 
+                        checked={selectedRows.length === paginatedForecasts.length && paginatedForecasts.length > 0} 
+                        onChange={handleSelectAll} 
+                      />
+                    </th>
+                    {/* REAL SORT HEADERS */}
+                    {[
+                      { key: 'id', label: 'Forecast ID' },
+                      { key: 'engine', label: 'Origin Engine' },
+                      { key: 'model', label: 'Model' },
+                      { key: 'confidence', label: 'Confidence' },
+                      { key: 'window', label: 'Time Window' },
+                      { key: 'status', label: 'Status' },
+                      { key: 'analyst', label: 'Reviewer' }
+                    ].map(col => (
+                      <th key={col.key} className="px-4 py-3 cursor-pointer hover:text-text transition-colors select-none" onClick={() => handleSort(col.key)}>
+                        <div className="flex items-center space-x-1">
+                          <span>{col.label}</span>
+                          {sortConfig.key === col.key && (
+                            <span className="text-primary">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                          )}
+                        </div>
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </DataTable>
-            <TablePagination />
+                </thead>
+                <tbody className="divide-y divide-border text-sm bg-background">
+                  {paginatedForecasts.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-4 py-8 text-center text-textSecondary">No forecasts found matching your search.</td>
+                    </tr>
+                  ) : (
+                    paginatedForecasts.map(fc => (
+                      <tr 
+                        key={fc.id} 
+                        className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedForecastId === fc.id ? 'bg-primary/5' : ''}`}
+                        onClick={() => setSelectedForecastId(fc.id)}
+                      >
+                        <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                          <RowSelectionCheckbox checked={selectedRows.includes(fc.id)} onChange={() => handleSelectRow(fc.id)} />
+                        </td>
+                        <td className="px-4 py-3 font-mono text-forecast font-medium">{fc.id}</td>
+                        <td className="px-4 py-3 text-text">{fc.engine}</td>
+                        <td className="px-4 py-3 font-mono text-muted">{fc.model}</td>
+                        <td className="px-4 py-3 text-text">{fc.confidence}</td>
+                        <td className="px-4 py-3 text-textSecondary">{fc.window}</td>
+                        <td className="px-4 py-3">
+                          <StatusBadge 
+                            status={fc.status === 'Published' ? 'Success' : fc.status === 'Rejected' ? 'Critical' : fc.status === 'Validated' ? 'Running' : 'Warning'} 
+                            label={fc.status} 
+                          />
+                        </td>
+                        <td className="px-4 py-3 text-textSecondary">{fc.analyst}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* REAL PAGINATION */}
+            <div className="p-4 border-t border-border flex items-center justify-between bg-surface text-sm">
+              <span className="text-textSecondary">
+                Showing <span className="font-medium text-text">{paginatedForecasts.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-medium text-text">{Math.min(currentPage * itemsPerPage, processedForecasts.length)}</span> of <span className="font-medium text-text">{processedForecasts.length}</span> results
+              </span>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center px-2 space-x-1">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-7 h-7 flex items-center justify-center rounded ${currentPage === i + 1 ? 'bg-primary text-background font-medium' : 'text-text hover:bg-surface'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </AdminCard>
 
           {/* Detailed Workspace */}
@@ -123,15 +252,13 @@ export default function Forecasts() {
                 </div>
                 <div className="flex space-x-2">
                   <SecondaryButton disabled>Flag for Retraining</SecondaryButton>
-                  <PrimaryButton disabled>Approve & Publish</PrimaryButton>
+                  <SplitButton mainAction="Approve & Publish" secondaryAction={null} />
                   <DangerButton disabled>Reject Prediction</DangerButton>
                 </div>
               </div>
-
               <div className="px-6 pt-2">
                 <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
               </div>
-
               <div className="p-6">
                 
                 {activeTab === 'Prediction Details' && (
@@ -148,7 +275,6 @@ export default function Forecasts() {
                     <AdminCard className="p-4 bg-card"><KPIBlock label="Dependencies" value="14 Signals" /></AdminCard>
                   </div>
                 )}
-
                 {activeTab === 'Forecast Validation' && (
                   <div className="space-y-6">
                     <StatGrid>
@@ -158,21 +284,20 @@ export default function Forecasts() {
                       <MetricCard title="Confidence Drift" value="+1.2%" />
                     </StatGrid>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       <AdminCard className="p-4">
-                         <h4 className="text-sm font-semibold text-text mb-3">Quality Review Logs</h4>
-                         <ul className="text-xs text-textSecondary space-y-2">
-                           <li className="flex justify-between items-center bg-surface p-2 rounded"><span>False Positives (Last 30d)</span> <span className="font-medium text-text">12</span></li>
-                           <li className="flex justify-between items-center bg-surface p-2 rounded"><span>False Negatives (Last 30d)</span> <span className="font-medium text-text">4</span></li>
-                           <li className="flex justify-between items-center bg-surface p-2 rounded"><span>Bias Review</span> <span className="font-medium text-success">Passed</span></li>
-                         </ul>
-                       </AdminCard>
-                       <AdminCard className="p-4 border-dashed border-border bg-transparent flex items-center justify-center text-sm text-textSecondary">
-                         Ground Truth Proxy Integration Placeholder
-                       </AdminCard>
+                      <AdminCard className="p-4">
+                        <h4 className="text-sm font-semibold text-text mb-3">Quality Review Logs</h4>
+                        <ul className="text-xs text-textSecondary space-y-2">
+                          <li className="flex justify-between items-center bg-surface p-2 rounded"><span>False Positives (Last 30d)</span> <span className="font-medium text-text">12</span></li>
+                          <li className="flex justify-between items-center bg-surface p-2 rounded"><span>False Negatives (Last 30d)</span> <span className="font-medium text-text">4</span></li>
+                          <li className="flex justify-between items-center bg-surface p-2 rounded"><span>Bias Review</span> <span className="font-medium text-success">Passed</span></li>
+                        </ul>
+                      </AdminCard>
+                      <AdminCard className="p-4 border-dashed border-border bg-transparent flex items-center justify-center text-sm text-textSecondary">
+                        Ground Truth Proxy Integration Placeholder
+                      </AdminCard>
                     </div>
                   </div>
                 )}
-
                 {activeTab === 'Forecast Lifecycle' && (
                   <AdminCard className="p-6">
                     <div className="flex justify-between items-center text-xs font-mono mb-4 px-8">
@@ -190,7 +315,6 @@ export default function Forecasts() {
                     </div>
                   </AdminCard>
                 )}
-
                 {activeTab === 'Reviewer Workspace' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -207,7 +331,6 @@ export default function Forecasts() {
                     </div>
                   </div>
                 )}
-
               </div>
             </AdminCard>
           )}
@@ -242,7 +365,7 @@ export default function Forecasts() {
               <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Forecast</h4>
               <p className="font-mono text-forecast font-medium mb-2">{selectedForecast.id}</p>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedForecast.status === 'Published' ? 'Success' : selectedForecast.status === 'Rejected' ? 'Critical' : 'Warning'} label={selectedForecast.status} /></div>
+                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedForecast.status === 'Published' ? 'Success' : selectedForecast.status === 'Rejected' ? 'Critical' : selectedForecast.status === 'Validated' ? 'Running' : 'Warning'} label={selectedForecast.status} /></div>
                 <div className="flex justify-between"><span className="text-muted">Confidence</span><span className="text-text font-bold">{selectedForecast.confidence}</span></div>
                 <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedForecast.analyst}</span></div>
               </div>

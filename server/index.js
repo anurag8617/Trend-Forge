@@ -74,7 +74,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Login Route
+// Client Login Route (Only allows 'client' role)
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -82,25 +82,68 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Check user
-    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    // FIX: Added AND role = 'client'
+    const [users] = await db.query('SELECT * FROM users WHERE email = ? AND role = "client"', [email]);
+    
     if (users.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid client credentials or account does not exist.' });
     }
+    
     const user = users[0];
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid client credentials' });
     }
 
     // Generate token
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '1h' });
     
-    res.json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email } });
+    res.json({ message: 'Client login successful', token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
   } catch (error) {
     console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Admin Login Route (Only allows 'admin' role)
+app.post('/api/admin/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Please provide email and password' });
+  }
+
+  try {
+    // FIX: Explicitly check for role = 'admin'
+    const [users] = await db.query('SELECT * FROM users WHERE email = ? AND role = "admin"', [email]);
+    
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Invalid admin credentials or you do not have admin access.' });
+    }
+    
+    const admin = users[0];
+
+    // Verify password
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: admin.id, role: admin.role }, 
+      process.env.JWT_SECRET || 'fallback_secret', 
+      { expiresIn: '2h' }
+    );
+    
+    res.json({ 
+      message: 'Admin login successful', 
+      token, 
+      user: { id: admin.id, username: admin.username, email: admin.email, role: admin.role } 
+    });
+  } catch (error) {
+    console.error('Admin login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

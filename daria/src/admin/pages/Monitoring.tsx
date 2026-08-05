@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   AdminCard, PageHeader, SectionHeader, StatusBadge, HealthIndicator,
   PrimaryButton, SecondaryButton, DangerButton, MetricCard, KPIBlock,
-  DataTable, TableToolbar, TablePagination, TableSearch, TableFilters, SortHeader,
-  Tabs, Breadcrumb, AuditTimeline, ActivityFeed,
-  RowSelectionCheckbox, BulkActionBar, StatGrid, SeverityPill, SplitButton
+  DataTable, Tabs, Breadcrumb, AuditTimeline, ActivityFeed,
+  RowSelectionCheckbox, BulkActionBar, StatGrid, SeverityPill
 } from '../components/ui';
 
 export default function Monitoring() {
   const [activeTab, setActiveTab] = useState('Global Health');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>('svc-api');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  // --- SEARCH, SORT, FILTER & PAGINATION STATE ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [logFilter, setLogFilter] = useState('all');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const services = [
     { id: 'svc-api', name: 'API Gateway', status: 'Running', health: 'Healthy', version: 'v5.12.4', latency: '42ms', restarts: 0, owner: 'Platform Eng' },
@@ -51,12 +58,86 @@ export default function Monitoring() {
     { id: 'Request Tracing', label: 'Request Tracing' },
   ];
 
+  // Reset filters and pagination on tab change
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setSearchQuery('');
+    setStatusFilter('all');
+    setLogFilter('all');
+    setCurrentPage(1);
+    setSelectedRows([]);
+  };
+
+  // --- FILTER & SORT SERVICES ---
+  const processedServices = useMemo(() => {
+    let result = services.filter(svc => {
+      const matchesSearch = 
+        svc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        svc.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        svc.health.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        svc.owner.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilter = 
+        statusFilter === 'all' || 
+        svc.health.toLowerCase() === statusFilter.toLowerCase();
+
+      return matchesSearch && matchesFilter;
+    });
+
+    result.sort((a: any, b: any) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [services, searchQuery, statusFilter, sortConfig]);
+
+  const totalServicePages = Math.ceil(processedServices.length / itemsPerPage);
+  const paginatedServices = processedServices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // --- FILTER & SORT LOGS ---
+  const processedLogs = useMemo(() => {
+    let result = logs.filter(log => {
+      const matchesSearch = 
+        log.svc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        log.sev.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        log.msg.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        log.trace.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilter = 
+        logFilter === 'all' || 
+        log.sev.toLowerCase() === logFilter.toLowerCase();
+
+      return matchesSearch && matchesFilter;
+    });
+
+    result.sort((a: any, b: any) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [logs, searchQuery, logFilter, sortConfig]);
+
+  const totalLogPages = Math.ceil(processedLogs.length / itemsPerPage);
+  const paginatedLogs = processedLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // --- SORT HANDLER ---
+  const handleSort = (key: string) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const handleSelectRow = (id: string) => {
     setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
   };
 
-  const handleSelectAll = () => {
-    setSelectedRows(selectedRows.length === services.length ? [] : services.map(s => s.id));
+  const handleSelectAllServices = () => {
+    setSelectedRows(selectedRows.length === paginatedServices.length ? [] : paginatedServices.map(s => s.id));
   };
 
   return (
@@ -75,10 +156,10 @@ export default function Monitoring() {
         </div>
 
         <div className="px-6 pt-2">
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          <Tabs tabs={tabs} activeTab={activeTab} onChange={handleTabChange} />
         </div>
 
-        <div className="p-6 pt-6 space-y-6">
+        <div className="p-6 pt-6 space-y-6 flex-1">
           
           {activeTab === 'Global Health' && (
             <div className="space-y-6">
@@ -106,41 +187,147 @@ export default function Monitoring() {
 
           {activeTab === 'Service Status' && (
             <AdminCard>
-              <TableToolbar>
-                <TableSearch />
-                <TableFilters />
-              </TableToolbar>
-              <DataTable>
-                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                  <tr>
-                    <th className="px-4 py-3"><RowSelectionCheckbox checked={selectedRows.length === services.length} onChange={handleSelectAll} /></th>
-                    <th className="px-4 py-3 text-left"><SortHeader label="Service" direction="asc" /></th>
-                    <th className="px-4 py-3 text-left">Version</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-left">Health</th>
-                    <th className="px-4 py-3 text-left">Latency</th>
-                    <th className="px-4 py-3 text-right">Restarts</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border text-sm">
-                  {services.map(svc => (
-                    <tr 
-                      key={svc.id} 
-                      className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedServiceId === svc.id ? 'bg-primary/5' : ''}`}
-                      onClick={() => setSelectedServiceId(svc.id)}
-                    >
-                      <td className="px-4 py-3" onClick={e => e.stopPropagation()}><RowSelectionCheckbox checked={selectedRows.includes(svc.id)} onChange={() => handleSelectRow(svc.id)} /></td>
-                      <td className="px-4 py-3 font-semibold text-text">{svc.name}</td>
-                      <td className="px-4 py-3 font-mono text-muted text-xs">{svc.version}</td>
-                      <td className="px-4 py-3"><StatusBadge status={svc.status as any} /></td>
-                      <td className="px-4 py-3"><HealthIndicator status={svc.health as any} /></td>
-                      <td className="px-4 py-3 font-mono text-primary text-xs">{svc.latency}</td>
-                      <td className="px-4 py-3 text-right font-mono text-muted">{svc.restarts}</td>
+              <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Service Mesh Status</h3>
+              </div>
+
+              {/* SEARCH & FILTER TOOLBAR */}
+              <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface/50 border-b border-border">
+                <div className="relative w-full sm:w-72">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Search services, health, owners..." 
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded text-sm text-text focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div className="flex space-x-2 w-full sm:w-auto">
+                  {/* FUNCTIONAL HEALTH FILTER */}
+                  <select 
+                    value={statusFilter}
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="bg-background border border-border text-text text-sm rounded px-3 py-2 focus:outline-none focus:border-primary cursor-pointer"
+                  >
+                    <option value="all">All Services</option>
+                    <option value="healthy">Healthy Only</option>
+                    <option value="degraded">Degraded Only</option>
+                    <option value="down">Down Only</option>
+                  </select>
+                  <SecondaryButton className="py-1.5 px-3">Export Report</SecondaryButton>
+                </div>
+              </div>
+
+              {selectedRows.length > 0 && (
+                <BulkActionBar 
+                  selectedCount={selectedRows.length} 
+                  actions={<><SecondaryButton className="py-1">Restart Selected</SecondaryButton><DangerButton className="py-1">Force Pause</DangerButton></>} 
+                />
+              )}
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                    <tr>
+                      <th className="px-4 py-3 w-10">
+                        <RowSelectionCheckbox 
+                          checked={selectedRows.length === paginatedServices.length && paginatedServices.length > 0} 
+                          onChange={handleSelectAllServices} 
+                        />
+                      </th>
+                      {[
+                        { key: 'name', label: 'Service' },
+                        { key: 'version', label: 'Version' },
+                        { key: 'status', label: 'Status' },
+                        { key: 'health', label: 'Health' },
+                        { key: 'latency', label: 'Latency' },
+                        { key: 'restarts', label: 'Restarts' }
+                      ].map(col => (
+                        <th 
+                          key={col.key} 
+                          className={`px-4 py-3 cursor-pointer hover:text-text transition-colors select-none ${col.key === 'restarts' ? 'text-right' : ''}`} 
+                          onClick={() => handleSort(col.key)}
+                        >
+                          <div className={`flex items-center space-x-1 ${col.key === 'restarts' ? 'justify-end' : ''}`}>
+                            <span>{col.label}</span>
+                            {sortConfig.key === col.key && (
+                              <span className="text-primary">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </div>
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </DataTable>
-              <TablePagination />
+                  </thead>
+                  <tbody className="divide-y divide-border text-sm bg-background">
+                    {paginatedServices.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-8 text-center text-textSecondary">No services found matching your filters.</td>
+                      </tr>
+                    ) : (
+                      paginatedServices.map(svc => (
+                        <tr 
+                          key={svc.id} 
+                          className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedServiceId === svc.id ? 'bg-primary/5' : ''}`}
+                          onClick={() => setSelectedServiceId(svc.id)}
+                        >
+                          <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                            <RowSelectionCheckbox checked={selectedRows.includes(svc.id)} onChange={() => handleSelectRow(svc.id)} />
+                          </td>
+                          <td className="px-4 py-3 font-semibold text-text">{svc.name}</td>
+                          <td className="px-4 py-3 font-mono text-muted text-xs">{svc.version}</td>
+                          <td className="px-4 py-3"><StatusBadge status={svc.status as any} /></td>
+                          <td className="px-4 py-3"><HealthIndicator status={svc.health as any} /></td>
+                          <td className="px-4 py-3 font-mono text-primary text-xs">{svc.latency}</td>
+                          <td className="px-4 py-3 text-right font-mono text-muted">{svc.restarts}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* PAGINATION */}
+              <div className="p-4 border-t border-border flex items-center justify-between bg-surface text-sm">
+                <span className="text-textSecondary">
+                  Showing <span className="font-medium text-text">{paginatedServices.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-medium text-text">{Math.min(currentPage * itemsPerPage, processedServices.length)}</span> of <span className="font-medium text-text">{processedServices.length}</span> results
+                </span>
+                <div className="flex space-x-2">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex items-center px-2 space-x-1">
+                    {Array.from({ length: totalServicePages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-7 h-7 flex items-center justify-center rounded ${currentPage === i + 1 ? 'bg-primary text-background font-medium' : 'text-text hover:bg-surface'}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalServicePages))}
+                    disabled={currentPage === totalServicePages || totalServicePages === 0}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </AdminCard>
           )}
 
@@ -195,32 +382,126 @@ export default function Monitoring() {
 
           {activeTab === 'Log Explorer' && (
             <AdminCard>
-              <TableToolbar>
-                <TableSearch />
-                <TableFilters />
-              </TableToolbar>
-              <DataTable>
-                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                  <tr>
-                    <th className="px-4 py-2 text-left">Timestamp</th>
-                    <th className="px-4 py-2 text-left">Service</th>
-                    <th className="px-4 py-2 text-left">Severity</th>
-                    <th className="px-4 py-2 text-left">Message</th>
-                    <th className="px-4 py-2 text-left">Trace ID</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border text-xs font-mono">
-                  {logs.map(log => (
-                    <tr key={log.id} className="hover:bg-surface/50 cursor-pointer">
-                      <td className="px-4 py-2 text-muted">{log.time}</td>
-                      <td className="px-4 py-2 text-text">{log.svc}</td>
-                      <td className="px-4 py-2"><SeverityPill level={log.sev === 'Error' || log.sev === 'Critical' ? 'Critical' : log.sev === 'Warning' ? 'High' : 'Low'} /></td>
-                      <td className="px-4 py-2 text-text truncate max-w-md">{log.msg}</td>
-                      <td className="px-4 py-2 text-primary">{log.trace}</td>
+              <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Log Explorer</h3>
+              </div>
+
+              {/* LOG SEARCH & SEVERITY FILTER */}
+              <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface/50 border-b border-border">
+                <div className="relative w-full sm:w-72">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Search logs, traces, messages..." 
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded text-sm text-text focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div className="flex space-x-2 w-full sm:w-auto">
+                  {/* FUNCTIONAL LOG SEVERITY FILTER */}
+                  <select 
+                    value={logFilter}
+                    onChange={(e) => {
+                      setLogFilter(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="bg-background border border-border text-text text-sm rounded px-3 py-2 focus:outline-none focus:border-primary cursor-pointer"
+                  >
+                    <option value="all">All Levels</option>
+                    <option value="critical">Critical</option>
+                    <option value="error">Error</option>
+                    <option value="warning">Warning</option>
+                    <option value="info">Info</option>
+                  </select>
+                  <SecondaryButton className="py-1.5 px-3">Export Logs</SecondaryButton>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                    <tr>
+                      {[
+                        { key: 'time', label: 'Timestamp' },
+                        { key: 'svc', label: 'Service' },
+                        { key: 'sev', label: 'Severity' },
+                        { key: 'msg', label: 'Message' },
+                        { key: 'trace', label: 'Trace ID' }
+                      ].map(col => (
+                        <th 
+                          key={col.key} 
+                          className="px-4 py-3 cursor-pointer hover:text-text transition-colors select-none" 
+                          onClick={() => handleSort(col.key)}
+                        >
+                          <div className="flex items-center space-x-1">
+                            <span>{col.label}</span>
+                            {sortConfig.key === col.key && (
+                              <span className="text-primary">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </div>
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </DataTable>
+                  </thead>
+                  <tbody className="divide-y divide-border text-xs font-mono bg-background">
+                    {paginatedLogs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-textSecondary font-sans text-sm">No logs found matching your filters.</td>
+                      </tr>
+                    ) : (
+                      paginatedLogs.map(log => (
+                        <tr key={log.id} className="hover:bg-surface/50 cursor-pointer">
+                          <td className="px-4 py-3 text-muted">{log.time}</td>
+                          <td className="px-4 py-3 text-text">{log.svc}</td>
+                          <td className="px-4 py-3"><SeverityPill level={log.sev === 'Error' || log.sev === 'Critical' ? 'Critical' : log.sev === 'Warning' ? 'High' : 'Low'} /></td>
+                          <td className="px-4 py-3 text-text truncate max-w-md">{log.msg}</td>
+                          <td className="px-4 py-3 text-primary">{log.trace}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* LOG PAGINATION */}
+              <div className="p-4 border-t border-border flex items-center justify-between bg-surface text-sm">
+                <span className="text-textSecondary font-sans">
+                  Showing <span className="font-medium text-text">{paginatedLogs.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-medium text-text">{Math.min(currentPage * itemsPerPage, processedLogs.length)}</span> of <span className="font-medium text-text">{processedLogs.length}</span> results
+                </span>
+                <div className="flex space-x-2 font-sans">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex items-center px-2 space-x-1">
+                    {Array.from({ length: totalLogPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-7 h-7 flex items-center justify-center rounded ${currentPage === i + 1 ? 'bg-primary text-background font-medium' : 'text-text hover:bg-surface'}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalLogPages))}
+                    disabled={currentPage === totalLogPages || totalLogPages === 0}
+                    className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </AdminCard>
           )}
 
@@ -233,7 +514,7 @@ export default function Monitoring() {
         </div>
 
         {/* BOTTOM PANEL */}
-        <div className="p-6 border-t border-border bg-surface/30">
+        <div className="p-6 border-t border-border bg-surface/30 mt-auto">
           <SectionHeader title="Infrastructure Timeline" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
@@ -251,7 +532,7 @@ export default function Monitoring() {
       </div>
 
       {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
+      <div className="w-80 bg-surface border-l border-border p-4 overflow-y-auto hidden lg:block">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Service Inspector</h3>
         
         {selectedService && activeTab === 'Service Status' ? (

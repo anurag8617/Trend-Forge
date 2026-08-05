@@ -7,7 +7,7 @@ const BaseButton = ({ children, className, ...props }: React.ButtonHTMLAttribute
 );
 
 export const PrimaryButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <BaseButton className="bg-primary text-dariaNavy hover:bg-primarySoft focus:ring-primary font-semibold shadow-[0_0_10px_rgba(38,231,255,0.3)] hover:shadow-[0_0_15px_rgba(38,231,255,0.5)]" {...props} />
+  <BaseButton className="bg-primary text-dariaNavy hover:bg-primarySoft focus:ring-primary font-semibold " {...props} />
 );
 
 export const SecondaryButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (

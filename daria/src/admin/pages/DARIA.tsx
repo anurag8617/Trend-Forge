@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   AdminCard, PageHeader, SectionHeader, StatusBadge, HealthIndicator,
   PrimaryButton, SecondaryButton, DangerButton, MetricCard, KPIBlock,
-  DataTable, TableToolbar, TablePagination, TableSearch, TableFilters, SortHeader,
-  Breadcrumb, AuditTimeline, ActivityFeed,
+  DataTable, Tabs, Breadcrumb, AuditTimeline, ActivityFeed,
   RowSelectionCheckbox, BulkActionBar, StatGrid, SecondaryNavigation, SplitButton,
   SeverityPill, JSONViewer
 } from '../components/ui';
@@ -12,6 +11,12 @@ export default function Daria() {
   const [activeView, setActiveView] = useState('Overview');
   const [selectedConvoId, setSelectedConvoId] = useState<string | null>('cnv-8a9f2bc');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  // --- NEW STATE: Search, Sort, and Pagination ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'id', direction: 'desc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   const navItems = [
     { id: 'Overview', label: 'Overview' },
@@ -35,20 +40,53 @@ export default function Daria() {
     { id: 'cnv-7k8l9z0', tenant: 'Acme Corp', user: 'e.vance', duration: '1m', messages: 2, engine: 'Standard', status: 'Ended', created: '5h ago' },
   ];
 
-  const selectedConversation = conversations.find(c => c.id === selectedConvoId) || conversations[0];
-
   const activityEvents = [
     { time: '10:45 AM', user: 'system', action: 'SAFETY', detail: 'Blocked prompt due to PII detection in cnv-3f4g5hj' },
     { time: '10:12 AM', user: 'a.turing', action: 'DEPLOY', detail: 'Deployed DARIA Persona v4.2.1 to Production' },
     { time: '09:30 AM', user: 'system', action: 'MEMORY', detail: 'Garbage collection completed. 1.2M short-term memories archived.' },
   ];
 
+  // --- LOGIC: Filter, Sort, and Paginate Data ---
+  const processedConversations = useMemo(() => {
+    // 1. Search Filter
+    let result = conversations.filter(cnv => 
+      cnv.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cnv.tenant.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cnv.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cnv.engine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cnv.status.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 2. Sorting
+    result.sort((a: any, b: any) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [conversations, searchQuery, sortConfig]);
+
+  // 3. Pagination limits
+  const totalPages = Math.ceil(processedConversations.length / itemsPerPage);
+  const paginatedConversations = processedConversations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const selectedConversation = conversations.find(c => c.id === selectedConvoId) || conversations[0];
+
+  // --- HANDLERS ---
+  const handleSort = (key: string) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const handleSelectRow = (id: string) => {
     setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
   };
 
   const handleSelectAll = () => {
-    setSelectedRows(selectedRows.length === conversations.length ? [] : conversations.map(c => c.id));
+    setSelectedRows(selectedRows.length === paginatedConversations.length ? [] : paginatedConversations.map(c => c.id));
   };
 
   return (
@@ -118,38 +156,139 @@ export default function Daria() {
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1 space-y-4">
                 <AdminCard>
-                  <TableToolbar>
-                    <TableSearch />
-                    <TableFilters />
-                  </TableToolbar>
-                  
-                  <DataTable>
-                    <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                      <tr>
-                        <th className="px-4 py-3"><SortHeader label="Conversation ID" direction="desc" /></th>
-                        <th className="px-4 py-3 text-left">Tenant / User</th>
-                        <th className="px-4 py-3 text-left">Engine</th>
-                        <th className="px-4 py-3 text-left">Status</th>
-                        <th className="px-4 py-3 text-right">Messages</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border text-sm">
-                      {conversations.map(cnv => (
-                        <tr 
-                          key={cnv.id} 
-                          className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedConvoId === cnv.id ? 'bg-primary/5' : ''}`}
-                          onClick={() => setSelectedConvoId(cnv.id)}
-                        >
-                          <td className="px-4 py-3 font-mono text-primary font-medium">{cnv.id}</td>
-                          <td className="px-4 py-3"><span className="font-medium text-text">{cnv.tenant}</span><span className="block text-xs text-muted">{cnv.user}</span></td>
-                          <td className="px-4 py-3 text-textSecondary">{cnv.engine}</td>
-                          <td className="px-4 py-3"><StatusBadge status={cnv.status === 'Active' ? 'Success' : cnv.status === 'Flagged' ? 'Critical' : 'Pending'} label={cnv.status} /></td>
-                          <td className="px-4 py-3 text-right text-muted">{cnv.messages}</td>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Conversation Queue</h3>
+                  </div>
+
+                  {/* REAL SEARCH & TOOLBAR */}
+                  <div className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface/50 border-b border-border">
+                    <div className="relative w-full sm:w-72">
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <input 
+                        type="text" 
+                        placeholder="Search conversations, tenants, users..." 
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1); // Reset to page 1 on search
+                        }}
+                        className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded text-sm text-text focus:outline-none focus:border-primary transition-colors"
+                      />
+                    </div>
+                    <div className="flex space-x-2 w-full sm:w-auto">
+                      <select className="bg-background border border-border text-text text-sm rounded px-3 py-2 focus:outline-none focus:border-primary">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="flagged">Flagged</option>
+                        <option value="ended">Ended</option>
+                      </select>
+                      <SecondaryButton>Export</SecondaryButton>
+                    </div>
+                  </div>
+
+                  {selectedRows.length > 0 && (
+                    <BulkActionBar 
+                      selectedCount={selectedRows.length} 
+                      actions={<><DangerButton className="py-1">Kill Selected Sessions</DangerButton><SecondaryButton className="py-1">Export Logs</SecondaryButton></>} 
+                    />
+                  )}
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                        <tr>
+                          <th className="px-4 py-3 w-10">
+                            <RowSelectionCheckbox 
+                              checked={selectedRows.length === paginatedConversations.length && paginatedConversations.length > 0} 
+                              onChange={handleSelectAll} 
+                            />
+                          </th>
+                          {/* REAL SORT HEADERS */}
+                          {[
+                            { key: 'id', label: 'Conversation ID' },
+                            { key: 'tenant', label: 'Tenant / User' },
+                            { key: 'engine', label: 'Engine' },
+                            { key: 'status', label: 'Status' },
+                            { key: 'messages', label: 'Messages' }
+                          ].map(col => (
+                            <th key={col.key} className="px-4 py-3 cursor-pointer hover:text-text transition-colors select-none" onClick={() => handleSort(col.key)}>
+                              <div className="flex items-center space-x-1">
+                                <span>{col.label}</span>
+                                {sortConfig.key === col.key && (
+                                  <span className="text-primary">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                                )}
+                              </div>
+                            </th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </DataTable>
-                  <TablePagination />
+                      </thead>
+                      <tbody className="divide-y divide-border text-sm bg-background">
+                        {paginatedConversations.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="px-4 py-8 text-center text-textSecondary">No conversations found matching your search.</td>
+                          </tr>
+                        ) : (
+                          paginatedConversations.map(cnv => (
+                            <tr 
+                              key={cnv.id} 
+                              className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedConvoId === cnv.id ? 'bg-primary/5' : ''}`}
+                              onClick={() => setSelectedConvoId(cnv.id)}
+                            >
+                              <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                                <RowSelectionCheckbox checked={selectedRows.includes(cnv.id)} onChange={() => handleSelectRow(cnv.id)} />
+                              </td>
+                              <td className="px-4 py-3 font-mono text-primary font-medium">{cnv.id}</td>
+                              <td className="px-4 py-3"><span className="font-medium text-text">{cnv.tenant}</span><span className="block text-xs text-muted">{cnv.user}</span></td>
+                              <td className="px-4 py-3 text-textSecondary">{cnv.engine}</td>
+                              <td className="px-4 py-3">
+                                <StatusBadge 
+                                  status={cnv.status === 'Active' ? 'Success' : cnv.status === 'Flagged' ? 'Critical' : 'Pending'} 
+                                  label={cnv.status} 
+                                />
+                              </td>
+                              <td className="px-4 py-3 text-muted">{cnv.messages}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* REAL PAGINATION */}
+                  <div className="p-4 border-t border-border flex items-center justify-between bg-surface text-sm">
+                    <span className="text-textSecondary">
+                      Showing <span className="font-medium text-text">{paginatedConversations.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-medium text-text">{Math.min(currentPage * itemsPerPage, processedConversations.length)}</span> of <span className="font-medium text-text">{processedConversations.length}</span> results
+                    </span>
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                      >
+                        Previous
+                      </button>
+                      <div className="flex items-center px-2 space-x-1">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentPage(i + 1)}
+                            className={`w-7 h-7 flex items-center justify-center rounded ${currentPage === i + 1 ? 'bg-primary text-background font-medium' : 'text-text hover:bg-surface'}`}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                      </div>
+                      <button 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages || totalPages === 0}
+                        className="px-3 py-1 border border-border rounded bg-background text-text disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </AdminCard>
               </div>
 
@@ -161,7 +300,7 @@ export default function Daria() {
                        <h4 className="text-sm font-semibold text-text">Session Inspector</h4>
                        <span className="text-xs font-mono text-primary">{selectedConversation.id}</span>
                      </div>
-                     <PrimaryButton className="text-xs py-1 px-2" disabled>Kill Session</PrimaryButton>
+                     <DangerButton className="text-xs py-1 px-2" disabled>Kill Session</DangerButton>
                   </div>
                   
                   <div className="space-y-4">
@@ -322,7 +461,7 @@ export default function Daria() {
       </div>
 
       {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
+      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block border-l border-border">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">AI Operations Inspector</h3>
         
         <div className="space-y-4">

@@ -153,6 +153,7 @@ export default function Dashboard() {
           onMouseEnter={() => !isAlertActive && setShowSummary(true)}
           onMouseLeave={() => setShowSummary(false)}
         >
+
           <div className="group p-6 pb-0 flex justify-between items-start absolute w-full z-10">
             <div>
               <h2 className={`${typography.microLabel} ${typography.textSecondary} group-hover:text-white`}>Core Engine</h2>
@@ -173,9 +174,8 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center mt-12 relative overflow-visible z-10">
-             <DariaJellyfish size={240} state={dariaState} confidence={confidence} />
+          <div className="flex-1 flex flex-col items-center justify-center mt-12 overflow-hidden">
+             <DariaJellyfish size={287} state={dariaState} confidence={confidence} />
              
              <div className="absolute bottom-8 left-8 right-8 z-20">
                <AnimatePresence mode="wait">

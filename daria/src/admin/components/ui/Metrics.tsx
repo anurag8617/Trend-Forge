@@ -32,6 +32,7 @@ export const KPIBlock = ({ label, value }: { label: string, value: string }) => 
 );
 
 export const StatGrid = ({ children }: { children: React.ReactNode }) => (
+  // FIX: Changed 'grid-cols' to 'grid-cols-1' so it defaults to 1 column on small screens
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     {children}
   </div>

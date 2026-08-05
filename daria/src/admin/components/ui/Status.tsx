@@ -27,14 +27,14 @@ export const HealthIndicator = ({ status }: { status: 'Healthy' | 'Degraded' | '
   const colors = { Healthy: 'bg-success', Degraded: 'bg-warning', Down: 'bg-danger' };
   return (
     <div className="flex items-center space-x-2">
-      <span className="relative flex h-3 w-3">
+      <span className="relative flex h-2 w-2">
         {status === 'Healthy' && <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-success" />}
-        <span className={`relative inline-flex rounded-full h-3 w-3 ${colors[status]}`} />
+        <span className={`relative inline-flex rounded-full h-2 w-2 ${colors[status]}`} />
       </span>
       <span className="text-sm font-medium text-text">{status}</span>
     </div>
   );
-};
+};  
 
 export const EngineStatus = ({ name, active }: { name: string, active: boolean }) => (
   <div className="flex items-center space-x-2 px-3 py-1.5 rounded bg-surface border border-border">

@@ -269,13 +269,13 @@ export default function Signals() {
                     <div className="col-span-full mt-4">
                        <h4 className="text-sm font-semibold text-text mb-2">Raw Metadata Summary</h4>
                        <pre className="bg-[#0A0F1C] border border-border p-4 rounded text-xs font-mono text-textSecondary overflow-x-auto">
-{`{
-  "signal_hash": "a8f93...2bc",
-  "topic_cluster": "macro_economic_shift",
-  "geo_origin": "EMEA",
-  "language_distribution": {"en": 0.6, "ru": 0.3, "fr": 0.1},
-  "anomaly_score": 0.942
-}`}
+                      {`{
+                        "signal_hash": "a8f93...2bc",
+                        "topic_cluster": "macro_economic_shift",
+                        "geo_origin": "EMEA",
+                        "language_distribution": {"en": 0.6, "ru": 0.3, "fr": 0.1},
+                        "anomaly_score": 0.942
+                      }`}
                        </pre>
                     </div>
                   </div>
