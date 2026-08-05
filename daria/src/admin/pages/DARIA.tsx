@@ -93,10 +93,10 @@ export default function Daria() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT SIDEBAR - Secondary Navigation */}
-      <SecondaryNavigation items={navItems} activeItem={activeView} />
+      <SecondaryNavigation items={navItems} activeItem={activeView} onChange={setActiveView} />
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'DARIA Operations' }, { label: activeView }]} />
@@ -149,6 +149,21 @@ export default function Daria() {
                 <MetricCard title="Memory Usage" value="12.4 TB" />
                 <MetricCard title="Active Sessions" value="4,821" />
               </StatGrid>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                 <AdminCard className="p-6 bg-card">
+                   <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Linked Services</h4>
+                   <ul className="text-sm text-primary space-y-2">
+                     <li className="cursor-pointer hover:underline">Tool: Ghost Mode Executor</li>
+                     <li className="cursor-pointer hover:underline">Tool: Quantum Query</li>
+                     <li className="cursor-pointer hover:underline">API: Knowledge Retrieval</li>
+                   </ul>
+                 </AdminCard>
+                 <AdminCard className="p-6 bg-warning/5 border-warning/30">
+                   <h4 className="text-sm font-bold text-warning uppercase mb-4">System Warnings</h4>
+                   <p className="text-sm text-textSecondary">High token usage detected in tenant tnt_gms44 over the last 10 minutes. Throttle engaged.</p>
+                 </AdminCard>
+              </div>
             </div>
           )}
 
@@ -433,10 +448,432 @@ export default function Daria() {
             </div>
           )}
 
-          {/* Placeholders for remaining views */}
-          {['Voice Operations', 'Guardrails', 'Model Evaluations', 'Deployments', 'Experiments'].includes(activeView) && (
-            <div className="text-sm text-textSecondary text-center py-12 border border-dashed border-border rounded">
-              {activeView} workspace configuration placeholder.
+          {activeView === 'Voice Operations' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 space-y-6">
+                <StatGrid>
+                  <MetricCard title="Active Voice Sessions" value="24" />
+                  <MetricCard title="Avg Latency" value="142ms" />
+                  <MetricCard title="ASR Accuracy" value="98.5%" />
+                  <MetricCard title="TTS Requests/min" value="1,204" />
+                </StatGrid>
+                
+                <AdminCard className="p-4">
+                  <SectionHeader title="Voice Models & Pipeline" />
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="bg-surface p-3 border border-border rounded flex justify-between items-center">
+                      <div>
+                        <div className="text-sm font-semibold text-text">Speech Recognition (ASR)</div>
+                        <div className="text-xs text-muted font-mono">Whisper-v3-Turbo</div>
+                      </div>
+                      <HealthIndicator status="Healthy" />
+                    </div>
+                    <div className="bg-surface p-3 border border-border rounded flex justify-between items-center">
+                      <div>
+                        <div className="text-sm font-semibold text-text">Text-to-Speech (TTS)</div>
+                        <div className="text-xs text-muted font-mono">ElevenLabs / Nova</div>
+                      </div>
+                      <HealthIndicator status="Healthy" />
+                    </div>
+                  </div>
+                </AdminCard>
+
+                <AdminCard>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Active Streaming Sessions</h3>
+                    <SecondaryButton className="text-xs py-1">View Audio Logs</SecondaryButton>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-sm">
+                      <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                        <tr>
+                          <th className="px-4 py-3">Session ID</th>
+                          <th className="px-4 py-3">Language</th>
+                          <th className="px-4 py-3">Provider</th>
+                          <th className="px-4 py-3">Quality/MOS</th>
+                          <th className="px-4 py-3">Latency</th>
+                          <th className="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-background">
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">vs-1a2b3c</td>
+                          <td className="px-4 py-3">en-US</td>
+                          <td className="px-4 py-3">OpenAI</td>
+                          <td className="px-4 py-3">4.8</td>
+                          <td className="px-4 py-3">120ms</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Streaming" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">vs-4d5e6f</td>
+                          <td className="px-4 py-3">es-ES</td>
+                          <td className="px-4 py-3">ElevenLabs</td>
+                          <td className="px-4 py-3">4.5</td>
+                          <td className="px-4 py-3">160ms</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Streaming" /></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </AdminCard>
+              </div>
+
+              {/* Voice Inspector */}
+              <div className="w-full lg:w-[300px] flex flex-col space-y-4">
+                <AdminCard className="p-4 bg-card h-full">
+                  <h4 className="text-sm font-semibold text-text border-b border-border pb-3 mb-4">Voice Inspector</h4>
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Model:</span><span>Whisper-v3</span></div>
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Provider:</span><span>Azure</span></div>
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Rate Limit:</span><span className="text-success">25% Used</span></div>
+                     <div className="border border-border rounded mt-4 overflow-hidden">
+                       <div className="bg-surface px-3 py-2 text-xs font-bold text-text uppercase">Voice Events Timeline</div>
+                       <div className="p-3 text-xs space-y-3 font-mono text-muted bg-[#0A0F1C]">
+                          <div>[10:12:01] Auth: vs-1a2b3c</div>
+                          <div>[10:12:02] VAD: Speech Detected</div>
+                          <div>[10:12:03] ASR: "How's the market?"</div>
+                          <div className="text-primary">[10:12:04] TTS: Generating...</div>
+                       </div>
+                     </div>
+                     <div className="mt-4 flex gap-2">
+                        <DangerButton className="flex-1 text-xs py-1">Kill Stream</DangerButton>
+                     </div>
+                  </div>
+                </AdminCard>
+              </div>
+            </div>
+          )}
+
+          {activeView === 'Guardrails' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 space-y-6">
+                <StatGrid>
+                  <MetricCard title="Policy Violations (24h)" value="12" isPositive={false} change="+2" />
+                  <MetricCard title="Blocked Prompts" value="45" />
+                  <MetricCard title="Tenant Restrictions" value="124" />
+                  <MetricCard title="Active Rules" value="86" />
+                </StatGrid>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <AdminCard className="p-4 border-l-4 border-l-warning">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-text">Prompt Guardrails</h4>
+                      <StatusBadge status="Warning" label="Strict Mode" />
+                    </div>
+                    <p className="text-xs text-textSecondary mb-4">Filters incoming prompts for PII, injection attempts, and restricted topics.</p>
+                    <div className="flex justify-between text-xs font-mono text-muted border-t border-border pt-2">
+                      <span>Triggered: 45 times</span>
+                      <span className="text-primary cursor-pointer hover:underline">Configure</span>
+                    </div>
+                  </AdminCard>
+                  
+                  <AdminCard className="p-4 border-l-4 border-l-primary">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-text">Output Guardrails</h4>
+                      <StatusBadge status="Success" label="Active" />
+                    </div>
+                    <p className="text-xs text-textSecondary mb-4">Scans generation for hallucinations, unauthorized commitments, and formatting.</p>
+                    <div className="flex justify-between text-xs font-mono text-muted border-t border-border pt-2">
+                      <span>Triggered: 12 times</span>
+                      <span className="text-primary cursor-pointer hover:underline">Configure</span>
+                    </div>
+                  </AdminCard>
+
+                  <AdminCard className="p-4 border-l-4 border-l-success">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-text">Memory & Knowledge Restrictions</h4>
+                      <StatusBadge status="Success" label="Active" />
+                    </div>
+                    <p className="text-xs text-textSecondary mb-4">Enforces tenant boundaries and access control on RAG data and session memory.</p>
+                    <div className="flex justify-between text-xs font-mono text-muted border-t border-border pt-2">
+                      <span>0 Violations</span>
+                      <span className="text-primary cursor-pointer hover:underline">Configure</span>
+                    </div>
+                  </AdminCard>
+
+                  <AdminCard className="p-4 border-l-4 border-l-success">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-text">Tool Restrictions</h4>
+                      <StatusBadge status="Success" label="Active" />
+                    </div>
+                    <p className="text-xs text-textSecondary mb-4">Validates arguments and limits permissions for external API and DB tools.</p>
+                    <div className="flex justify-between text-xs font-mono text-muted border-t border-border pt-2">
+                      <span>0 Violations</span>
+                      <span className="text-primary cursor-pointer hover:underline">Configure</span>
+                    </div>
+                  </AdminCard>
+                </div>
+              </div>
+
+              {/* Guardrail Inspector */}
+              <div className="w-full lg:w-[300px] flex flex-col space-y-4">
+                <AdminCard className="p-4 bg-card h-full">
+                  <h4 className="text-sm font-semibold text-text border-b border-border pb-3 mb-4">Guardrail Inspector</h4>
+                  <div className="space-y-4">
+                     <div className="flex justify-between items-center text-xs text-textSecondary"><span className="font-bold">Recent Trigger:</span><SeverityPill level="Critical" /></div>
+                     <div className="text-xs text-muted mb-2">Policy: <span className="text-text font-mono">Anti-Injection</span></div>
+                     <div className="border border-border rounded mt-4 overflow-hidden">
+                       <div className="bg-surface px-3 py-2 text-xs font-bold text-text uppercase">Guardrail Timeline</div>
+                       <div className="p-3 text-xs space-y-3 font-mono text-muted bg-[#0A0F1C]">
+                          <div>[10:14] Tenant: Acme</div>
+                          <div>[10:14] Prompt: "Ignore previous instructions..."</div>
+                          <div className="text-danger">[10:14] BLOCK: Injection Score 0.98</div>
+                          <div>[10:14] Action: Session Terminated</div>
+                       </div>
+                     </div>
+                     <div className="mt-4">
+                        <SecondaryButton className="w-full text-xs py-1">View Safety Rules</SecondaryButton>
+                     </div>
+                  </div>
+                </AdminCard>
+              </div>
+            </div>
+          )}
+
+          {activeView === 'Model Evaluations' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 space-y-6">
+                <StatGrid>
+                  <MetricCard title="Avg Accuracy" value="94.2%" />
+                  <MetricCard title="Regression Tests" value="100% Pass" />
+                  <MetricCard title="Tool Success Rate" value="99.1%" />
+                  <MetricCard title="Failed Evaluations" value="2" isPositive={false} />
+                </StatGrid>
+                
+                <AdminCard>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Evaluation Runs & Benchmarks</h3>
+                    <PrimaryButton className="text-xs py-1">Run New Eval</PrimaryButton>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-sm">
+                      <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                        <tr>
+                          <th className="px-4 py-3">Run ID</th>
+                          <th className="px-4 py-3">Dataset</th>
+                          <th className="px-4 py-3">Accuracy</th>
+                          <th className="px-4 py-3">Latency</th>
+                          <th className="px-4 py-3">Prompt Quality</th>
+                          <th className="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-background">
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">eval-8x92</td>
+                          <td className="px-4 py-3">Finance-Q3</td>
+                          <td className="px-4 py-3 text-success">96.5%</td>
+                          <td className="px-4 py-3">820ms</td>
+                          <td className="px-4 py-3">High</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Passed" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">eval-7y11</td>
+                          <td className="px-4 py-3">Knowledge-Base-V2</td>
+                          <td className="px-4 py-3 text-warning">88.2%</td>
+                          <td className="px-4 py-3">1100ms</td>
+                          <td className="px-4 py-3">Medium</td>
+                          <td className="px-4 py-3"><StatusBadge status="Warning" label="Degraded" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">eval-6z44</td>
+                          <td className="px-4 py-3">Tool-Execution-Core</td>
+                          <td className="px-4 py-3 text-danger">75.0%</td>
+                          <td className="px-4 py-3">950ms</td>
+                          <td className="px-4 py-3">Low</td>
+                          <td className="px-4 py-3"><StatusBadge status="Critical" label="Failed" /></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </AdminCard>
+              </div>
+
+              {/* Evaluation Inspector */}
+              <div className="w-full lg:w-[300px] flex flex-col space-y-4">
+                <AdminCard className="p-4 bg-card h-full">
+                  <h4 className="text-sm font-semibold text-text border-b border-border pb-3 mb-4">Evaluation Inspector</h4>
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Selected:</span><span className="font-mono text-primary">eval-6z44</span></div>
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Dataset Size:</span><span>5,000 queries</span></div>
+                     <div className="border border-border rounded mt-4 overflow-hidden">
+                       <div className="bg-surface px-3 py-2 text-xs font-bold text-text uppercase">Evaluation History</div>
+                       <div className="p-3 text-xs space-y-3 font-mono text-muted bg-[#0A0F1C]">
+                          <div>[09:00] Started run</div>
+                          <div>[09:15] Tool execution check</div>
+                          <div className="text-danger">[09:20] Regression in get_weather()</div>
+                          <div>[09:30] Completed (75%)</div>
+                       </div>
+                     </div>
+                     <div className="mt-4">
+                        <SecondaryButton className="w-full text-xs py-1">View Detailed Report</SecondaryButton>
+                     </div>
+                  </div>
+                </AdminCard>
+              </div>
+            </div>
+          )}
+
+          {activeView === 'Deployments' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 space-y-6">
+                <StatGrid>
+                  <MetricCard title="Current Deployment" value="v4.2.1" />
+                  <MetricCard title="Uptime" value="14d 6h" />
+                  <MetricCard title="Canary Traffic" value="5%" />
+                  <MetricCard title="Rollbacks (30d)" value="0" />
+                </StatGrid>
+
+                <AdminCard>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Version History & Environments</h3>
+                    <PrimaryButton className="text-xs py-1">Deploy New Version</PrimaryButton>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-sm">
+                      <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                        <tr>
+                          <th className="px-4 py-3">Version</th>
+                          <th className="px-4 py-3">Environment</th>
+                          <th className="px-4 py-3">Traffic</th>
+                          <th className="px-4 py-3">Deployed By</th>
+                          <th className="px-4 py-3">Date</th>
+                          <th className="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-background">
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary font-bold">v4.2.1</td>
+                          <td className="px-4 py-3">Production</td>
+                          <td className="px-4 py-3">95%</td>
+                          <td className="px-4 py-3 text-muted">system/auto</td>
+                          <td className="px-4 py-3 text-muted">2 days ago</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Active" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors bg-primary/5">
+                          <td className="px-4 py-3 font-mono text-primary font-bold">v4.3.0-rc1</td>
+                          <td className="px-4 py-3">Canary</td>
+                          <td className="px-4 py-3">5%</td>
+                          <td className="px-4 py-3 text-muted">a.turing</td>
+                          <td className="px-4 py-3 text-muted">4 hours ago</td>
+                          <td className="px-4 py-3"><StatusBadge status="Pending" label="Evaluating" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-muted">v4.2.0</td>
+                          <td className="px-4 py-3">Staging</td>
+                          <td className="px-4 py-3">0%</td>
+                          <td className="px-4 py-3 text-muted">m.curie</td>
+                          <td className="px-4 py-3 text-muted">15 days ago</td>
+                          <td className="px-4 py-3"><StatusBadge status="Warning" label="Inactive" /></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </AdminCard>
+              </div>
+
+              {/* Deployment Inspector */}
+              <div className="w-full lg:w-[300px] flex flex-col space-y-4">
+                <AdminCard className="p-4 bg-card h-full">
+                  <h4 className="text-sm font-semibold text-text border-b border-border pb-3 mb-4">Deployment Inspector</h4>
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Version:</span><span className="font-mono text-primary">v4.3.0-rc1</span></div>
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Approval Status:</span><span className="text-success">Approved</span></div>
+                     <div className="border border-border rounded mt-4 overflow-hidden">
+                       <div className="bg-surface px-3 py-2 text-xs font-bold text-text uppercase">Deployment Timeline</div>
+                       <div className="p-3 text-xs space-y-3 font-mono text-muted bg-[#0A0F1C]">
+                          <div>[14:00] Build triggered</div>
+                          <div>[14:05] Tests passed</div>
+                          <div>[14:15] Deployed to Canary</div>
+                          <div className="text-primary">[14:20] Monitoring metrics...</div>
+                       </div>
+                     </div>
+                     <div className="mt-4 flex gap-2">
+                        <SecondaryButton className="flex-1 text-xs py-1">Rollback</SecondaryButton>
+                        <PrimaryButton className="flex-1 text-xs py-1">Promote</PrimaryButton>
+                     </div>
+                  </div>
+                </AdminCard>
+              </div>
+            </div>
+          )}
+
+          {activeView === 'Experiments' && (
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 space-y-6">
+                <StatGrid>
+                  <MetricCard title="Active Experiments" value="3" />
+                  <MetricCard title="Total Variants" value="8" />
+                  <MetricCard title="Traffic Allocated" value="20%" />
+                  <MetricCard title="Recent Results" value="1 Winner" />
+                </StatGrid>
+
+                <AdminCard>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-text uppercase tracking-wider">A/B Tests & Prompt Experiments</h3>
+                    <PrimaryButton className="text-xs py-1">Create Experiment</PrimaryButton>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-sm">
+                      <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                        <tr>
+                          <th className="px-4 py-3">Experiment ID</th>
+                          <th className="px-4 py-3">Type</th>
+                          <th className="px-4 py-3">Traffic</th>
+                          <th className="px-4 py-3">Success Metrics</th>
+                          <th className="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-background">
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">exp-prompt-tone</td>
+                          <td className="px-4 py-3">Prompt</td>
+                          <td className="px-4 py-3">10%</td>
+                          <td className="px-4 py-3">+4% User Retention</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Running" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-primary">exp-model-temp</td>
+                          <td className="px-4 py-3">Model Config</td>
+                          <td className="px-4 py-3">5%</td>
+                          <td className="px-4 py-3">TBD</td>
+                          <td className="px-4 py-3"><StatusBadge status="Pending" label="Gathering Data" /></td>
+                        </tr>
+                        <tr className="hover:bg-surface/50 transition-colors">
+                          <td className="px-4 py-3 font-mono text-muted">exp-rag-weights</td>
+                          <td className="px-4 py-3">Algorithm</td>
+                          <td className="px-4 py-3">100%</td>
+                          <td className="px-4 py-3 text-success">+15% Accuracy</td>
+                          <td className="px-4 py-3"><StatusBadge status="Success" label="Concluded" /></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </AdminCard>
+              </div>
+
+              {/* Experiment Inspector */}
+              <div className="w-full lg:w-[300px] flex flex-col space-y-4">
+                <AdminCard className="p-4 bg-card h-full">
+                  <h4 className="text-sm font-semibold text-text border-b border-border pb-3 mb-4">Experiment Inspector</h4>
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Experiment:</span><span className="font-mono text-primary">exp-prompt-tone</span></div>
+                     <div className="flex justify-between text-xs text-textSecondary"><span className="font-bold">Variants:</span><span>A (Control), B (Polite)</span></div>
+                     <div className="border border-border rounded mt-4 overflow-hidden">
+                       <div className="bg-surface px-3 py-2 text-xs font-bold text-text uppercase">Experiment Timeline</div>
+                       <div className="p-3 text-xs space-y-3 font-mono text-muted bg-[#0A0F1C]">
+                          <div>[Oct 12] Experiment started</div>
+                          <div>[Oct 13] Variant B +2% CTR</div>
+                          <div>[Oct 14] Variant B +4% Ret.</div>
+                          <div className="text-success">[Oct 15] Statistically Significant</div>
+                       </div>
+                     </div>
+                     <div className="mt-4 flex gap-2">
+                        <SecondaryButton className="flex-1 text-xs py-1">Stop</SecondaryButton>
+                        <PrimaryButton className="flex-1 text-xs py-1">Apply Winner</PrimaryButton>
+                     </div>
+                  </div>
+                </AdminCard>
+              </div>
             </div>
           )}
 
@@ -458,36 +895,6 @@ export default function Daria() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block border-l border-border">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">AI Operations Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Model Engine</h4>
-            <p className="font-mono text-primary text-sm mb-2">GPT-4o-TrendForge-Custom</p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Environment</span><span className="text-text font-mono">Production</span></div>
-              <div className="flex justify-between"><span className="text-muted">Health</span><HealthIndicator status="Healthy" /></div>
-            </div>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Linked Services</h4>
-            <ul className="text-xs text-primary space-y-2">
-              <li className="cursor-pointer hover:underline">Tool: Ghost Mode Executor</li>
-              <li className="cursor-pointer hover:underline">Tool: Quantum Query</li>
-              <li className="cursor-pointer hover:underline">API: Knowledge Retrieval</li>
-            </ul>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-warning/5 border-warning/30">
-            <h4 className="text-xs font-bold text-warning uppercase mb-2">Warnings</h4>
-            <p className="text-xs text-textSecondary">High token usage detected in tenant tnt_gms44 over the last 10 minutes.</p>
-          </AdminCard>
-        </div>
       </div>
 
     </div>

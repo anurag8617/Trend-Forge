@@ -87,7 +87,7 @@ export default function Organizations() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Organizations' }]} />
@@ -265,14 +265,46 @@ export default function Organizations() {
 
               <div className="p-6">
                 {activeTab === 'Overview' && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <AdminCard className="p-4 bg-card"><KPIBlock label="Total Seats" value={selectedOrg.seats} /></AdminCard>
-                    <AdminCard className="p-4 bg-card"><KPIBlock label="Active Users" value={selectedOrg.active} /></AdminCard>
-                    <AdminCard className="p-4 bg-card"><KPIBlock label="Created Date" value={selectedOrg.created} /></AdminCard>
-                    <AdminCard className="p-4 bg-card">
-                      <span className="text-xs text-muted font-medium mb-1 block">Health</span>
-                      <HealthIndicator status={selectedOrg.health as any} />
-                    </AdminCard>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <AdminCard className="p-4 bg-card">
+                        <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Organization Summary</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between"><span className="text-muted">Tenant ID</span><span className="text-primary font-mono">{selectedOrg.tenant}</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedOrg.status as any} /></div>
+                          <div className="flex justify-between"><span className="text-muted">Plan</span><span className="text-text">{selectedOrg.plan}</span></div>
+                        </div>
+                      </AdminCard>
+                      
+                      {selectedOrg.health === 'Degraded' ? (
+                        <AdminCard className="p-4 bg-warning/5 border-warning/30">
+                          <h4 className="text-xs font-bold text-warning uppercase mb-2">Warnings</h4>
+                          <p className="text-xs text-textSecondary">Approaching API rate limits on HoloBidder endpoint (92% consumed).</p>
+                        </AdminCard>
+                      ) : (
+                        <AdminCard className="p-4 bg-card">
+                          <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Recent Activity</h4>
+                          <div className="text-xs text-muted">No recent critical events.</div>
+                        </AdminCard>
+                      )}
+
+                      <AdminCard className="p-4 bg-card">
+                        <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Audit Logs</h4>
+                        <div className="max-h-32 overflow-y-auto">
+                          <AuditTimeline events={auditEvents} />
+                        </div>
+                      </AdminCard>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <AdminCard className="p-4 bg-card"><KPIBlock label="Total Seats" value={selectedOrg.seats} /></AdminCard>
+                      <AdminCard className="p-4 bg-card"><KPIBlock label="Active Users" value={selectedOrg.active} /></AdminCard>
+                      <AdminCard className="p-4 bg-card"><KPIBlock label="Created Date" value={selectedOrg.created} /></AdminCard>
+                      <AdminCard className="p-4 bg-card">
+                        <span className="text-xs text-muted font-medium mb-1 block">Health</span>
+                        <HealthIndicator status={selectedOrg.health as any} />
+                      </AdminCard>
+                    </div>
                   </div>
                 )}
                 
@@ -308,39 +340,6 @@ export default function Organizations() {
           )}
 
         </div>
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface border-l border-border p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Organization Inspector</h3>
-        
-        {selectedOrg ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Summary</h4>
-              <p className="font-medium text-text mb-2">{selectedOrg.name}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Tenant ID</span><span className="text-primary font-mono">{selectedOrg.tenant}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedOrg.status as any} /></div>
-                <div className="flex justify-between"><span className="text-muted">Plan</span><span className="text-text">{selectedOrg.plan}</span></div>
-              </div>
-            </AdminCard>
-
-            {selectedOrg.health === 'Degraded' && (
-              <AdminCard className="p-4 bg-warning/5 border-warning/30">
-                <h4 className="text-xs font-bold text-warning uppercase mb-2">Warnings</h4>
-                <p className="text-xs text-textSecondary">Approaching API rate limits on HoloBidder endpoint (92% consumed).</p>
-              </AdminCard>
-            )}
-
-            <div className="mt-6">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Recent Activity</h4>
-              <AuditTimeline events={auditEvents} />
-            </div>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select an organization to view details.</div>
-        )}
       </div>
 
     </div>

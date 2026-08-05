@@ -81,8 +81,8 @@ export default function Security() {
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
-      {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Security Center' }]} />
@@ -101,6 +101,27 @@ export default function Security() {
           
           {activeTab === 'Overview' && (
             <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <AdminCard className="p-6 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Threat Intelligence</h4>
+                  <div className="space-y-4 text-sm mt-4">
+                    <div className="flex justify-between items-center"><span className="text-muted">Global Risk</span><StatusBadge status="Success" label="Low" /></div>
+                    <div className="flex justify-between items-center"><span className="text-muted">Active Threats</span><span className="text-text font-mono text-lg font-bold">0</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className="p-6 bg-warning/5 border-warning/30">
+                  <h4 className="text-xs font-bold text-warning uppercase mb-3">Warnings</h4>
+                  <ul className="text-sm text-text space-y-2 list-disc list-inside">
+                    <li>3 active sessions from anomalous IPs (EU West).</li>
+                    <li>14 users lacking MFA enforcement.</li>
+                  </ul>
+                </AdminCard>
+                <AdminCard className="p-6 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Linked Incidents</h4>
+                  <div className="text-sm text-muted italic flex h-full items-center justify-center pb-4">No active security incidents.</div>
+                </AdminCard>
+              </div>
+
               <AdminCard className="p-6 bg-card border-l-4 border-l-success">
                 <div className="flex justify-between items-center mb-6">
                   <div>
@@ -318,33 +339,7 @@ export default function Security() {
         </div>
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block border-l border-border">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Security Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Threat Intelligence</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Global Risk</span><StatusBadge status="Success" label="Low" /></div>
-              <div className="flex justify-between"><span className="text-muted">Active Threats</span><span className="text-text font-mono">0</span></div>
-            </div>
-          </AdminCard>
 
-          <AdminCard className="p-4 bg-warning/5 border-warning/30">
-            <h4 className="text-xs font-bold text-warning uppercase mb-2">Warnings</h4>
-            <ul className="text-xs text-textSecondary space-y-2 list-disc list-inside">
-              <li>3 active sessions from anomalous IPs (EU West).</li>
-              <li>14 users lacking MFA enforcement.</li>
-            </ul>
-          </AdminCard>
-
-          <div className="mt-6">
-             <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Linked Incidents</h4>
-             <div className="text-xs text-muted italic">No active security incidents.</div>
-          </div>
-        </div>
-      </div>
 
     </div>
   );

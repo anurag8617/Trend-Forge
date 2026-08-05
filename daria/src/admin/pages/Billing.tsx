@@ -85,7 +85,7 @@ export default function Billing() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Commercial Operations' }, { label: 'Billing' }]} />
@@ -120,6 +120,45 @@ export default function Billing() {
           )}
 
           {activeTab === 'Subscriptions' && (
+            <div className="space-y-6">
+              {selectedSub && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <AdminCard className="p-6 bg-card">
+                    <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Selected Customer</h4>
+                    <p className="text-xl font-bold text-text mb-4">{selectedSub.org}</p>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedSub.status === 'Active' ? 'Success' : 'Critical'} label={selectedSub.status} /></div>
+                      <div className="flex justify-between"><span className="text-muted">Health</span><HealthIndicator status="Healthy" /></div>
+                      <div className="flex justify-between"><span className="text-muted">Plan</span><span className="text-text font-bold">{selectedSub.plan}</span></div>
+                    </div>
+                  </AdminCard>
+                  
+                  <AdminCard className="p-6 bg-card">
+                    <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Contract Details</h4>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between"><span className="text-muted">ID</span><span className="font-mono text-primary">{selectedSub.contract}</span></div>
+                      <div className="flex justify-between"><span className="text-muted">Revenue</span><span className="font-mono text-text">$142,000 / yr</span></div>
+                      <div className="flex justify-between"><span className="text-muted">Renewal</span><span className="font-mono text-text">{selectedSub.renewal}</span></div>
+                    </div>
+                  </AdminCard>
+                  
+                  {selectedSub.status === 'Past Due' ? (
+                    <AdminCard className="p-6 bg-danger/5 border-danger/30">
+                       <h4 className="text-sm font-bold text-danger uppercase mb-2">Warnings</h4>
+                       <p className="text-sm text-textSecondary mb-4">Account is 14 days past due. Services will be suspended in 48 hours.</p>
+                       <DangerButton className="w-full justify-center text-sm py-2">Suspend Now</DangerButton>
+                    </AdminCard>
+                  ) : (
+                    <AdminCard className="p-6 bg-card">
+                      <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Quick Actions</h4>
+                      <div className="space-y-2">
+                        <SecondaryButton className="w-full justify-start text-sm py-2 text-left">Upgrade Plan</SecondaryButton>
+                        <SecondaryButton className="w-full justify-start text-sm py-2 text-left">Generate Invoice</SecondaryButton>
+                      </div>
+                    </AdminCard>
+                  )}
+                </div>
+              )}
             <AdminCard>
               <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
                 <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Active Subscriptions</h3>
@@ -258,6 +297,7 @@ export default function Billing() {
                 </div>
               </div>
             </AdminCard>
+            </div>
           )}
 
           {activeTab === 'Invoices' && (
@@ -310,41 +350,6 @@ export default function Billing() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block border-l border-border">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Revenue Inspector</h3>
-        
-        {selectedSub && activeTab === 'Subscriptions' ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Customer</h4>
-              <p className="font-medium text-text mb-2">{selectedSub.org}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedSub.status === 'Active' ? 'Success' : 'Critical'} label={selectedSub.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Health</span><HealthIndicator status="Healthy" /></div>
-                <div className="flex justify-between"><span className="text-muted">Plan</span><span className="text-text font-bold">{selectedSub.plan}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Contract Details</h4>
-              <div className="flex justify-between text-sm mb-1"><span className="text-muted">ID</span><span className="font-mono text-primary">{selectedSub.contract}</span></div>
-              <div className="flex justify-between text-sm mb-1"><span className="text-muted">Revenue</span><span className="font-mono text-text">$142,000 / yr</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted">Renewal</span><span className="font-mono text-text">{selectedSub.renewal}</span></div>
-            </AdminCard>
-
-            {selectedSub.status === 'Past Due' && (
-              <AdminCard className="p-4 bg-danger/5 border-danger/30">
-                 <h4 className="text-xs font-bold text-danger uppercase mb-2">Warnings</h4>
-                 <p className="text-xs text-textSecondary">Account is 14 days past due. Services will be suspended in 48 hours.</p>
-              </AdminCard>
-            )}
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a subscription to inspect.</div>
-        )}
       </div>
 
     </div>

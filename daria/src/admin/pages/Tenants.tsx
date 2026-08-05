@@ -46,7 +46,7 @@ export default function Tenants() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Tenant Operations' }]} />
@@ -137,6 +137,42 @@ export default function Tenants() {
                 </div>
               </div>
 
+              {/* INTEGRATED INSPECTOR DATA */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pb-2">
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Health & Status</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted">Health Score</span><span className="text-success font-bold">{selectedTenant.health}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedTenant.status as any} /></div>
+                    <div className="flex justify-between"><span className="text-muted">Environment</span><span className="text-text">{selectedTenant.env}</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className={`p-4 ${selectedTenant.status === 'Warning' ? 'bg-warning/5 border-warning/30' : 'bg-card'}`}>
+                  <h4 className={`text-xs font-bold uppercase mb-2 ${selectedTenant.status === 'Warning' ? 'text-warning' : 'text-textSecondary'}`}>Warnings & Risks</h4>
+                  {selectedTenant.status === 'Warning' ? (
+                    <p className="text-xs text-textSecondary">Seat utilization is near maximum capacity. Approaching API rate limits on Bio-Feel endpoints.</p>
+                  ) : (
+                    <p className="text-xs text-muted">No active warnings or risks detected for this tenant.</p>
+                  )}
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Recent Activity</h4>
+                  <ul className="text-xs text-muted space-y-2 list-disc list-inside">
+                    <li>New API Key generated</li>
+                    <li>Added members to team</li>
+                    <li>Configuration updated</li>
+                  </ul>
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Metadata</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted">Region</span><span className="text-text">{selectedTenant.region}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Created</span><span className="text-text">{selectedTenant.created}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Seats</span><span className="text-text">{selectedTenant.seats}</span></div>
+                  </div>
+                </AdminCard>
+              </div>
+
               <div className="px-6 pt-2">
                 <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
               </div>
@@ -203,43 +239,6 @@ export default function Tenants() {
           )}
 
         </div>
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Tenant Inspector</h3>
-        
-        {selectedTenant ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Summary</h4>
-              <p className="font-medium text-text mb-2">{selectedTenant.name}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Tenant ID</span><span className="text-primary font-mono">{selectedTenant.id}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Health</span><span className="text-success font-bold">{selectedTenant.health}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedTenant.status as any} /></div>
-              </div>
-            </AdminCard>
-
-            {selectedTenant.status === 'Warning' && (
-              <AdminCard className="p-4 bg-warning/5 border-warning/30">
-                <h4 className="text-xs font-bold text-warning uppercase mb-2">Open Risks</h4>
-                <p className="text-xs text-textSecondary">Seat utilization is near maximum capacity. Approaching API rate limits on Bio-Feel endpoints.</p>
-              </AdminCard>
-            )}
-
-            <div className="mt-6">
-               <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Recent Activity</h4>
-               <ul className="text-xs text-muted space-y-2 list-disc list-inside">
-                 <li>New API Key generated by j.smith</li>
-                 <li>Added 4 members to 'Analysts' team</li>
-                 <li>Bio-Feel model configuration updated</li>
-               </ul>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a tenant to view details.</div>
-        )}
       </div>
 
     </div>

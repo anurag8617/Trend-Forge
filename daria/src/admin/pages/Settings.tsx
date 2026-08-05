@@ -35,7 +35,7 @@ export default function Settings() {
       <SecondaryNavigation items={navItems} activeItem={activeView} />
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Platform Configuration' }, { label: 'Global Settings' }]} />
@@ -48,6 +48,21 @@ export default function Settings() {
               <SecondaryButton disabled>Discard Changes</SecondaryButton>
               <SplitButton mainAction="Save Configuration" secondaryAction={null} />
             </div>
+          </div>
+
+          {/* Inspector Content Moved Here */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <AdminCard className="p-6 bg-card">
+              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Policy Metadata</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><span className="text-muted block text-xs mb-1">Owner</span><span className="text-text font-medium">Platform Engineering</span></div>
+                <div><span className="text-muted block text-xs mb-1">Last Modified</span><span className="text-text font-mono bg-surface px-2 py-1 rounded">14:20 PM</span></div>
+              </div>
+            </AdminCard>
+            <AdminCard className="p-6 bg-card border-l-4 border-l-primary">
+              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Impact Radius</h4>
+              <p className="text-sm text-textSecondary mt-2">Modifying policies in this category will enforce new limits across all <strong className="text-text">1,241 active tenant organizations</strong>.</p>
+            </AdminCard>
           </div>
         </div>
 
@@ -139,27 +154,6 @@ export default function Settings() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Policy Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Category</h4>
-            <p className="font-medium text-text mb-2">{activeView}</p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">Platform Engineering</span></div>
-              <div className="flex justify-between"><span className="text-muted">Last Modified</span><span className="text-text font-mono">14:20 PM</span></div>
-            </div>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Impact Radius</h4>
-            <p className="text-xs text-textSecondary">Modifying policies in this category will enforce new limits across all 1,241 active tenant organizations.</p>
-          </AdminCard>
-        </div>
       </div>
 
     </div>

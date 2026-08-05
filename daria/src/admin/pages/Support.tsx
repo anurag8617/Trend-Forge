@@ -45,7 +45,7 @@ export default function Support() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Tenant Operations' }, { label: 'Support Center' }]} />
@@ -136,6 +136,42 @@ export default function Support() {
                   <SecondaryButton disabled>Escalate</SecondaryButton>
                   <SplitButton mainAction="Reply to Customer" secondaryAction={null} />
                 </div>
+              </div>
+
+              {/* INTEGRATED INSPECTOR DATA */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pb-2">
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Summary & Status</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedTicket.status === 'Resolved' ? 'Success' : selectedTicket.status === 'Escalated' ? 'Critical' : 'Warning'} label={selectedTicket.status} /></div>
+                    <div className="flex justify-between"><span className="text-muted">Priority</span><SeverityPill level={selectedTicket.priority as any} /></div>
+                    <div className="flex justify-between"><span className="text-muted">Agent</span><span className="text-text">{selectedTicket.agent}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Reporter</span><span className="text-text">{selectedTicket.reporter}</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Tenant Health</h4>
+                  <div className="flex justify-between items-center mb-2">
+                     <span className="text-sm text-text">{selectedTicket.tenant}</span>
+                     <span className="text-sm font-bold text-success">98/100</span>
+                  </div>
+                  <p className="text-xs text-textSecondary">Enterprise Plan. Renewal in 6 months. High usage volume.</p>
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Metadata & Related</h4>
+                  <div className="space-y-2 text-sm">
+                     <div className="flex justify-between"><span className="text-muted">Dependencies</span><span className="text-text">Core API</span></div>
+                     <div className="flex justify-between"><span className="text-muted">Linked Signals</span><span className="text-text">None</span></div>
+                     <div className="flex justify-between"><span className="text-muted">Last Updated</span><span className="text-text">{selectedTicket.updated}</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Quick Actions</h4>
+                  <div className="space-y-2">
+                     <SecondaryButton className="w-full text-xs py-1">View Audit Log</SecondaryButton>
+                     <SecondaryButton className="w-full text-xs py-1">Notify CSM</SecondaryButton>
+                  </div>
+                </AdminCard>
               </div>
 
               <div className="px-6 pt-2">
@@ -234,36 +270,6 @@ export default function Support() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Ticket Inspector</h3>
-        
-        {selectedTicket ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Ticket</h4>
-              <p className="font-mono text-primary font-medium mb-2">{selectedTicket.id}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedTicket.status === 'Resolved' ? 'Success' : selectedTicket.status === 'Escalated' ? 'Critical' : 'Warning'} label={selectedTicket.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Priority</span><SeverityPill level={selectedTicket.priority as any} /></div>
-                <div className="flex justify-between"><span className="text-muted">Agent</span><span className="text-text">{selectedTicket.agent}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Tenant Health</h4>
-              <div className="flex justify-between items-center mb-2">
-                 <span className="text-sm text-text">{selectedTicket.tenant}</span>
-                 <span className="text-sm font-bold text-success">98/100</span>
-              </div>
-              <p className="text-xs text-textSecondary">Enterprise Plan. Renewal in 6 months. High usage volume.</p>
-            </AdminCard>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a ticket to inspect.</div>
-        )}
       </div>
 
     </div>

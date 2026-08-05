@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { 
   AdminCard, PageHeader, SectionHeader, StatusBadge, HealthIndicator,
   PrimaryButton, SecondaryButton, DangerButton, MetricCard, KPIBlock,
@@ -30,7 +30,7 @@ export default function Developer() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Platform Engineering' }, { label: 'Developer Platform' }]} />
@@ -57,45 +57,83 @@ export default function Developer() {
               </StatGrid>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <AdminCard className="p-4 bg-card"><KPIBlock label="Target Environments" value="Prod, Staging, Dev, GovCloud" /></AdminCard>
+                 <AdminCard className="p-4 bg-card">ADMI<KPIBlock label="Target Environments" value="Prod, Staging, Dev, GovCloud" /></AdminCard>
                  <AdminCard className="p-4 bg-card"><KPIBlock label="Developer Docs" value="Build Passing (v4.2)" /></AdminCard>
               </div>
             </div>
           )}
 
           {activeTab === 'API Registry' && (
-            <AdminCard>
-              <TableToolbar>
-                <TableSearch />
-                <TableFilters />
-              </TableToolbar>
-              <DataTable>
-                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                  <tr>
-                    <th className="px-4 py-3 text-left">API Name</th>
-                    <th className="px-4 py-3 text-left">Internal Service</th>
-                    <th className="px-4 py-3 text-left">Latest Version</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-left">Owner</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border text-sm">
-                  {[
-                    { name: 'Core Signals API', svc: 'svc-signals', ver: 'v2', status: 'Active', owner: 'Data Eng' },
-                    { name: 'Forecast Generation API', svc: 'svc-quantum', ver: 'v1', status: 'Active', owner: 'ML Ops' },
-                    { name: 'Legacy Ingestion', svc: 'svc-ingest-old', ver: 'v0.9', status: 'Deprecated', owner: 'Platform' },
-                  ].map(api => (
-                    <tr key={api.name} className="hover:bg-surface/50 cursor-pointer">
-                      <td className="px-4 py-3 font-semibold text-text">{api.name}</td>
-                      <td className="px-4 py-3 font-mono text-muted text-xs">{api.svc}</td>
-                      <td className="px-4 py-3 font-mono text-primary text-xs">{api.ver}</td>
-                      <td className="px-4 py-3"><StatusBadge status={api.status === 'Active' ? 'Success' : 'Warning'} label={api.status} /></td>
-                      <td className="px-4 py-3 text-textSecondary">{api.owner}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </DataTable>
-            </AdminCard>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-2 space-y-6">
+                <AdminCard>
+                  <TableToolbar>
+                    <TableSearch />
+                    <TableFilters />
+                  </TableToolbar>
+                  <DataTable>
+                    <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                      <tr>
+                        <th className="px-4 py-3 text-left">API Name</th>
+                        <th className="px-4 py-3 text-left">Internal Service</th>
+                        <th className="px-4 py-3 text-left">Latest Version</th>
+                        <th className="px-4 py-3 text-left">Status</th>
+                        <th className="px-4 py-3 text-left">Owner</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border text-sm">
+                      {[
+                        { name: 'Core Signals API', svc: 'svc-signals', ver: 'v2', status: 'Active', owner: 'Data Eng' },
+                        { name: 'Forecast Generation API', svc: 'svc-quantum', ver: 'v1', status: 'Active', owner: 'ML Ops' },
+                        { name: 'Legacy Ingestion', svc: 'svc-ingest-old', ver: 'v0.9', status: 'Deprecated', owner: 'Platform' },
+                      ].map(api => (
+                        <tr key={api.name} className="hover:bg-surface/50 cursor-pointer">
+                          <td className="px-4 py-3 font-semibold text-text">{api.name}</td>
+                          <td className="px-4 py-3 font-mono text-muted text-xs">{api.svc}</td>
+                          <td className="px-4 py-3 font-mono text-primary text-xs">{api.ver}</td>
+                          <td className="px-4 py-3"><StatusBadge status={api.status === 'Active' ? 'Success' : 'Warning'} label={api.status} /></td>
+                          <td className="px-4 py-3 text-textSecondary">{api.owner}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </DataTable>
+                </AdminCard>
+              </div>
+              <div className="space-y-6">
+                <AdminCard className="p-6">
+                  <SectionHeader title="Metadata & Status" />
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <h4 className="text-xs font-bold text-textSecondary uppercase mb-1">Core Signals API</h4>
+                      <p className="font-mono text-primary text-sm mb-2">v2.4.1</p>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status="Success" label="Active" /></div>
+                      <div className="flex justify-between"><span className="text-muted">Health</span><span className="text-success font-medium">99.9% Uptime</span></div>
+                      <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">Data Eng</span></div>
+                      <div className="flex justify-between"><span className="text-muted">Warnings</span><span className="text-warning font-medium">1 Deprecation</span></div>
+                    </div>
+                  </div>
+                </AdminCard>
+                <AdminCard className="p-6">
+                  <SectionHeader title="Dependencies & Actions" />
+                  <div className="mt-4 space-y-2">
+                    <ul className="text-sm text-muted space-y-1">
+                      <li>• PostgreSQL Cluster</li>
+                      <li>• Redis Cache layer</li>
+                      <li>• Auth Gateway</li>
+                    </ul>
+                    <div className="pt-4 mt-4 border-t border-border">
+                      <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Quick Actions</h4>
+                      <div className="flex flex-col space-y-2">
+                         <SecondaryButton className="text-xs">View API Docs</SecondaryButton>
+                         <SecondaryButton className="text-xs">Rotate Keys</SecondaryButton>
+                      </div>
+                    </div>
+                  </div>
+                </AdminCard>
+              </div>
+            </div>
           )}
 
           {activeTab === 'Config' && (
@@ -162,30 +200,7 @@ export default function Developer() {
 
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">API Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Core Signals API</h4>
-            <p className="font-mono text-primary text-sm mb-2">v2.4.1</p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status="Success" label="Active" /></div>
-              <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">Data Eng</span></div>
-            </div>
-          </AdminCard>
 
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Dependencies</h4>
-            <ul className="text-xs text-muted space-y-1">
-              <li>• PostgreSQL Cluster</li>
-              <li>• Redis Cache layer</li>
-              <li>• Auth Gateway</li>
-            </ul>
-          </AdminCard>
-        </div>
-      </div>
 
     </div>
   );

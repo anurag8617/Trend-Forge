@@ -25,7 +25,7 @@ export default function Platform() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Platform Configuration' }, { label: 'Platform Controls' }]} />
@@ -43,17 +43,27 @@ export default function Platform() {
         <div className="p-6 pt-6 flex-1 space-y-6">
           
           {activeTab === 'Platform Status' && (
-            <AdminCard className="p-6">
-               <SectionHeader title="Global Platform Topology" />
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-                 <KPIBlock label="Platform Version" value="v5.12.4 (Stable)" />
-                 <KPIBlock label="Release Channel" value="Production" />
-                 <KPIBlock label="Environment" value="Production (Isolated)" />
-                 <KPIBlock label="Primary Cluster" value="us-east-1-core" />
-                 <KPIBlock label="Deployment Ring" value="Ring 0 (Global)" />
-                 <KPIBlock label="Edge Network" value="Cloudflare Enterprise" />
-               </div>
-            </AdminCard>
+            <div className="space-y-6">
+              <AdminCard className="p-6">
+                 <SectionHeader title="Global Platform Topology" />
+                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+                   <KPIBlock label="Platform Version" value="v5.12.4 (Stable)" />
+                   <KPIBlock label="Release Channel" value="Production" />
+                   <KPIBlock label="Environment" value="Production (Isolated)" />
+                   <KPIBlock label="Primary Cluster" value="us-east-1-core" />
+                   <KPIBlock label="Deployment Ring" value="Ring 0 (Global)" />
+                   <KPIBlock label="Edge Network" value="Cloudflare Enterprise" />
+                 </div>
+              </AdminCard>
+
+              <AdminCard className="p-6 bg-card">
+                <SectionHeader title="System Lock Status" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                  <div className="flex justify-between items-center p-4 border border-border rounded bg-surface"><span className="text-muted">Master Switch</span><StatusBadge status="Success" label="Unlocked" /></div>
+                  <div className="flex justify-between items-center p-4 border border-border rounded bg-surface"><span className="text-muted">Write Status</span><StatusBadge status="Success" label="Active" /></div>
+                </div>
+              </AdminCard>
+            </div>
           )}
 
           {activeTab === 'Maintenance Mode' && (
@@ -131,21 +141,6 @@ export default function Platform() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Control Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">System Lock</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Master Switch</span><StatusBadge status="Success" label="Unlocked" /></div>
-              <div className="flex justify-between"><span className="text-muted">Write Status</span><StatusBadge status="Success" label="Active" /></div>
-            </div>
-          </AdminCard>
-        </div>
       </div>
 
     </div>

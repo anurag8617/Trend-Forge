@@ -144,7 +144,7 @@ export default function Monitoring() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Monitoring' }]} />
@@ -186,6 +186,43 @@ export default function Monitoring() {
           )}
 
           {activeTab === 'Service Status' && (
+            <div className="space-y-6">
+              {selectedService && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <AdminCard className="p-4 bg-card">
+                    <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Service Summary</h4>
+                    <p className="font-medium text-text mb-2">{selectedService.name}</p>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedService.status as any} /></div>
+                      <div className="flex justify-between"><span className="text-muted">Health</span><HealthIndicator status={selectedService.health as any} /></div>
+                      <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedService.owner}</span></div>
+                      <div className="flex justify-between"><span className="text-muted">Version</span><span className="font-mono text-text">{selectedService.version}</span></div>
+                    </div>
+                  </AdminCard>
+
+                  <AdminCard className="p-4 bg-card">
+                    <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Dependencies</h4>
+                    <ul className="text-xs text-primary space-y-2">
+                      <li className="cursor-pointer hover:underline">Redis Cache (Healthy)</li>
+                      <li className="cursor-pointer hover:underline">PostgreSQL (Healthy)</li>
+                      <li className="cursor-pointer hover:underline text-danger">External Exchange API (Timeout)</li>
+                    </ul>
+                  </AdminCard>
+
+                  {selectedService.health === 'Down' ? (
+                    <AdminCard className="p-4 bg-danger/5 border-danger/30">
+                       <h4 className="text-xs font-bold text-danger uppercase mb-2">Critical Warnings</h4>
+                       <p className="text-xs text-textSecondary">Service is currently offline and failing health checks. Linked to Incident INC-091.</p>
+                    </AdminCard>
+                  ) : (
+                    <AdminCard className="p-4 bg-card">
+                       <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Recent Activity</h4>
+                       <p className="text-xs text-textSecondary">No recent critical events for {selectedService.name}.</p>
+                    </AdminCard>
+                  )}
+                </div>
+              )}
+
             <AdminCard>
               <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
                 <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Service Mesh Status</h3>
@@ -329,6 +366,7 @@ export default function Monitoring() {
                 </div>
               </div>
             </AdminCard>
+            </div>
           )}
 
           {activeTab === 'Performance' && (
@@ -529,44 +567,6 @@ export default function Monitoring() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface border-l border-border p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Service Inspector</h3>
-        
-        {selectedService && activeTab === 'Service Status' ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Service</h4>
-              <p className="font-medium text-text mb-2">{selectedService.name}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedService.status as any} /></div>
-                <div className="flex justify-between"><span className="text-muted">Health</span><HealthIndicator status={selectedService.health as any} /></div>
-                <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedService.owner}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Version</span><span className="font-mono text-text">{selectedService.version}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Dependencies</h4>
-              <ul className="text-xs text-primary space-y-2">
-                <li className="cursor-pointer hover:underline">Redis Cache (Healthy)</li>
-                <li className="cursor-pointer hover:underline">PostgreSQL (Healthy)</li>
-                <li className="cursor-pointer hover:underline text-danger">External Exchange API (Timeout)</li>
-              </ul>
-            </AdminCard>
-
-            {selectedService.health === 'Down' && (
-              <AdminCard className="p-4 bg-danger/5 border-danger/30">
-                 <h4 className="text-xs font-bold text-danger uppercase mb-2">Critical Warnings</h4>
-                 <p className="text-xs text-textSecondary">Service is currently offline and failing health checks. Linked to Incident INC-091.</p>
-              </AdminCard>
-            )}
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a service to inspect.</div>
-        )}
       </div>
 
     </div>

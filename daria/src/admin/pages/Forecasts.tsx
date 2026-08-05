@@ -83,7 +83,7 @@ export default function Forecasts() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Intelligence Operations' }, { label: 'Forecast Review' }]} />
@@ -262,12 +262,27 @@ export default function Forecasts() {
               <div className="p-6">
                 
                 {activeTab === 'Prediction Details' && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
                     <div className="col-span-full mb-2">
-                      <h4 className="text-sm font-semibold text-text mb-2">Prediction Summary</h4>
-                      <p className="text-sm text-textSecondary p-4 bg-surface border border-border rounded">
-                        Model predicts a 88% probability of an anomalous volatility spike in the Asian electronics supply chain sector within the next 48 to 72 hours, driven by compounding logistical disruptions detected in underlying signals.
-                      </p>
+                      <SectionHeader title="Forecast Metadata & Status" />
+                      <div className="mt-4 p-4 bg-surface border border-border rounded flex flex-wrap gap-6 text-sm">
+                        <div className="flex-1 min-w-[200px]">
+                          <span className="text-muted block mb-1">Summary</span>
+                          <span className="text-textSecondary">Model predicts an anomalous volatility spike in the Asian electronics supply chain sector within the next 48 to 72 hours, driven by compounding logistical disruptions detected in underlying signals.</span>
+                        </div>
+                        <div className="w-48 space-y-2">
+                          <div className="flex justify-between"><span className="text-muted">Health</span><span className="text-success font-medium">Optimal</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Warnings</span><span className="text-textSecondary">None</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">{selectedForecast.analyst}</span></div>
+                        </div>
+                        <div className="w-48 space-y-2 border-l border-border pl-6">
+                           <h4 className="text-xs font-bold text-textSecondary uppercase mb-1">Related Objects</h4>
+                           <ul className="text-xs text-primary space-y-1">
+                             <li className="cursor-pointer hover:underline">fc-1048 (Similar Window)</li>
+                             <li className="cursor-pointer hover:underline">fc-0992 (Historical)</li>
+                           </ul>
+                        </div>
+                      </div>
                     </div>
                     <AdminCard className="p-4 bg-card"><KPIBlock label="Confidence Level" value={selectedForecast.confidence} /></AdminCard>
                     <AdminCard className="p-4 bg-card"><KPIBlock label="Model Version" value={selectedForecast.model} /></AdminCard>
@@ -354,36 +369,6 @@ export default function Forecasts() {
         </div>
 
       </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Forecast Inspector</h3>
-        
-        {selectedForecast ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Forecast</h4>
-              <p className="font-mono text-forecast font-medium mb-2">{selectedForecast.id}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedForecast.status === 'Published' ? 'Success' : selectedForecast.status === 'Rejected' ? 'Critical' : selectedForecast.status === 'Validated' ? 'Running' : 'Warning'} label={selectedForecast.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Confidence</span><span className="text-text font-bold">{selectedForecast.confidence}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedForecast.analyst}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Related Forecasts</h4>
-              <ul className="text-xs text-primary space-y-2">
-                <li className="cursor-pointer hover:underline">fc-1048 (Similar Time Window)</li>
-                <li className="cursor-pointer hover:underline">fc-0992 (Historical Ground Truth)</li>
-              </ul>
-            </AdminCard>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a forecast to inspect.</div>
-        )}
-      </div>
-
     </div>
   );
 }

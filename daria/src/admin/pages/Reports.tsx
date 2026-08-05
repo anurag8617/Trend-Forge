@@ -45,8 +45,8 @@ export default function Reports() {
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
-      {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Executive Operations' }, { label: 'Reports' }]} />
@@ -64,8 +64,33 @@ export default function Reports() {
         <div className="p-6 pt-6 flex-1 space-y-6">
           
           {activeTab === 'Report Library' && (
-            <AdminCard>
-              <div className="p-4 border-b border-border bg-surface"><h3 className="text-sm font-semibold text-text uppercase tracking-wider">Report Directory</h3></div>
+            <div className="space-y-6">
+              {selectedReport && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <AdminCard className="p-6 bg-card">
+                    <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Report Summary</h4>
+                    <p className="font-medium text-text mb-4 text-lg">{selectedReport.name}</p>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div><span className="text-muted block text-xs mb-1">Status</span><StatusBadge status={selectedReport.status === 'Active' ? 'Success' : 'Warning'} label={selectedReport.status} /></div>
+                      <div><span className="text-muted block text-xs mb-1">Owner</span><span className="text-text font-medium">{selectedReport.owner}</span></div>
+                      <div><span className="text-muted block text-xs mb-1">Format</span><span className="font-mono text-text bg-surface px-2 py-1 rounded">{selectedReport.format}</span></div>
+                    </div>
+                  </AdminCard>
+                  
+                  <AdminCard className="p-6 bg-card">
+                    <h4 className="text-xs font-bold text-textSecondary uppercase mb-4">Metadata & Health</h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div><span className="text-muted block text-xs mb-1">Last Gen</span><span className="text-primary font-mono bg-primary/10 px-2 py-1 rounded">10:00 AM</span></div>
+                      <div><span className="text-muted block text-xs mb-1">Recipients</span><span className="text-text font-medium bg-surface px-2 py-1 rounded">14 Users</span></div>
+                      <div><span className="text-muted block text-xs mb-1">Schedule</span><span className="text-text font-medium">{selectedReport.schedule}</span></div>
+                      <div><span className="text-muted block text-xs mb-1">Category</span><span className="text-text">{selectedReport.category}</span></div>
+                    </div>
+                  </AdminCard>
+                </div>
+              )}
+
+              <AdminCard>
+                <div className="p-4 border-b border-border bg-surface"><h3 className="text-sm font-semibold text-text uppercase tracking-wider">Report Directory</h3></div>
               <TableToolbar>
                 <TableSearch />
                 <TableFilters />
@@ -108,6 +133,7 @@ export default function Reports() {
                 </tbody>
               </DataTable>
             </AdminCard>
+            </div>
           )}
 
           {activeTab === 'Scheduled Reports' && (
@@ -154,33 +180,6 @@ export default function Reports() {
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Report Inspector</h3>
-        
-        {selectedReport ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Report</h4>
-              <p className="font-medium text-text mb-2">{selectedReport.name}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedReport.status === 'Active' ? 'Success' : 'Warning'} label={selectedReport.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedReport.owner}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Format</span><span className="font-mono text-text">{selectedReport.format}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Metadata</h4>
-              <div className="flex justify-between text-sm mb-1"><span className="text-muted">Last Gen</span><span className="text-primary font-mono">10:00 AM</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted">Recipients</span><span className="text-text">14 Users</span></div>
-            </AdminCard>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a report to inspect.</div>
-        )}
       </div>
 
     </div>

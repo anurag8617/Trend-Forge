@@ -26,7 +26,7 @@ export default function Integrations() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 w-full">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Platform Engineering' }, { label: 'Integrations' }]} />
@@ -37,7 +37,21 @@ export default function Integrations() {
           />
         </div>
 
-        <div className="px-6 pt-2">
+        <div className="px-6 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AdminCard className="p-4 bg-card flex flex-col justify-center">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Integration Status</h4>
+            <div className="text-sm text-textSecondary py-4">Select an integration from the table to inspect connection details and OAuth scopes.</div>
+          </AdminCard>
+          <AdminCard className="p-4 bg-card">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Dependencies & Metadata</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted">API Gateway</span><HealthIndicator status="Healthy" /></div>
+              <div className="flex justify-between"><span className="text-muted">Webhook Delivery</span><StatusBadge status="Success" label="Operational" /></div>
+            </div>
+          </AdminCard>
+        </div>
+
+        <div className="px-6 pt-6">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
         </div>
 
@@ -112,10 +126,6 @@ export default function Integrations() {
 
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Integration Inspector</h3>
-        <div className="text-center text-sm text-textSecondary py-12">Select an integration to inspect connection details and OAuth scopes.</div>
       </div>
 
     </div>

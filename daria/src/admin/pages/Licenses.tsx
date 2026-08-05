@@ -26,7 +26,7 @@ export default function Licenses() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 w-full">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Commercial Operations' }, { label: 'Licenses' }]} />
@@ -37,7 +37,22 @@ export default function Licenses() {
           />
         </div>
 
-        <div className="px-6 pt-2">
+        <div className="px-6 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AdminCard className="p-4 bg-card">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">System Defaults & Metadata</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted">Grace Period</span><span className="text-text font-mono">14 Days</span></div>
+              <div className="flex justify-between"><span className="text-muted">Hard Enforcement</span><span className="text-success font-bold">Active</span></div>
+            </div>
+          </AdminCard>
+
+          <AdminCard className="p-4 bg-card">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Revenue Impact & Warnings</h4>
+            <p className="text-sm text-textSecondary">12 licenses expiring in the next 30 days. Estimated MRR risk: <span className="font-semibold text-warning">$142,000</span>.</p>
+          </AdminCard>
+        </div>
+
+        <div className="px-6 pt-6">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
         </div>
 
@@ -145,24 +160,6 @@ export default function Licenses() {
 
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Entitlement Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">System Defaults</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Grace Period</span><span className="text-text font-mono">14 Days</span></div>
-              <div className="flex justify-between"><span className="text-muted">Hard Enforcement</span><span className="text-success font-bold">Active</span></div>
-            </div>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Revenue Impact</h4>
-            <p className="text-xs text-textSecondary">12 licenses expiring in the next 30 days. Estimated MRR risk: $142,000.</p>
-          </AdminCard>
-        </div>
       </div>
 
     </div>

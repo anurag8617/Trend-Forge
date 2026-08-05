@@ -93,7 +93,7 @@ export default function Compliance() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 w-full overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Compliance & Audit' }]} />
@@ -102,6 +102,22 @@ export default function Compliance() {
             subtitle="Immutable audit logs, regulatory compliance, and incident forensics." 
             action={<PrimaryButton>Export Audit Log</PrimaryButton>} 
           />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <AdminCard className="p-6 bg-card">
+              <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Overall Posture</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center"><span className="text-muted">Compliance Status</span><StatusBadge status="Success" label="Audit Ready" /></div>
+                <div className="flex justify-between items-center"><span className="text-muted">Legal Holds</span><span className="text-text font-mono font-bold">2 Active</span></div>
+              </div>
+            </AdminCard>
+            <AdminCard className="p-6 bg-card">
+              <h4 className="text-sm font-bold text-textSecondary uppercase mb-4">Recommendations</h4>
+              <ul className="text-sm text-textSecondary space-y-2">
+                <li className="flex items-start gap-2"><span className="text-warning">⚠</span> ISO 27001 readiness review is pending 3 remediation items.</li>
+                <li className="flex items-start gap-2"><span className="text-primary">ℹ</span> Data retention purge scheduled in 48 hours for 2 tenants.</li>
+              </ul>
+            </AdminCard>
+          </div>
         </div>
 
         <div className="px-6 pt-2">
@@ -338,29 +354,6 @@ export default function Compliance() {
             </div>
           )}
 
-        </div>
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface border-l border-border p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Compliance Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Overall Posture</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Compliance Status</span><StatusBadge status="Success" label="Audit Ready" /></div>
-              <div className="flex justify-between"><span className="text-muted">Legal Holds</span><span className="text-text font-mono">2 Active</span></div>
-            </div>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Recommendations</h4>
-            <ul className="text-xs text-textSecondary space-y-2">
-              <li>• ISO 27001 readiness review is pending 3 remediation items.</li>
-              <li>• Data retention purge scheduled in 48 hours for 2 tenants.</li>
-            </ul>
-          </AdminCard>
         </div>
       </div>
 

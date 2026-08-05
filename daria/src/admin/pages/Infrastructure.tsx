@@ -28,7 +28,7 @@ export default function Infrastructure() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 w-full">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Infrastructure' }]} />
@@ -39,7 +39,29 @@ export default function Infrastructure() {
           />
         </div>
 
-        <div className="px-6 pt-2">
+        <div className="px-6 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AdminCard className="p-4 bg-card">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">System Health</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted">Database</span><HealthIndicator status="Healthy" /></div>
+              <div className="flex justify-between"><span className="text-muted">Cache</span><HealthIndicator status="Healthy" /></div>
+              <div className="flex justify-between"><span className="text-muted">Storage</span><HealthIndicator status="Healthy" /></div>
+              <div className="flex justify-between"><span className="text-muted">Network</span><HealthIndicator status="Healthy" /></div>
+            </div>
+          </AdminCard>
+
+          <AdminCard className="p-4 bg-card">
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Active Incidents & Warnings</h4>
+            <div className="text-xs text-muted italic mb-4">No active infrastructure incidents.</div>
+            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Quick Actions</h4>
+            <div className="flex space-x-2">
+              <SecondaryButton className="text-xs">Run Diagnostic</SecondaryButton>
+              <SecondaryButton className="text-xs">View Logs</SecondaryButton>
+            </div>
+          </AdminCard>
+        </div>
+
+        <div className="px-6 pt-6">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
         </div>
 
@@ -161,26 +183,6 @@ export default function Infrastructure() {
 
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Infra Inspector</h3>
-        
-        <div className="space-y-4">
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">System Health</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted">Database</span><HealthIndicator status="Healthy" /></div>
-              <div className="flex justify-between"><span className="text-muted">Cache</span><HealthIndicator status="Healthy" /></div>
-              <div className="flex justify-between"><span className="text-muted">Storage</span><HealthIndicator status="Healthy" /></div>
-              <div className="flex justify-between"><span className="text-muted">Network</span><HealthIndicator status="Healthy" /></div>
-            </div>
-          </AdminCard>
-
-          <AdminCard className="p-4 bg-card">
-            <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Active Incidents</h4>
-            <div className="text-xs text-muted italic">No active infrastructure incidents.</div>
-          </AdminCard>
-        </div>
       </div>
 
     </div>

@@ -91,7 +91,7 @@ export default function Users() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Users' }]} />
@@ -273,6 +273,44 @@ export default function Users() {
                 </div>
               </div>
 
+              {/* INTEGRATED INSPECTOR DATA */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pb-2">
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Status & Security</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedUser.status as any} label={selectedUser.status === 'Success' ? 'Active' : selectedUser.status === 'Warning' ? 'At Risk' : 'Offline'} /></div>
+                    <div className="flex justify-between"><span className="text-muted">MFA</span><span className={selectedUser.mfa === 'Enabled' ? 'text-success font-medium' : 'text-danger font-bold'}>{selectedUser.mfa}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Active Sessions</span><span className="text-text">{selectedUser.sessions}</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className={`p-4 ${selectedUser.mfa === 'Disabled' ? 'bg-danger/5 border-danger/30' : 'bg-card'}`}>
+                  <h4 className={`text-xs font-bold uppercase mb-2 ${selectedUser.mfa === 'Disabled' ? 'text-danger' : 'text-textSecondary'}`}>Warnings</h4>
+                  {selectedUser.mfa === 'Disabled' ? (
+                    <div>
+                      <p className="text-xs text-textSecondary mb-2">This user does not have MFA enabled.</p>
+                      <SecondaryButton className="w-full text-xs py-1">Enforce MFA</SecondaryButton>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted">No security warnings for this user.</p>
+                  )}
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Metadata</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-muted">Role</span><span className="text-text">{selectedUser.role}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Last Login</span><span className="text-text">{selectedUser.lastLogin}</span></div>
+                    <div className="flex justify-between"><span className="text-muted">Auth Provider</span><span className="text-text">SAML SSO</span></div>
+                  </div>
+                </AdminCard>
+                <AdminCard className="p-4 bg-card">
+                  <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Quick Actions</h4>
+                  <div className="space-y-2">
+                     <SecondaryButton className="w-full text-xs py-1">Suspend Account</SecondaryButton>
+                     <SecondaryButton className="w-full text-xs py-1">View Audit Log</SecondaryButton>
+                  </div>
+                </AdminCard>
+              </div>
+
               <div className="px-6 pt-2">
                 <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
               </div>
@@ -371,35 +409,6 @@ export default function Users() {
           )}
 
         </div>
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">User Inspector</h3>
-        
-        {selectedUser ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Summary</h4>
-              <p className="font-medium text-text mb-2">{selectedUser.name}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedUser.status as any} label={selectedUser.status === 'Success' ? 'Active' : selectedUser.status === 'Warning' ? 'At Risk' : 'Offline'} /></div>
-                <div className="flex justify-between"><span className="text-muted">MFA</span><span className={selectedUser.mfa === 'Enabled' ? 'text-success' : 'text-danger font-bold'}>{selectedUser.mfa}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Sessions</span><span className="text-text">{selectedUser.sessions}</span></div>
-              </div>
-            </AdminCard>
-
-            {selectedUser.mfa === 'Disabled' && (
-              <AdminCard className="p-4 bg-danger/5 border-danger/30">
-                <h4 className="text-xs font-bold text-danger uppercase mb-2">Security Warning</h4>
-                <p className="text-xs text-textSecondary">This user does not have MFA enabled. Enforce MFA via bulk actions.</p>
-                <SecondaryButton className="w-full mt-3 text-xs py-1">Enforce MFA</SecondaryButton>
-              </AdminCard>
-            )}
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a user to view details.</div>
-        )}
       </div>
 
     </div>

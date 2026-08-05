@@ -47,7 +47,7 @@ export default function FeatureFlags() {
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
       {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
         
         <div className="p-6 pb-0">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Platform Engineering' }, { label: 'Feature Flags' }]} />
@@ -65,57 +65,105 @@ export default function FeatureFlags() {
         <div className="p-6 pt-6 flex-1 space-y-6">
           
           {activeTab === 'Flags' && (
-            <AdminCard>
-              <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
-                 <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Global Flag Directory</h3>
-                 <div className="flex space-x-4 text-xs">
-                    <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-success mr-2"></div>Active (142)</span>
-                    <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-warning mr-2"></div>Canary (12)</span>
-                    <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-muted mr-2"></div>Inactive (84)</span>
-                 </div>
-              </div>
-              <TableToolbar>
-                <TableSearch />
-                <TableFilters />
-              </TableToolbar>
-              
-              <BulkActionBar 
-                selectedCount={selectedRows.length} 
-                actions={<><SecondaryButton className="py-1">Enable</SecondaryButton><DangerButton className="py-1">Disable</DangerButton></>} 
-              />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-2 space-y-6">
+                <AdminCard>
+                  <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
+                     <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Global Flag Directory</h3>
+                     <div className="flex space-x-4 text-xs">
+                        <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-success mr-2"></div>Active (142)</span>
+                        <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-warning mr-2"></div>Canary (12)</span>
+                        <span className="flex items-center"><div className="w-2 h-2 rounded-full bg-muted mr-2"></div>Inactive (84)</span>
+                     </div>
+                  </div>
+                  <TableToolbar>
+                    <TableSearch />
+                    <TableFilters />
+                  </TableToolbar>
+                  
+                  <BulkActionBar 
+                    selectedCount={selectedRows.length} 
+                    actions={<><SecondaryButton className="py-1">Enable</SecondaryButton><DangerButton className="py-1">Disable</DangerButton></>} 
+                  />
 
-              <DataTable>
-                <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
-                  <tr>
-                    <th className="px-4 py-3"><RowSelectionCheckbox checked={selectedRows.length === flags.length} onChange={handleSelectAll} /></th>
-                    <th className="px-4 py-3 text-left">Flag Name</th>
-                    <th className="px-4 py-3 text-left">Type</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-left">Traffic Allocation</th>
-                    <th className="px-4 py-3 text-left">Environment</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border text-sm">
-                  {flags.map(f => (
-                    <tr 
-                      key={f.id} 
-                      className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedFlagId === f.id ? 'bg-primary/5' : ''}`}
-                      onClick={() => setSelectedFlagId(f.id)}
-                    >
-                      <td className="px-4 py-3" onClick={e => e.stopPropagation()}><RowSelectionCheckbox checked={selectedRows.includes(f.id)} onChange={() => handleSelectRow(f.id)} /></td>
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-text">{f.name}</div>
-                        <div className="text-xs font-mono text-muted">{f.id}</div>
-                      </td>
-                      <td className="px-4 py-3 text-textSecondary">{f.type}</td>
-                      <td className="px-4 py-3"><StatusBadge status={f.status === 'Rolled Out' ? 'Success' : f.status === 'Canary' || f.status === 'A/B Test' ? 'Warning' : 'Offline'} label={f.status} /></td>
-                      <td className="px-4 py-3 font-mono text-primary">{f.traffic}</td>
-                      <td className="px-4 py-3 text-muted text-xs">{f.env}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </DataTable>
-            </AdminCard>
+                  <DataTable>
+                    <thead className="bg-surface border-b border-border text-xs uppercase text-textSecondary">
+                      <tr>
+                        <th className="px-4 py-3"><RowSelectionCheckbox checked={selectedRows.length === flags.length} onChange={handleSelectAll} /></th>
+                        <th className="px-4 py-3 text-left">Flag Name</th>
+                        <th className="px-4 py-3 text-left">Type</th>
+                        <th className="px-4 py-3 text-left">Status</th>
+                        <th className="px-4 py-3 text-left">Traffic Allocation</th>
+                        <th className="px-4 py-3 text-left">Environment</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border text-sm">
+                      {flags.map(f => (
+                        <tr 
+                          key={f.id} 
+                          className={`hover:bg-surface/50 cursor-pointer transition-colors ${selectedFlagId === f.id ? 'bg-primary/5' : ''}`}
+                          onClick={() => setSelectedFlagId(f.id)}
+                        >
+                          <td className="px-4 py-3" onClick={e => e.stopPropagation()}><RowSelectionCheckbox checked={selectedRows.includes(f.id)} onChange={() => handleSelectRow(f.id)} /></td>
+                          <td className="px-4 py-3">
+                            <div className="font-semibold text-text">{f.name}</div>
+                            <div className="text-xs font-mono text-muted">{f.id}</div>
+                          </td>
+                          <td className="px-4 py-3 text-textSecondary">{f.type}</td>
+                          <td className="px-4 py-3"><StatusBadge status={f.status === 'Rolled Out' ? 'Success' : f.status === 'Canary' || f.status === 'A/B Test' ? 'Warning' : 'Offline'} label={f.status} /></td>
+                          <td className="px-4 py-3 font-mono text-primary">{f.traffic}</td>
+                          <td className="px-4 py-3 text-muted text-xs">{f.env}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </DataTable>
+                </AdminCard>
+              </div>
+              <div className="space-y-6">
+                {selectedFlag ? (
+                  <>
+                    <AdminCard className="p-6">
+                      <SectionHeader title="Summary & Metadata" />
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <p className="font-medium text-text mb-1">{selectedFlag.name}</p>
+                          <div className="font-mono text-xs text-primary">{selectedFlag.id}</div>
+                        </div>
+                        
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedFlag.status === 'Rolled Out' ? 'Success' : selectedFlag.status === 'Canary' || selectedFlag.status === 'A/B Test' ? 'Warning' : 'Offline'} label={selectedFlag.status} /></div>
+                          <div className="flex justify-between"><span className="text-muted">Health</span><span className="text-success font-medium">Stable</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">{selectedFlag.owner}</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Traffic</span><span className="font-mono text-primary">{selectedFlag.traffic}</span></div>
+                          <div className="flex justify-between"><span className="text-muted">Warnings</span><span className="text-textSecondary">None</span></div>
+                        </div>
+                      </div>
+                    </AdminCard>
+
+                    <AdminCard className="p-6">
+                       <SectionHeader title="Dependencies & Actions" />
+                       <div className="mt-4 space-y-4">
+                         <div>
+                           <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Related Objects</h4>
+                           <ul className="text-xs text-muted space-y-1">
+                             <li>• Audience: {selectedFlag.type} Users</li>
+                             <li>• Rule: Default Targeting</li>
+                           </ul>
+                         </div>
+                         <div className="flex justify-between items-center pt-4 border-t border-border">
+                            <h4 className="text-xs font-bold text-textSecondary uppercase">Killswitch Override</h4>
+                            <div className="w-8 h-4 bg-surface rounded-full border border-border"></div>
+                         </div>
+                       </div>
+                    </AdminCard>
+                  </>
+                ) : (
+                  <AdminCard className="p-6 flex items-center justify-center text-sm text-textSecondary h-full">
+                    Select a feature flag to view details.
+                  </AdminCard>
+                )}
+              </div>
+            </div>
           )}
 
           {activeTab === 'Experiments' && (
@@ -163,35 +211,7 @@ export default function FeatureFlags() {
 
       </div>
 
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Flag Inspector</h3>
-        
-        {selectedFlag ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Flag</h4>
-              <p className="font-medium text-text mb-2">{selectedFlag.name}</p>
-              <div className="font-mono text-xs text-primary mb-4">{selectedFlag.id}</div>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedFlag.status === 'Rolled Out' ? 'Success' : selectedFlag.status === 'Canary' || selectedFlag.status === 'A/B Test' ? 'Warning' : 'Offline'} label={selectedFlag.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text font-medium">{selectedFlag.owner}</span></div>
-                <div className="flex justify-between"><span className="text-muted">Traffic</span><span className="font-mono text-primary">{selectedFlag.traffic}</span></div>
-              </div>
-            </AdminCard>
 
-            <AdminCard className="p-4 bg-card">
-               <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold text-textSecondary uppercase">Killswitch Override</h4>
-                  <div className="w-8 h-4 bg-surface rounded-full border border-border"></div>
-               </div>
-            </AdminCard>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a feature flag to inspect.</div>
-        )}
-      </div>
 
     </div>
   );

@@ -57,10 +57,10 @@ export const Tabs = ({ tabs, activeTab, onChange }: { tabs: { id: string, label:
   </div>
 );
 
-export const SecondaryNavigation = ({ items, activeItem }: { items: { id: string, label: string }[], activeItem: string }) => (
-  <nav className="flex flex-col space-y-1 w-48 border-r border-border min-h-[calc(100vh-4rem)] p-4 bg-surface">
+export const SecondaryNavigation = ({ items, activeItem, onChange }: { items: { id: string, label: string }[], activeItem: string, onChange?: (id: string) => void }) => (
+  <nav className="flex flex-col space-y-1 w-48 border-r border-border min-h-[calc(100vh-4rem)] p-2 bg-surface">
     {items.map(item => (
-      <button key={item.id} className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${activeItem === item.id ? 'bg-card text-primary font-medium' : 'text-textSecondary hover:bg-card hover:text-text'}`}>
+      <button key={item.id} onClick={() => onChange?.(item.id)} className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${activeItem === item.id ? 'bg-card text-primary font-medium' : 'text-textSecondary hover:bg-card hover:text-text'}`}>
         {item.label}
       </button>
     ))}

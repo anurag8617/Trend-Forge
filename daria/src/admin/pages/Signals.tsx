@@ -81,10 +81,10 @@ export default function Signals() {
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-background text-text">
       
-      {/* LEFT CONTENT AREA */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 border-r border-border">
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 overflow-y-auto flex flex-col min-w-0 w-full">
         
-        <div className="p-6 pb-0">
+        <div className="p-6 pb-0 w-full">
           <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Intelligence Operations' }, { label: 'Signals Queue' }]} />
           <PageHeader 
             title="Signal Review Center" 
@@ -93,7 +93,7 @@ export default function Signals() {
           />
         </div>
 
-        <div className="p-6 pt-0 space-y-6 flex-1">
+        <div className="p-6 pt-0 space-y-6 flex-1 w-full">
           {/* Signal Queue */}
           <AdminCard>
             <div className="p-4 border-b border-border bg-surface flex justify-between items-center">
@@ -234,18 +234,18 @@ export default function Signals() {
 
           {/* Detailed Workspace */}
           {selectedSignal && (
-            <AdminCard className="overflow-hidden">
-              <div className="bg-surface border-b border-border p-6 flex justify-between items-start">
+            <AdminCard className="overflow-hidden mb-8">
+              <div className="bg-surface border-b border-border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                   <h2 className="text-xl font-bold text-text mb-1 flex items-center">
                     Signal Review: <span className="ml-2 font-mono text-primary">{selectedSignal.id}</span>
                   </h2>
                   <div className="flex space-x-2 mt-2">
-                    <span className="px-2 py-1 bg-surface border border-border rounded text-xs text-textSecondary">Origin: {selectedSignal.source}</span>
-                    <span className="px-2 py-1 bg-surface border border-border rounded text-xs text-textSecondary">Created: {selectedSignal.created}</span>
+                    <span className="px-2 py-1 bg-background border border-border rounded text-xs text-textSecondary">Origin: {selectedSignal.source}</span>
+                    <span className="px-2 py-1 bg-background border border-border rounded text-xs text-textSecondary">Created: {selectedSignal.created}</span>
                   </div>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <SecondaryButton disabled>Split</SecondaryButton>
                   <SecondaryButton disabled>Merge</SecondaryButton>
                   <SecondaryButton disabled>Escalate</SecondaryButton>
@@ -254,21 +254,63 @@ export default function Signals() {
                 </div>
               </div>
 
-              <div className="px-6 pt-2 bg-surface">
+              {/* NEW SECTIONS: Signal Summary & Risk Evidence Summary */}
+              <div className="p-6 bg-surface/30 border-b border-border">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                  {/* Signal Summary */}
+                  <AdminCard className="p-8 shadow-sm border border-border bg-background">
+                    <SectionHeader title="Signal Summary" />
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-8">
+                      <KPIBlock label="Signal ID" value={<span className="font-mono text-primary">{selectedSignal.id}</span>} />
+                      <div>
+                        <span className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5">Status</span>
+                        <StatusBadge status={selectedSignal.status === 'Validated' ? 'Success' : selectedSignal.status === 'Escalated' ? 'Warning' : 'Pending'} label={selectedSignal.status} />
+                      </div>
+                      <div>
+                        <span className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5">Priority</span>
+                        <SeverityPill level={selectedSignal.priority as any} />
+                      </div>
+                      <KPIBlock label="Analyst" value={selectedSignal.analyst} />
+                      <KPIBlock label="Created" value={selectedSignal.created} />
+                      <KPIBlock label="Source" value={selectedSignal.source} />
+                      <KPIBlock label="Category" value={selectedSignal.category} />
+                      <KPIBlock label="Velocity" value={selectedSignal.velocity} />
+                      <KPIBlock label="Confidence" value={selectedSignal.confidence} />
+                    </div>
+                  </AdminCard>
+
+                  {/* Risk & Evidence Summary */}
+                  <AdminCard className="p-8 shadow-sm border border-border bg-background">
+                    <SectionHeader title="Risk & Evidence Summary" />
+                    <div className="grid grid-cols-2 gap-8 mt-8">
+                      <div>
+                        <span className="block text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5">Risk Profile</span>
+                        <SeverityPill level={selectedSignal.priority as any} />
+                      </div>
+                      <KPIBlock label="Supporting Evidence Count" value="2" />
+                      <KPIBlock label="Contradicting Evidence Count" value="1" />
+                      <KPIBlock label="Media Files" value="0" />
+                      <KPIBlock label="Linked Documents" value="3" />
+                    </div>
+                  </AdminCard>
+                </div>
+              </div>
+
+              <div className="px-6 pt-4 bg-surface border-b border-border">
                 <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
               </div>
 
-              <div className="p-6">
+              <div className="p-8">
                 
                 {activeTab === 'Metadata' && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Signal Category" value={selectedSignal.category} /></AdminCard>
-                    <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Calculated Confidence" value={selectedSignal.confidence} /></AdminCard>
-                    <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Ingestion Velocity" value={selectedSignal.velocity} /></AdminCard>
-                    <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Assigned Analyst" value={selectedSignal.analyst} /></AdminCard>
-                    <div className="col-span-full mt-4">
-                       <h4 className="text-sm font-semibold text-text mb-2">Raw Metadata Summary</h4>
-                       <pre className="bg-[#0A0F1C] border border-border p-4 rounded text-xs font-mono text-textSecondary overflow-x-auto">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                    <AdminCard className="p-6 bg-card border border-border"><KPIBlock label="Signal Category" value={selectedSignal.category} /></AdminCard>
+                    <AdminCard className="p-6 bg-card border border-border"><KPIBlock label="Calculated Confidence" value={selectedSignal.confidence} /></AdminCard>
+                    <AdminCard className="p-6 bg-card border border-border"><KPIBlock label="Ingestion Velocity" value={selectedSignal.velocity} /></AdminCard>
+                    <AdminCard className="p-6 bg-card border border-border"><KPIBlock label="Assigned Analyst" value={selectedSignal.analyst} /></AdminCard>
+                    <div className="col-span-full mt-6">
+                       <h4 className="text-sm font-semibold text-text mb-4">Raw Metadata Summary</h4>
+                       <pre className="bg-[#0A0F1C] border border-border p-6 rounded-lg text-xs font-mono text-textSecondary overflow-x-auto shadow-inner">
                       {`{
                         "signal_hash": "a8f93...2bc",
                         "topic_cluster": "macro_economic_shift",
@@ -282,30 +324,30 @@ export default function Signals() {
                 )}
 
                 {activeTab === 'Evidence' && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       <AdminCard className="p-4 border-primary/30">
-                         <h4 className="text-sm font-semibold text-text mb-3">Supporting Evidence</h4>
-                         <ul className="text-xs text-textSecondary space-y-2">
-                           <li className="flex justify-between items-center bg-surface p-2 rounded border border-border"><span>Financial Times Article Mention</span> <span className="text-success font-medium">High Reliability</span></li>
-                           <li className="flex justify-between items-center bg-surface p-2 rounded border border-border"><span>Correlated Twitter Volume Spike</span> <span className="text-warning font-medium">Medium Reliability</span></li>
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <AdminCard className="p-6 border-primary/30">
+                         <h4 className="text-sm font-semibold text-text mb-4">Supporting Evidence</h4>
+                         <ul className="text-xs text-textSecondary space-y-3">
+                           <li className="flex justify-between items-center bg-surface p-3 rounded-lg border border-border"><span>Financial Times Article Mention</span> <span className="text-success font-medium">High Reliability</span></li>
+                           <li className="flex justify-between items-center bg-surface p-3 rounded-lg border border-border"><span>Correlated Twitter Volume Spike</span> <span className="text-warning font-medium">Medium Reliability</span></li>
                          </ul>
                        </AdminCard>
-                       <AdminCard className="p-4 border-danger/30">
-                         <h4 className="text-sm font-semibold text-text mb-3">Contradicting Evidence</h4>
-                         <ul className="text-xs text-textSecondary space-y-2">
-                           <li className="flex justify-between items-center bg-surface p-2 rounded border border-border"><span>Official Government Press Release</span> <span className="text-danger font-medium">Direct Contradiction</span></li>
+                       <AdminCard className="p-6 border-danger/30">
+                         <h4 className="text-sm font-semibold text-text mb-4">Contradicting Evidence</h4>
+                         <ul className="text-xs text-textSecondary space-y-3">
+                           <li className="flex justify-between items-center bg-surface p-3 rounded-lg border border-border"><span>Official Government Press Release</span> <span className="text-danger font-medium">Direct Contradiction</span></li>
                          </ul>
                        </AdminCard>
                     </div>
-                    <div className="text-sm text-textSecondary text-center py-8 border border-dashed border-border rounded bg-surface/30">
+                    <div className="text-sm text-textSecondary text-center py-12 border border-dashed border-border rounded-xl bg-surface/30">
                       Attached Media and Documents Viewer Placeholder
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'Pipeline' && (
-                  <AdminCard className="p-6 border border-border">
+                  <AdminCard className="p-8 border border-border max-w-3xl">
                     <div className="flex flex-col space-y-8 font-mono text-xs">
                       {[
                         { stage: 'Collected', status: 'Success', time: '10:00 AM', owner: 'System' },
@@ -316,14 +358,14 @@ export default function Signals() {
                         { stage: 'Ready for Publication', status: 'Offline', time: '-', owner: '-' },
                       ].map((step, idx, arr) => (
                         <div key={step.stage} className="flex relative">
-                          <div className="w-24 font-bold text-textSecondary pt-1">{step.stage}</div>
-                          <div className="relative mx-4 flex-shrink-0 flex items-start justify-center">
-                            <div className={`w-3 h-3 rounded-full mt-1 ${step.status === 'Success' ? 'bg-success' : step.status === 'Pending' ? 'bg-warning animate-pulse' : 'bg-muted'}`} />
-                            {idx !== arr.length - 1 && <div className={`absolute top-4 w-px h-12 ${step.status === 'Success' ? 'bg-success/50' : 'bg-border'}`} />}
+                          <div className="w-32 font-bold text-textSecondary pt-1">{step.stage}</div>
+                          <div className="relative mx-6 flex-shrink-0 flex items-start justify-center">
+                            <div className={`w-3.5 h-3.5 rounded-full mt-1 border-2 border-background ${step.status === 'Success' ? 'bg-success' : step.status === 'Pending' ? 'bg-warning animate-pulse' : 'bg-muted'}`} />
+                            {idx !== arr.length - 1 && <div className={`absolute top-5 w-px h-14 ${step.status === 'Success' ? 'bg-success/50' : 'bg-border'}`} />}
                           </div>
-                          <div className="flex-1 pb-4 pt-0.5">
-                            <div className="flex space-x-4">
-                              <span className={step.status === 'Success' ? 'text-text' : 'text-textSecondary'}>{step.status}</span>
+                          <div className="flex-1 pb-6 pt-0.5">
+                            <div className="flex space-x-6">
+                              <span className={step.status === 'Success' ? 'text-text font-semibold' : 'text-textSecondary'}>{step.status}</span>
                               <span className="text-muted">{step.time}</span>
                               <span className="text-primary">{step.owner}</span>
                             </div>
@@ -342,50 +384,22 @@ export default function Signals() {
 
         {/* BOTTOM PANEL - Recent Intelligence Activity */}
         <div className="p-6 border-t border-border bg-surface/30">
-          <SectionHeader title="Recent Intelligence Activity" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <ActivityFeed>
-                <AuditTimeline events={activityEvents} />
-              </ActivityFeed>
-            </div>
-            <div className="space-y-4">
-              <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Signals Approved (24h)" value="1,402" /></AdminCard>
-              <AdminCard className="p-4 bg-card border border-border"><KPIBlock label="Signals Rejected (24h)" value="89" /></AdminCard>
+          <div className="w-full">
+            <SectionHeader title="Recent Intelligence Activity" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+              <div className="lg:col-span-2">
+                <ActivityFeed>
+                  <AuditTimeline events={activityEvents} />
+                </ActivityFeed>
+              </div>
+              <div className="space-y-6">
+                <AdminCard className="p-6 bg-card border border-border shadow-sm"><KPIBlock label="Signals Approved (24h)" value="1,402" /></AdminCard>
+                <AdminCard className="p-6 bg-card border border-border shadow-sm"><KPIBlock label="Signals Rejected (24h)" value="89" /></AdminCard>
+              </div>
             </div>
           </div>
         </div>
 
-      </div>
-
-      {/* RIGHT INSPECTOR PANEL */}
-      <div className="w-80 bg-surface border-l border-border p-4 overflow-y-auto hidden lg:block">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Intelligence Inspector</h3>
-        
-        {selectedSignal ? (
-          <div className="space-y-4">
-            <AdminCard className="p-4 bg-card border border-border">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-3">Selected Signal</h4>
-              <p className="font-mono text-primary font-medium mb-2">{selectedSignal.id}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted">Status</span><StatusBadge status={selectedSignal.status === 'Validated' ? 'Success' : selectedSignal.status === 'Escalated' ? 'Warning' : 'Pending'} label={selectedSignal.status} /></div>
-                <div className="flex justify-between"><span className="text-muted">Risk Profile</span><SeverityPill level={selectedSignal.priority as any} /></div>
-                <div className="flex justify-between"><span className="text-muted">Owner</span><span className="text-text">{selectedSignal.analyst}</span></div>
-              </div>
-            </AdminCard>
-
-            <AdminCard className="p-4 bg-card border border-border">
-              <h4 className="text-xs font-bold text-textSecondary uppercase mb-2">Linked Evidence</h4>
-              <ul className="text-xs text-textSecondary space-y-1 list-disc list-inside">
-                <li>2 Supporting Documents</li>
-                <li>1 Contradicting Source</li>
-                <li>0 Media Files</li>
-              </ul>
-            </AdminCard>
-          </div>
-        ) : (
-          <div className="text-center text-sm text-textSecondary py-12">Select a signal to inspect.</div>
-        )}
       </div>
 
     </div>
